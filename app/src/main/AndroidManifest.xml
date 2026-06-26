@@ -88,7 +88,7 @@
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:exported="false"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"

@@ -13,6 +13,7 @@ import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.data.model.CacheConfig
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.vm.PrivacyViewModel
 import com.flower.flow.databinding.ActivityPrivacyBinding
@@ -20,6 +21,7 @@ import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.finishAllActivity
 import me.hgj.jetpackmvvm.ext.util.getColorExt
+import me.hgj.jetpackmvvm.ext.util.intent.finish
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
 
@@ -37,7 +39,8 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
         }
 
         mBind.btnAgree.clickNoRepeat {
-
+            CacheConfig.isAgree = true
+            finish()
         }
     }
 

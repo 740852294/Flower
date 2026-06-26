@@ -1,8 +1,9 @@
 package com.flower.flow.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import com.flower.flow.MainActivity
+import com.flower.flow.ui.activity.MainActivity
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.LanguageConfigHelper
 import com.flower.flow.data.model.CacheConfig
@@ -11,6 +12,7 @@ import com.flower.flow.databinding.ActivityStartBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.finishAllActivity
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
+import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
 import me.hgj.jetpackmvvm.ext.util.toast
 
 class StartActivity : BaseActivity<StartViewModel, ActivityStartBinding>() {
@@ -23,21 +25,29 @@ class StartActivity : BaseActivity<StartViewModel, ActivityStartBinding>() {
 
     private fun routeNext() {
         if (!CacheConfig.isAgree) {
-            openActivity<PrivacyActivity>()
+            openActivityForResult<PrivacyActivity> { _ ->
+                if (CacheConfig.isAgree) {
+                    checkUser()
+                }
+            }
             return
         }
         if (CacheConfig.hasLanguageConfigCache()) {
             LanguageConfigHelper.restoreLanguageIdFromCache()
-            goMain()
+            checkUser()
             return
         }
         mViewModel.initLanguageConfig().obs(this) {
-            onSuccess { goMain() }
+            onSuccess { checkUser() }
             onError { error ->
                 error.msg.toast()
                 finishAllActivity()
             }
         }
+    }
+
+    private fun checkUser() {
+        "下一步".toast()
     }
 
     private fun goMain() {
