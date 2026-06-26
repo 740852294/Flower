@@ -33,5 +33,7 @@ object NetUrl {
         const val LANGUAGE_LIST = "language/list"
         //网页链接
         const val WEB_URL = "sys/getUrl"
+        //获取背景视频
+        const val BACKGROUND_VIDEO = "sys/getVideo"
     }
 }

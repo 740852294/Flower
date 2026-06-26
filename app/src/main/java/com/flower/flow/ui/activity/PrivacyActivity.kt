@@ -11,39 +11,55 @@ import android.view.View
 import androidx.activity.enableEdgeToEdge
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
+import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.vm.PrivacyViewModel
 import com.flower.flow.databinding.ActivityPrivacyBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.finishAllActivity
 import me.hgj.jetpackmvvm.ext.util.getColorExt
+import me.hgj.jetpackmvvm.ext.util.intent.openActivity
+import me.hgj.jetpackmvvm.ext.util.toast
 
 class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>() {
 
     override val showTitle = false
 
     override fun initView(savedInstanceState: Bundle?) {
-        enableEdgeToEdge()
 
+    }
+
+    override fun onBindViewClick() {
+        mBind.btnDisagree.clickNoRepeat {
+            finishAllActivity()
+        }
+
+        mBind.btnAgree.clickNoRepeat {
+
+        }
+    }
+
+    override fun createObserver() {
         mViewModel.initLanguageConfig().obs(this) {
             onSuccess {
                 mBind.clContent.visibility = View.VISIBLE
                 setLanguage()
             }
-            onError {
-                finish()
+            onError { error ->
+                error.msg.toast()
+                finishAllActivity()
             }
         }
-    }
 
-    override fun onBindViewClick() {
-        mBind.btnDisagree.clickNoRepeat {
-
-        }
-
-        mBind.btnAgree.clickNoRepeat {
-
+        mViewModel.getBackgroundVideo().obs(this) {
+            onSuccess {
+                if (it.url.isNotEmpty()) {
+                    mBind.bgVideo.loadImage(it.url)
+                    mBind.ivBg.visibility = View.INVISIBLE
+                }
+            }
         }
     }
 
@@ -92,7 +108,7 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
         builder.setSpan(
             object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    mViewModel.openPolicyPage(route.requestType)
+                    openPolicyPage(route.requestType)
                 }
 
                 override fun updateDrawState(ds: TextPaint) {
@@ -105,6 +121,31 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
             end,
             Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
         )
+    }
+
+    private fun openPolicyPage(requestType: Int) {
+        mViewModel.openPolicyPage(requestType).obs(this) {
+            onSuccess { data ->
+                if (data.url.isEmpty()) {
+                    FlowCopyStore.get(FlowCopyKey.WEB_EMPTY_HINT).toast()
+                } else {
+                    val title = when (requestType) {
+                        PolicyRoute.PRIVACY.requestType -> {
+                            FlowCopyStore.get(FlowCopyKey.PRIVACY_LINK)
+                        }
+
+                        PolicyRoute.TERMS.requestType -> {
+                            FlowCopyStore.get(FlowCopyKey.TERMS_LINK)
+                        }
+
+                        else -> {
+                            ""
+                        }
+                    }
+                    openActivity<WebviewActivity>("url" to data.url, "title" to title)
+                }
+            }
+        }
     }
 
     private enum class PolicyRoute(val requestType: Int) {

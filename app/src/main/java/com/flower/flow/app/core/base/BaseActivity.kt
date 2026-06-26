@@ -4,7 +4,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -15,6 +14,7 @@ import com.flower.flow.app.core.ext.dismissAppLoadingExt
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.showAppLoadingExt
 import com.flower.flow.databinding.IncludeToolbarBinding
+import com.google.android.material.appbar.MaterialToolbar
 import me.hgj.jetpackmvvm.base.ui.BaseVbActivity
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.core.net.LoadingEntity
@@ -23,7 +23,7 @@ import me.hgj.jetpackmvvm.ext.util.getColorExt
 
 abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : BaseVbActivity<VM, VB>() {
 
-    lateinit var mToolbar: Toolbar
+    lateinit var mToolbar: MaterialToolbar
 
     open val title = ""
 

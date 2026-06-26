@@ -123,6 +123,7 @@ dependencies {
     implementation(project(":mvvm"))
 
     implementation("com.facebook.fresco:fresco:3.7.0")
+    implementation("com.facebook.fresco:vito:3.7.0")
     implementation("com.facebook.fresco:vito-view:3.7.0")
     implementation("com.facebook.fresco:vito-options:3.7.0")
     implementation("com.facebook.fresco:vito-source:3.7.0")
@@ -130,6 +131,8 @@ dependencies {
     implementation("com.facebook.fresco:animated-webp:3.7.0")
     // 动图基础支持
     implementation("com.facebook.fresco:animated-base:3.7.0")
+    implementation("com.facebook.fresco:webpsupport:3.7.0")
+
     implementation(libs.androidx.activity.ktx)
 
     //基础库

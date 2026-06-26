@@ -52,4 +52,13 @@ object CommonRepository {
             .add("type", type)
             .toAwaitResponse()
     }
+
+    /**
+     * 获取背景视频，type: 1=登录页，2=VIP开通页，3=同意协议页面
+     */
+    fun getBackgroundVideo(type: String): Await<WebUrl> {
+        return RxHttp.get(NetUrl.Common.BACKGROUND_VIDEO)
+            .add("type", type)
+            .toAwaitResponse()
+    }
 }
