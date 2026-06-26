@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#0F0C11</color>
+    <color name="colorPrimaryDark">#080609</color>
+    <color name="colorAccent">#FF7A3D</color>
+    <color name="colorPrimaryLight">#3B3D42</color>
+
+    <!-- 基础颜色 -->
+    <color name="white">#FFFFFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="black">#000000</color>
+
+    <!-- 背景色 -->
+    <color name="windowBackground">#141414</color>
+</resources>
