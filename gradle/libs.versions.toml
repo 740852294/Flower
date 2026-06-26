@@ -38,7 +38,8 @@ dialog =  "3.3.0"
 immersionbar =  "3.2.2"
 permissions =  "26.5"
 brv = "1.5.8"
-backgroundlibrary = "1.7.6"
+shapeView = "11.0"
+shapeDrawable = "5.0"
 spannable = "1.2.7"
 ksp = "2.3.9"
 activityKtx = "1.8.0"
@@ -83,7 +84,8 @@ rxhttp = { module = "com.github.liujingxing.rxhttp:rxhttp", version.ref = "rxhtt
 rxhttp-compiler = { module = "com.github.liujingxing.rxhttp:rxhttp-compiler", version.ref = "rxhttp" }
 toaster = { module = "com.github.getActivity:Toaster", version.ref = "toaster" }
 unpeek-livedata = { module = "com.kunminx.arch:unpeek-livedata", version.ref = "unpeekLivedata" }
-backgroundlibrary-library = { module = "com.github.JavaNoober.BackgroundLibrary:library", version.ref = "backgroundlibrary" }
+shape-view = { module = "com.github.getActivity:ShapeView", version.ref = "shapeView" }
+shape-drawable = { module = "com.github.getActivity:ShapeDrawable", version.ref = "shapeDrawable" }
 brv = { module = "com.github.liangjingkanji:BRV", version.ref = "brv" }
 spinkit = { module = "com.github.ybq:Android-SpinKit", version.ref = "spinkit" }
 dialog = { module = "com.afollestad.material-dialogs:core", version.ref = "dialog" }

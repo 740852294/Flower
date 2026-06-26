@@ -31,5 +31,7 @@ object NetUrl {
         const val LANGUAGE_CONFIG = "sys/getAppLanguageConfig"
         //语言列表
         const val LANGUAGE_LIST = "language/list"
+        //网页链接
+        const val WEB_URL = "sys/getUrl"
     }
 }

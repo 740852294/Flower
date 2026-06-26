@@ -58,7 +58,8 @@ dependencies {
     //利用liveData发送全局消息
     api(libs.unpeek.livedata)
     //通过标签直接生成shape，无需再写shape.xml
-    api(libs.backgroundlibrary.library)
+    api(libs.shape.view)
+    api(libs.shape.drawable)
     //权限申请
     api(libs.permissions)
 }

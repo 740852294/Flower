@@ -3,6 +3,7 @@ package com.flower.flow.data.repository
 import com.flower.flow.app.core.net.NetUrl
 import com.flower.flow.data.model.entity.AppLanguageConfig
 import com.flower.flow.data.model.entity.LanguageItem
+import com.flower.flow.data.model.entity.WebUrl
 import rxhttp.wrapper.coroutines.Await
 import rxhttp.wrapper.coroutines.CallFlow
 import rxhttp.wrapper.param.RxHttp
@@ -41,5 +42,14 @@ object CommonRepository {
     fun getLanguageListFlow(): CallFlow<List<LanguageItem>> {
         return RxHttp.get(NetUrl.Common.LANGUAGE_LIST)
             .toFlowResponse()
+    }
+
+    /**
+     * 获取网页链接，type: 1=隐私政策，2=使用条款
+     */
+    fun getWebUrl(type: Int): Await<WebUrl> {
+        return RxHttp.get(NetUrl.Common.WEB_URL)
+            .add("type", type)
+            .toAwaitResponse()
     }
 }

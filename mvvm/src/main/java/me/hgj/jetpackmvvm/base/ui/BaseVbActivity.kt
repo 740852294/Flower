@@ -2,7 +2,6 @@ package me.hgj.jetpackmvvm.base.ui
 
 import android.view.View
 import androidx.viewbinding.ViewBinding
-import com.noober.background.BackgroundLibrary
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.ext.util.inflateBinding
 
@@ -27,7 +26,6 @@ abstract class BaseVbActivity<VM : BaseViewModel,VB: ViewBinding> : BaseVmActivi
 
     override fun initViewDataBind(): View? {
         mBind = createViewBinding()
-        BackgroundLibrary.inject(this)
         return mBind.root
     }
 }
