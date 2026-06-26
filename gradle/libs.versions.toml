@@ -43,6 +43,10 @@ shapeDrawable = "5.0"
 spannable = "1.2.7"
 ksp = "2.3.9"
 activityKtx = "1.8.0"
+fresco = "3.7.0"
+facebookCore = "17.0.0"
+installReferrer = "2.2"
+playServicesAdsIdentifier = "18.2.0"
 
 [libraries]
 agentweb = { module = "com.just.agentweb:agentweb", version.ref = "agentweb" }
@@ -95,6 +99,17 @@ immersionbar = { module = "com.geyifeng.immersionbar:immersionbar", version.ref 
 permissions = { module = "com.github.getActivity:XXPermissions", version.ref = "permissions" }
 spannable = { module = "com.github.liangjingkanji:spannable", version.ref = "spannable" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
+fresco = { module = "com.facebook.fresco:fresco", version.ref = "fresco" }
+fresco-vito = { module = "com.facebook.fresco:vito", version.ref = "fresco" }
+fresco-vito-view = { module = "com.facebook.fresco:vito-view", version.ref = "fresco" }
+fresco-vito-options = { module = "com.facebook.fresco:vito-options", version.ref = "fresco" }
+fresco-vito-source = { module = "com.facebook.fresco:vito-source", version.ref = "fresco" }
+fresco-animated-webp = { module = "com.facebook.fresco:animated-webp", version.ref = "fresco" }
+fresco-animated-base = { module = "com.facebook.fresco:animated-base", version.ref = "fresco" }
+fresco-webpsupport = { module = "com.facebook.fresco:webpsupport", version.ref = "fresco" }
+facebook-core = { module = "com.facebook.android:facebook-core", version.ref = "facebookCore" }
+install-referrer = { module = "com.android.installreferrer:installreferrer", version.ref = "installReferrer" }
+play-services-ads-identifier = { module = "com.google.android.gms:play-services-ads-identifier", version.ref = "playServicesAdsIdentifier" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

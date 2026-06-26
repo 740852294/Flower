@@ -16,8 +16,8 @@ object UserRepository {
     fun registerLivedata(
         code: String,
         source: Int,
-        sourceFlag: String,
-        step: String
+        sourceFlag: String = "",
+        step: String = ""
     ): Await<RegisterResponse> {
         return RxHttp.postForm(NetUrl.User.REGISTER)
             .add("code", code)

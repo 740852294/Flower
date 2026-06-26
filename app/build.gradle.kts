@@ -99,15 +99,19 @@ android {
 androidComponents {
     onVariants { variant ->
         val buildType = variant.buildType ?: "unknown"
+        val variantTaskName = variant.name.replaceFirstChar { it.titlecase() }
         val versionName = variant.outputs.first().versionName.orNull ?: "unknown"
         val versionCode = variant.outputs.first().versionCode.orNull?.toString() ?: "0"
         val outputFileName = "Flower_${buildType}_${versionName}_${versionCode}_${apkBuildTime()}.apk"
 
-        val renameTask = tasks.register<RenameApkTask>("renameApk${variant.name.replaceFirstChar { it.titlecase() }}") {
+        val renameTask = tasks.register<RenameApkTask>("renameApk$variantTaskName") {
             output.set(layout.buildDirectory.dir("outputs/apk/${variant.name}"))
             builtArtifactsLoader.set(variant.artifacts.getBuiltArtifactsLoader())
             this.outputFileName.set(outputFileName)
         }
+
+        tasks.matching { it.name == "create${variantTaskName}ApkListingFileRedirect" }
+            .configureEach { dependsOn(renameTask) }
 
         variant.artifacts.use(renameTask).wiredWith { it.input }.toListenTo(SingleArtifact.APK)
     }
@@ -122,16 +126,20 @@ kotlin {
 dependencies {
     implementation(project(":mvvm"))
 
-    implementation("com.facebook.fresco:fresco:3.7.0")
-    implementation("com.facebook.fresco:vito:3.7.0")
-    implementation("com.facebook.fresco:vito-view:3.7.0")
-    implementation("com.facebook.fresco:vito-options:3.7.0")
-    implementation("com.facebook.fresco:vito-source:3.7.0")
+    implementation(libs.fresco)
+    implementation(libs.fresco.vito)
+    implementation(libs.fresco.vito.view)
+    implementation(libs.fresco.vito.options)
+    implementation(libs.fresco.vito.source)
     // 动图 webp
-    implementation("com.facebook.fresco:animated-webp:3.7.0")
+    implementation(libs.fresco.animated.webp)
     // 动图基础支持
-    implementation("com.facebook.fresco:animated-base:3.7.0")
-    implementation("com.facebook.fresco:webpsupport:3.7.0")
+    implementation(libs.fresco.animated.base)
+    implementation(libs.fresco.webpsupport)
+
+    implementation(libs.facebook.core)
+    implementation(libs.install.referrer)
+    implementation(libs.play.services.ads.identifier)
 
     implementation(libs.androidx.activity.ktx)
 

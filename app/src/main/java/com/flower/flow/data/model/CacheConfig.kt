@@ -9,6 +9,8 @@ object CacheConfig {
 
     var userId by Cache("")
 
+    var deviceSourceFlag by Cache("")
+
     var selectedLanguageId by Cache(0)
 
     /** 文案 Map 的 JSON 缓存，key 为 FlowCopyKey 本地常量 */

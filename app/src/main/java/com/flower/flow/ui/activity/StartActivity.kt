@@ -1,9 +1,6 @@
 package com.flower.flow.ui.activity
 
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import com.flower.flow.ui.activity.MainActivity
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.LanguageConfigHelper
 import com.flower.flow.data.model.CacheConfig
@@ -47,7 +44,19 @@ class StartActivity : BaseActivity<StartViewModel, ActivityStartBinding>() {
     }
 
     private fun checkUser() {
-        "下一步".toast()
+        if (CacheConfig.userId.isEmpty()) {
+            mViewModel.registerUserByAttribution(applicationContext).obs(this) {
+                onSuccess { response ->
+                    CacheConfig.userId = response.uid
+                    goMain()
+                }
+                onError {
+                    finishAllActivity()
+                }
+            }
+        } else {
+            goMain()
+        }
     }
 
     private fun goMain() {
