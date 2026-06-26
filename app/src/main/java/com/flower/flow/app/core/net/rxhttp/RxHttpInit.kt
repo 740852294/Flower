@@ -1,5 +1,6 @@
 package com.flower.flow.app.core.net.rxhttp
 
+import com.flower.flow.app.core.net.interception.HeaderInterceptor
 import me.hgj.jetpackmvvm.core.appContext
 import me.hgj.jetpackmvvm.core.net.interception.LogInterceptor
 import okhttp3.OkHttpClient
@@ -24,6 +25,7 @@ object RxHttpInit {
             .connectTimeout(25, TimeUnit.SECONDS)//读取连接超时时间 15秒
             .readTimeout(25, TimeUnit.SECONDS)
             .writeTimeout(25, TimeUnit.SECONDS)
+            .addInterceptor(HeaderInterceptor())
             .addInterceptor(LogInterceptor())//添加Log拦截器
             .sslSocketFactory(sslParams.sSLSocketFactory, sslParams.trustManager) //添加信任证书
             .hostnameVerifier { hostname, session -> true } //忽略host验证

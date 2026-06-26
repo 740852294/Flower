@@ -39,7 +39,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/fb_app_id" />
@@ -67,6 +68,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.activity.PrivacyActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
     </application>
 
 </manifest>

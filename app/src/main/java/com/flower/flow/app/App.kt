@@ -10,6 +10,10 @@ import me.hgj.jetpackmvvm.ext.util.isMainProcess
 
 class App : Application(){
 
+    companion object {
+        var currentLanguageId: Int = 0
+    }
+
     override fun onCreate() {
         super.onCreate()
         if (isMainProcess()){
