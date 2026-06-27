@@ -3,9 +3,17 @@ package com.flower.flow.ui.activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.os.Bundle
+import androidx.core.net.toUri
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.flower.flow.R
+import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
+import com.flower.flow.app.core.ext.dismissAppLoadingExt
+import com.flower.flow.app.core.ext.showAppLoadingExt
 import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.UserManager
+import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.MainInitResult
 import com.flower.flow.data.vm.MainViewModel
@@ -15,9 +23,10 @@ import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.dialog.CommonMessageDialog
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
-import androidx.core.net.toUri
-import androidx.core.view.isVisible
-import com.flower.flow.app.event.EventViewModel
+import me.hgj.jetpackmvvm.ext.util.intent.openActivity
+import me.hgj.jetpackmvvm.ext.util.toast
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
@@ -25,6 +34,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     private var msgRedDot = false
     private var workRedDot = false
+    private var userInfoPollingStarted = false
 
     private data class TabConfig(
         val binding: LayoutMainBottomTabItemBinding,
@@ -74,6 +84,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     }
 
     private fun setupMainContent() {
+        getUserInfo(true)
+
         tabs = listOf(
             TabConfig(
                 mBind.tabTopic,
@@ -105,6 +117,34 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         mBind.mainViewPager.offscreenPageLimit = mBind.mainViewPager.adapter!!.itemCount
         mBind.mainViewPager.isUserInputEnabled = false
         selectTab(MainAdapter.PAGE_TOPIC)
+
+        startUserInfoPolling()
+    }
+
+    private fun startUserInfoPolling() {
+        if (userInfoPollingStarted) return
+        userInfoPollingStarted = true
+        lifecycleScope.launch {
+            while (true) {
+                delay(USER_INFO_POLL_INTERVAL)
+                getUserInfo(false)
+            }
+        }
+    }
+
+    fun getUserInfo(isFirst: Boolean) {
+        mViewModel.fetchUserInfo(isFirst).obs(this){
+            onSuccess { userInfo ->
+                if (isFirst && !userInfo.isVip && (App.globalConfig?.integralAndVipEntranceShow ?: 0) == 1) {
+                    openActivity<VipJoinActivity>()
+                }
+            }
+            onError { error ->
+                if (isFirst) {
+                    error.toast()
+                }
+            }
+        }
     }
 
     private fun selectTab(index: Int) {
@@ -133,5 +173,9 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             }
             startActivity(intent)
         }
+    }
+
+    private companion object {
+        private const val USER_INFO_POLL_INTERVAL = 2 * 60 * 1000L
     }
 }
