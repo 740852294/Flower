@@ -10,9 +10,6 @@ object EventViewModel  {
     /** 通知fragment请求数据 */
     val mainFragmentDataEvent = MutableResult<Boolean>()
 
-    /** 通知用户信息请求数据 */
-    val userInfoDataEvent = MutableResult<UserInfo>()
-
     /** 消息通知红点 */
     val msgRedDotEvent = MutableResult<Boolean>()
 
