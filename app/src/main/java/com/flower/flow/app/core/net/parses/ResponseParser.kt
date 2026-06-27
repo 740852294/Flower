@@ -1,4 +1,4 @@
-package com.flower.flow.app.core.net.rxhttp.parses
+package com.flower.flow.app.core.net.parses
 
 import com.flower.flow.app.core.net.NetUrl
 import com.flower.flow.app.core.util.UserManager

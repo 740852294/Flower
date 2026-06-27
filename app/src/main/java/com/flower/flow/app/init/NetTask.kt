@@ -1,7 +1,7 @@
 package com.flower.flow.app.init
 
 import android.app.Application
-import com.flower.flow.app.core.net.rxhttp.RxHttpInit
+import com.flower.flow.app.core.net.RxHttpInit
 import me.hgj.jetpackmvvm.core.init.BaseInitTask
 
 /**
