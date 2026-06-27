@@ -84,7 +84,6 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     }
 
     private fun setupMainContent() {
-        getUserInfo(true)
 
         tabs = listOf(
             TabConfig(
@@ -118,6 +117,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         mBind.mainViewPager.isUserInputEnabled = false
         selectTab(MainAdapter.PAGE_TOPIC)
 
+        getUserInfo(true)
         startUserInfoPolling()
     }
 
