@@ -40,7 +40,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : BaseVbActivi
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
         //设置导航栏图标颜色为深色
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightNavigationBars =
-            true
+            false
         //设置导航栏背景为白色
         window.navigationBarColor = getColorExt(R.color.windowBackground)
         ViewCompat.setOnApplyWindowInsetsListener(mBind.root) { view, insets ->

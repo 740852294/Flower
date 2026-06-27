@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_topic"
+        android:checked="true"
+        android:icon="@drawable/menu_topic"
+        android:title="" />
+
+    <item
+        android:id="@+id/menu_tag"
+        android:icon="@drawable/menu_tag"
+        android:title="" />
+
+    <item
+        android:id="@+id/menu_me"
+        android:icon="@drawable/menu_me"
+        android:title="" />
+
+</menu>

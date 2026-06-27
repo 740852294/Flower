@@ -18,4 +18,12 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
     override fun initView(savedInstanceState: Bundle?) {
     }
+
+    override fun lazyLoadData() {
+
+    }
+
+    override fun createObserver() {
+
+    }
 }

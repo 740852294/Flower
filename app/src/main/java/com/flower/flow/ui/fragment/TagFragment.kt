@@ -18,4 +18,12 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
 
     override fun initView(savedInstanceState: Bundle?) {
     }
+
+    override fun lazyLoadData() {
+
+    }
+
+    override fun createObserver() {
+
+    }
 }

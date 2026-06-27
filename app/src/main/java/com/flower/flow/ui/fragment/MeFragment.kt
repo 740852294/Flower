@@ -17,6 +17,14 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun initView(savedInstanceState: Bundle?) {
-        TODO("Not yet implemented")
+
+    }
+
+    override fun lazyLoadData() {
+
+    }
+
+    override fun createObserver() {
+
     }
 }
