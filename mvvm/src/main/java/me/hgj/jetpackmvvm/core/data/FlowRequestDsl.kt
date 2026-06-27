@@ -78,7 +78,6 @@ private fun <T> BaseViewModel.executeFlowRequestWithResult(
                 if (requestParameterDsl.loadingType != LoadingType.LOADING_NULL) {
                     loadingChange.loading.postValue = LoadingEntity(
                         loadingType = requestParameterDsl.loadingType,
-                        loadingMessage = requestParameterDsl.loadingMessage,
                         isShow = true,
                         coroutineScope = this
                     )
@@ -90,7 +89,6 @@ private fun <T> BaseViewModel.executeFlowRequestWithResult(
                         if (requestParameterDsl.loadingType != LoadingType.LOADING_NULL) {
                             loadingChange.loading.postValue = LoadingEntity(
                                 loadingType = requestParameterDsl.loadingType,
-                                loadingMessage = requestParameterDsl.loadingMessage,
                                 isShow = false
                             )
                         }
@@ -130,7 +128,6 @@ private fun <T> BaseViewModel.executeFlowRequestWithResult(
                 if (requestParameterDsl.loadingType != LoadingType.LOADING_NULL) {
                     loadingChange.loading.postValue = LoadingEntity(
                         loadingType = requestParameterDsl.loadingType,
-                        loadingMessage = requestParameterDsl.loadingMessage,
                         isShow = false
                     )
                 }

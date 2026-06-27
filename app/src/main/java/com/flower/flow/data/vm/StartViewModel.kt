@@ -14,7 +14,6 @@ class StartViewModel : BaseViewModel() {
             LanguageConfigHelper.loadAndCache()
         }
         loadingType = LoadingType.LOADING_DIALOG
-        loadingMessage = "正在加载..."
     }
 
     fun registerUserByAttribution(context: Context) = request {
@@ -26,6 +25,5 @@ class StartViewModel : BaseViewModel() {
             registerResponse
         }
         loadingType = LoadingType.LOADING_DIALOG
-        loadingMessage = "正在加载..."
     }
 }

@@ -100,21 +100,17 @@ private val loadingDialogs = WeakHashMap<Any, Dialog>() // 使用 WeakHashMap �
 /**
  * 打开等待框
  */
-fun Fragment.showLoadingExt(
-    message: String = "请求网络中...",
-    coroutineScope: CoroutineScope? = null
-) {
+fun Fragment.showLoadingExt(coroutineScope: CoroutineScope? = null) {
     dismissLoadingExt() // 先关闭之前的
     activity?.let {
         if (!it.isFinishing) {
             val dialog = MaterialDialog(it)
                 .show {
                     val dialogView = LayoutBaseLoadingViewBinding.inflate(LayoutInflater.from(it))
-                    dialogView.loadingMessage.text = message
                     customView(view = dialogView.root, horizontalPadding = true)
                     cancelOnTouchOutside(false)
                     cornerRadius(4f)
-                    .lifecycleOwner(it)
+                        .lifecycleOwner(it)
                 }.onDismiss {
                     //关闭弹窗时 将请求也关闭了
                     coroutineScope?.cancel()
@@ -126,20 +122,17 @@ fun Fragment.showLoadingExt(
     }
 }
 
-fun AppCompatActivity.showLoadingExt(
-    message: String = "请求网络中...",
-    coroutineScope: CoroutineScope? = null
-) {
+fun AppCompatActivity.showLoadingExt(coroutineScope: CoroutineScope? = null) {
     dismissLoadingExt() // 先关闭之前的
     if (!isFinishing) {
         val dialog = MaterialDialog(this)
             .show {
-                val dialogView = LayoutBaseLoadingViewBinding.inflate(LayoutInflater.from(this@showLoadingExt))
-                dialogView.loadingMessage.text = message
+                val dialogView =
+                    LayoutBaseLoadingViewBinding.inflate(LayoutInflater.from(this@showLoadingExt))
                 customView(view = dialogView.root, horizontalPadding = true)
                 cornerRadius(4f)
                 cancelOnTouchOutside(false)
-                .lifecycleOwner(this@showLoadingExt)
+                    .lifecycleOwner(this@showLoadingExt)
             }.onDismiss {
                 //关闭弹窗时 将请求也关闭了
                 coroutineScope?.cancel()

@@ -154,7 +154,7 @@ abstract class BaseVmActivity<VM : BaseViewModel> : AppCompatActivity(), BaseIVi
 
                     LoadingType.LOADING_XML -> {
                         if (it.isShow) {
-                            showLoadingUi(it.loadingMessage)
+                            showLoadingUi()
                         }
                     }
 
@@ -247,7 +247,7 @@ abstract class BaseVmActivity<VM : BaseViewModel> : AppCompatActivity(), BaseIVi
      * @param setting 设置
      */
     override fun showLoading(setting: LoadingEntity) {
-        showLoadingExt(setting.loadingMessage, setting.coroutineScope)
+        showLoadingExt(setting.coroutineScope)
     }
 
     /**

@@ -172,7 +172,7 @@ abstract class BaseVmFragment<VM : BaseViewModel> : Fragment(), BaseIView {
                     //请求时 xml显示 loading
                     LoadingType.LOADING_XML -> {
                         if (it.isShow) {
-                            showLoadingUi(it.loadingMessage)
+                            showLoadingUi()
                         }
                     }
                     else ->{}
@@ -264,7 +264,7 @@ abstract class BaseVmFragment<VM : BaseViewModel> : Fragment(), BaseIView {
     }
 
     override fun showLoading(setting: LoadingEntity) {
-        showLoadingExt(setting.loadingMessage)
+        showLoadingExt()
     }
 
     override fun dismissLoading(setting: LoadingEntity) {

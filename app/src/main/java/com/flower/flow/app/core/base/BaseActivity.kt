@@ -68,7 +68,7 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : BaseVbActivi
      * 这里我自定义了自己项目的 loading ，仅供参考 ，BaseFragment我暂时没有定义，使用的是框架中的默认loading, 如果要改loading，ac/fm都要修改重写
      */
     override fun showLoading(setting: LoadingEntity) {
-        showAppLoadingExt(setting.loadingMessage, setting.coroutineScope)
+        showAppLoadingExt(setting.coroutineScope)
     }
 
     /**

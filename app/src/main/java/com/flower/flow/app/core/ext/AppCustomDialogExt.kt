@@ -4,88 +4,81 @@ import android.app.Dialog
 import android.view.LayoutInflater
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import com.afollestad.materialdialogs.MaterialDialog
-import com.afollestad.materialdialogs.callbacks.onDismiss
-import com.afollestad.materialdialogs.customview.customView
-import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import com.flower.flow.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
-import me.hgj.jetpackmvvm.databinding.LayoutBaseLoadingViewBinding
+import me.hgj.jetpackmvvm.ext.util.dp2px
 import me.hgj.jetpackmvvm.ext.util.hideOffKeyboard
 import java.util.WeakHashMap
 
-// 使用一个弱引用集合来管理所有的 loadingDialog
-private val loadingDialogs = WeakHashMap<Any, Dialog>() // 使用 WeakHashMap 防止内存泄漏
+private val loadingDialogs = WeakHashMap<Any, Dialog>()
 
-/**
- * 打开等待框
- */
-fun Fragment.showAppLoadingExt(message: String = "请求网络中...", coroutineScope: CoroutineScope? = null) {
-    dismissAppLoadingExt() // 先关闭之前的
-    activity?.let {
-        if (!it.isFinishing) {
-            val dialog = MaterialDialog(it)
-                .show {
-                    val dialogView = LayoutBaseLoadingViewBinding.inflate(LayoutInflater.from(it))
-                    dialogView.loadingMessage.text = message
-                    customView(view = dialogView.root,horizontalPadding = false)
-                    cancelOnTouchOutside(false)
-                    cornerRadius(4f)
-                    .lifecycleOwner(this@showAppLoadingExt)
-                }.onDismiss {
-                    //关闭弹窗时 将请求也关闭了
-                    coroutineScope?.cancel()
-                    loadingDialogs.remove(this) // 从集合中移除
-                }
-            loadingDialogs[this] = dialog // 以 Fragment 实例为 key 存储
-            dialog.show()
-        }
-    }
-}
+private const val LOADING_SIZE_DP = 70
 
-fun AppCompatActivity.showAppLoadingExt(message: String = "请求网络中...", coroutineScope: CoroutineScope? = null) {
-    dismissAppLoadingExt() // 先关闭之前的
-    if (!isFinishing) {
-        //弹出loading时 把当前界面的输入法关闭
-        this@showAppLoadingExt.hideOffKeyboard()
-        val dialog = MaterialDialog(this)
-            .show {
-                val dialogView = LayoutBaseLoadingViewBinding.inflate(LayoutInflater.from(this@showAppLoadingExt))
-                dialogView.loadingMessage.text = message
-                customView(view = dialogView.root,horizontalPadding = true)
-                cornerRadius(4f)
-                cancelOnTouchOutside(false)
-                .lifecycleOwner(this@showAppLoadingExt)
-            }.onDismiss {
-                //关闭弹窗时 将请求也关闭了
-                coroutineScope?.cancel()
-                loadingDialogs.remove(this) // 从集合中移除
+private fun createLoadingDialog(
+    activity: AppCompatActivity,
+    owner: LifecycleOwner,
+    ownerKey: Any,
+    coroutineScope: CoroutineScope?,
+): Dialog {
+    val contentView = LayoutInflater.from(activity).inflate(R.layout.layout_app_loading_dialog, null)
+    val size = dp2px(LOADING_SIZE_DP.toFloat())
+    return Dialog(activity, R.style.LoadingDialog).apply {
+        setContentView(contentView)
+        setCancelable(false)
+        setCanceledOnTouchOutside(false)
+        window?.apply {
+            setBackgroundDrawableResource(android.R.color.transparent)
+            decorView.setPadding(0, 0, 0, 0)
+            setLayout(size, size)
+            attributes = attributes.apply {
+                width = size
+                height = size
             }
-        loadingDialogs[this] = dialog // 以 Fragment 实例为 key 存储
-        dialog.show()
+        }
+        setOnDismissListener {
+            coroutineScope?.cancel()
+            loadingDialogs.remove(ownerKey)
+        }
+        owner.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onDestroy(owner: LifecycleOwner) {
+                dismiss()
+            }
+        })
     }
 }
 
-/**
- * 关闭等待框
- */
+fun Fragment.showAppLoadingExt(coroutineScope: CoroutineScope? = null) {
+    dismissAppLoadingExt()
+    val activity = activity as? AppCompatActivity ?: return
+    if (activity.isFinishing) return
+    val dialog = createLoadingDialog(activity, this, this, coroutineScope)
+    loadingDialogs[this] = dialog
+    dialog.show()
+}
+
+fun AppCompatActivity.showAppLoadingExt(coroutineScope: CoroutineScope? = null) {
+    dismissAppLoadingExt()
+    if (isFinishing) return
+    hideOffKeyboard()
+    val dialog = createLoadingDialog(this, this, this, coroutineScope)
+    loadingDialogs[this] = dialog
+    dialog.show()
+}
+
 fun AppCompatActivity.dismissAppLoadingExt() {
     loadingDialogs[this]?.dismiss()
     loadingDialogs.remove(this)
 }
 
-/**
- * 关闭等待框
- */
 fun Fragment.dismissAppLoadingExt() {
     loadingDialogs[this]?.dismiss()
     loadingDialogs.remove(this)
 }
 
-// 全局关闭所有
 fun dismissAppAllLoading() {
     loadingDialogs.values.forEach { it.dismiss() }
     loadingDialogs.clear()
 }
-
-

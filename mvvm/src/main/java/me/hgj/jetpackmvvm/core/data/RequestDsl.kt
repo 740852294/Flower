@@ -80,7 +80,6 @@ private fun <T> BaseViewModel.executeRequestWithResult(requestParameterDsl: Requ
                 if (requestParameterDsl.loadingType != LoadingType.LOADING_NULL) {
                     loadingChange.loading.postValue = LoadingEntity(
                         loadingType = requestParameterDsl.loadingType,
-                        loadingMessage = requestParameterDsl.loadingMessage,
                         isShow = true,
                         coroutineScope = this
                     )
@@ -92,7 +91,6 @@ private fun <T> BaseViewModel.executeRequestWithResult(requestParameterDsl: Requ
                 if (requestParameterDsl.loadingType != LoadingType.LOADING_NULL) {
                     loadingChange.loading.postValue = LoadingEntity(
                         loadingType = requestParameterDsl.loadingType,
-                        loadingMessage = requestParameterDsl.loadingMessage,
                         isShow = false
                     )
                 }
@@ -111,7 +109,6 @@ private fun <T> BaseViewModel.executeRequestWithResult(requestParameterDsl: Requ
                 if (requestParameterDsl.loadingType != LoadingType.LOADING_NULL) {
                     loadingChange.loading.postValue = LoadingEntity(
                         loadingType = requestParameterDsl.loadingType,
-                        loadingMessage = requestParameterDsl.loadingMessage,
                         isShow = false
                     )
                 }
@@ -181,9 +178,6 @@ class RequestParameterDsl<T> {
     fun onRequest(block: suspend CoroutineScope.() -> T) {
         _onRequest = block
     }
-
-    /** 目前这个在 loadingType != LOADING_NULL 的时候有效， 可以给不同接口定义不同的 加载提示 内容 */
-    var loadingMessage: String = getStringExt(R.string.helper_loading_tip)
 
     /** 请求时loading类型 默认请求时不显示loading */
     @LoadingType
