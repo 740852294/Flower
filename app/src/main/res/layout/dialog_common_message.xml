@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_common_dialog"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:paddingStart="12dp"
+    android:paddingTop="26dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="26dp">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        tools:text="Reminder" />
+
+    <TextView
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="5dp"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        tools:text="Using this template will deduct 150 points.\nYou currently have 400 points remaining.\nDo you want to proceed?" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <com.hjq.shape.view.ShapeButton
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:paddingHorizontal="12dp"
+            android:textAllCaps="false"
+            android:textColor="#FFC1BFBF"
+            android:textSize="20sp"
+            app:shape_radius="20dp"
+            app:shape_solidColor="#FF5C5C60"
+            app:shape_solidPressedColor="#FF4D4D51"
+            tools:text="Cancel" />
+
+        <Space
+            android:id="@+id/buttonSpace"
+            android:layout_width="26dp"
+            android:layout_height="match_parent" />
+
+        <com.hjq.shape.view.ShapeButton
+            android:id="@+id/confirmButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:paddingHorizontal="12dp"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:shape_radius="20dp"
+            app:shape_solidGradientEndColor="#FFFD662E"
+            app:shape_solidGradientOrientation="leftToRight"
+            app:shape_solidGradientStartColor="#FFFE9233"
+            app:shape_solidPressedColor="#FFE85E2A"
+            tools:text="Got it" />
+    </LinearLayout>
+</LinearLayout>

@@ -2,7 +2,9 @@ package com.flower.flow.data.repository
 
 import com.flower.flow.app.core.net.NetUrl
 import com.flower.flow.data.model.entity.AppLanguageConfig
+import com.flower.flow.data.model.entity.GlobalConfig
 import com.flower.flow.data.model.entity.LanguageItem
+import com.flower.flow.data.model.entity.VersionCheckInfo
 import com.flower.flow.data.model.entity.WebUrl
 import rxhttp.wrapper.coroutines.Await
 import rxhttp.wrapper.coroutines.CallFlow
@@ -21,27 +23,11 @@ object CommonRepository {
     }
 
     /**
-     * 获取APP语言文案配置 flow 版本
-     */
-    fun getAppLanguageConfigFlow(): CallFlow<AppLanguageConfig> {
-        return RxHttp.get(NetUrl.Common.LANGUAGE_CONFIG)
-            .toFlowResponse()
-    }
-
-    /**
      * 获取语言列表 livedata版本
      */
     fun getLanguageListLivedata(): Await<List<LanguageItem>> {
         return RxHttp.get(NetUrl.Common.LANGUAGE_LIST)
             .toAwaitResponse()
-    }
-
-    /**
-     * 获取语言列表 flow 版本
-     */
-    fun getLanguageListFlow(): CallFlow<List<LanguageItem>> {
-        return RxHttp.get(NetUrl.Common.LANGUAGE_LIST)
-            .toFlowResponse()
     }
 
     /**
@@ -59,6 +45,16 @@ object CommonRepository {
     fun getBackgroundVideo(type: String): Await<WebUrl> {
         return RxHttp.get(NetUrl.Common.BACKGROUND_VIDEO)
             .add("type", type)
+            .toAwaitResponse()
+    }
+
+    fun checkVersion(): Await<VersionCheckInfo> {
+        return RxHttp.get(NetUrl.Common.UPDATE_INFO)
+            .toAwaitResponse()
+    }
+
+    fun getGlobalConfig(): Await<GlobalConfig> {
+        return RxHttp.get(NetUrl.Common.SYSTEM_CONFIG)
             .toAwaitResponse()
     }
 }

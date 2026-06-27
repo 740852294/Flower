@@ -4,6 +4,7 @@ import android.app.Application
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.fresco.vito.init.FrescoVito
 import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.data.model.entity.GlobalConfig
 import com.flower.flow.app.init.NetTask
 import com.flower.flow.app.init.WidgetTask
 import me.hgj.jetpackmvvm.core.JetpackMvvm
@@ -14,6 +15,7 @@ class App : Application(){
 
     companion object {
         var currentLanguageId: Int = 0
+        var globalConfig: GlobalConfig? = null
     }
 
     override fun onCreate() {

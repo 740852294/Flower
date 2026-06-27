@@ -35,5 +35,9 @@ object NetUrl {
         const val WEB_URL = "sys/getUrl"
         //获取背景视频
         const val BACKGROUND_VIDEO = "sys/getVideo"
+        //升级信息
+        const val UPDATE_INFO = "sys/checkVersion"
+        //系统配置
+        const val SYSTEM_CONFIG = "sys/getGlobal"
     }
 }
