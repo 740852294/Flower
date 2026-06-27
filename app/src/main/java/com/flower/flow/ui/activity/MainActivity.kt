@@ -16,10 +16,15 @@ import com.flower.flow.ui.dialog.CommonMessageDialog
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import androidx.core.net.toUri
+import androidx.core.view.isVisible
+import com.flower.flow.app.event.EventViewModel
 
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     override val showTitle = false
+
+    private var msgRedDot = false
+    private var workRedDot = false
 
     private data class TabConfig(
         val binding: LayoutMainBottomTabItemBinding,
@@ -42,6 +47,20 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
                 }
             }
         }
+
+        EventViewModel.msgRedDotEvent.observe(this) { show ->
+            msgRedDot = show == true
+            updateMeTabRedDot()
+        }
+
+        EventViewModel.workRedDotEvent.observe(this) { show ->
+            workRedDot = show == true
+            updateMeTabRedDot()
+        }
+    }
+
+    private fun updateMeTabRedDot() {
+        mBind.tabMe.redDot.isVisible = msgRedDot || workRedDot
     }
 
     private fun showForceUpdateDialog(result: MainInitResult.ForceUpdate) {
