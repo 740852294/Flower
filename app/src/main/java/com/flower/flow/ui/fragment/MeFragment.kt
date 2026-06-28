@@ -9,7 +9,7 @@ import androidx.core.view.isVisible
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
-import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.app.core.ext.loadAvatarFile
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.core.widget.CenterImageSpan
@@ -73,7 +73,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         mBind.clInfo.clickNoRepeat {
             openActivityForResult<EditUserInfoActivity> { _ ->
-
+                (activity as? MainActivity)?.getUserInfo(isFirst = false, isLoading = true)
             }
         }
 
@@ -112,7 +112,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         val avatar = user.avatar
         if (avatar.isNotEmpty()) {
-            mBind.ivAvatar.loadImage(avatar)
+            mBind.ivAvatar.loadAvatarFile(avatar)
         }
 
         mBind.tvName.text = user.name

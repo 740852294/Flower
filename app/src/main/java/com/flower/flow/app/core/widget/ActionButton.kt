@@ -14,6 +14,14 @@ class ActionButton @JvmOverloads constructor(
     attrs: AttributeSet? = null
 ) : ShapeButton(context, attrs) {
 
+    private val backgroundDrawable = GradientDrawable().apply {
+        shape = GradientDrawable.RECTANGLE
+        cornerRadius = dp(15).toFloat()
+    }
+
+    private val enabledColor = "#FFF77417".toColorInt()
+    private val disabledColor = "#FF525255".toColorInt()
+
     init {
         setTextColor(Color.WHITE)
         setTextSize(TypedValue.COMPLEX_UNIT_SP, 14f)
@@ -28,12 +36,17 @@ class ActionButton @JvmOverloads constructor(
         minimumHeight = 0
 
         setPadding(dp(13), dp(5), dp(13), dp(5))
+        background = backgroundDrawable
+        updateBackgroundColor(isEnabled)
+    }
 
-        background = GradientDrawable().apply {
-            shape = GradientDrawable.RECTANGLE
-            cornerRadius = dp(15).toFloat()
-            setColor("#FFF77417".toColorInt())
-        }
+    override fun setEnabled(enabled: Boolean) {
+        super.setEnabled(enabled)
+        updateBackgroundColor(enabled)
+    }
+
+    private fun updateBackgroundColor(enabled: Boolean) {
+        backgroundDrawable.setColor(if (enabled) enabledColor else disabledColor)
     }
 
     private fun dp(value: Int): Int {

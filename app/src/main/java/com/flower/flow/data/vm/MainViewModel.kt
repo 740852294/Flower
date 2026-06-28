@@ -28,13 +28,13 @@ class MainViewModel : BaseViewModel() {
         loadingType = LoadingType.LOADING_DIALOG
     }
 
-    fun fetchUserInfo(isFirst: Boolean) = request {
+    fun fetchUserInfo(isLoading: Boolean) = request {
         onRequest {
             val info = UserRepository.getUserInfoLivedata().await()
-            UserManager.saveUser( info)
+            UserManager.saveUser(info)
             info
         }
-        loadingType = if(isFirst )LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL
+        loadingType = if (isLoading) LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL
     }
 
     private companion object {

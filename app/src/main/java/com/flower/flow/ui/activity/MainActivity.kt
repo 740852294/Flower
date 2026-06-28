@@ -118,7 +118,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         mBind.mainViewPager.isUserInputEnabled = false
         selectTab(MainAdapter.PAGE_TOPIC)
 
-        getUserInfo(true)
+        getUserInfo(isFirst = true, isLoading = true)
         startUserInfoPolling()
     }
 
@@ -128,15 +128,17 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         lifecycleScope.launch {
             while (true) {
                 delay(USER_INFO_POLL_INTERVAL)
-                getUserInfo(false)
+                getUserInfo(false, isLoading = false)
             }
         }
     }
 
-    fun getUserInfo(isFirst: Boolean) {
-        mViewModel.fetchUserInfo(isFirst).obs(this){
+    fun getUserInfo(isFirst: Boolean, isLoading: Boolean) {
+        mViewModel.fetchUserInfo(isLoading).obs(this) {
             onSuccess { userInfo ->
-                if (isFirst && !userInfo.isVip && (App.globalConfig?.integralAndVipEntranceShow ?: 0) == 1) {
+                if (isFirst && !userInfo.isVip && (App.globalConfig?.integralAndVipEntranceShow
+                        ?: 0) == 1
+                ) {
                     openActivity<VipJoinActivity>()
                 }
             }
@@ -157,7 +159,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         val previousTab = currentTabIndex
         if (previousTab != index) {
             if (index == MainAdapter.PAGE_TOPIC && previousTab != -1) {
-                getUserInfo(false)
+                getUserInfo(isFirst = false, isLoading = false)
             }
             currentTabIndex = index
         }
