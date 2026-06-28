@@ -1,24 +1,35 @@
 package com.flower.flow.ui.fragment
 
-import android.content.Intent
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.util.UserManager
+import com.flower.flow.app.core.widget.CenterImageSpan
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.UserInfo
 import com.flower.flow.data.vm.MeViewModel
 import com.flower.flow.databinding.FragmentMeBinding
+import com.flower.flow.ui.activity.EditUserInfoActivity
 import com.flower.flow.ui.activity.IntegralRechargeActivity
+import com.flower.flow.ui.activity.MainActivity
 import com.flower.flow.ui.activity.VipJoinActivity
+import com.flower.flow.ui.adapter.MainAdapter
 import me.hgj.jetpackmvvm.core.net.interception.logging.util.LogUtils
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
+import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
+import me.hgj.jetpackmvvm.ext.util.logD
 import me.hgj.jetpackmvvm.ext.util.statusPadding
+import me.hgj.jetpackmvvm.ext.util.toast
 
 class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
@@ -61,17 +72,25 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
 
         mBind.clInfo.clickNoRepeat {
-            //编辑
+            openActivityForResult<EditUserInfoActivity> { _ ->
+
+            }
+        }
+
+        mBind.rlWorkAdd.clickNoRepeat {
+            FlowCopyStore.get(FlowCopyKey.TASK_EMPTY_HINT).toast()
+            (activity as? MainActivity)?.switchTab(MainAdapter.PAGE_TOPIC)
         }
     }
 
     override fun lazyLoadData() {
         LogUtils.debugInfo("MeFragment", "lazyLoadData")
+
     }
 
     override fun createObserver() {
         EventViewModel.mainFragmentDataEvent.observe(viewLifecycleOwner) {
-            LogUtils.debugInfo("MeFragment", "收到通知")
+            "收到通知".logD("MeFragment")
         }
 
         EventViewModel.msgRedDotEvent.observe(this) { show ->
@@ -98,11 +117,42 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         mBind.tvName.text = user.name
         mBind.tvMoney.text = user.integralBalance.toString()
+
+        mBind.tvOverTip.isVisible = user.clearTaskMsg.isNotEmpty()
+        setIconText(mBind.tvOverTip, R.mipmap.ic_me_over_star, user.clearTaskMsg)
     }
 
     private fun setText() {
         mBind.vipTitleText.text = FlowCopyStore.get(FlowCopyKey.VIDEO_PRO_NAME)
         mBind.vipSubtitleText.text = FlowCopyStore.get(FlowCopyKey.VIP_UNLOCK_HINT)
         mBind.btnVip.text = FlowCopyStore.get(FlowCopyKey.VIP_OPEN_HINT)
+        mBind.worksLabel.text = FlowCopyStore.get(FlowCopyKey.WORKS_TAB)
+        mBind.btnDelete.text = FlowCopyStore.get(FlowCopyKey.DELETE_ACTION)
+    }
+
+    fun setIconText(
+        textView: TextView,
+        iconRes: Int,
+        text: String,
+        iconSizeDp: Int = 18
+    ) {
+        val density = textView.resources.displayMetrics.density
+        val size = (iconSizeDp * density).toInt()
+
+        val drawable = ContextCompat.getDrawable(textView.context, iconRes)!!.mutate()
+        drawable.setBounds(0, 0, size, size)
+
+        // 注意：前面加一个占位符，图片替换占位符，不要替换正文第一个字母
+        val finalText = "  $text"
+        val span = SpannableString(finalText)
+
+        span.setSpan(
+            CenterImageSpan(drawable),
+            0,
+            1,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+        )
+
+        textView.text = span
     }
 }

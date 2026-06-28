@@ -77,4 +77,8 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : BaseVbActivi
     override fun dismissLoading(setting: LoadingEntity) {
         dismissAppLoadingExt()
     }
+
+    fun dp(value: Int): Int {
+        return (value * resources.displayMetrics.density + 0.5f).toInt()
+    }
 }

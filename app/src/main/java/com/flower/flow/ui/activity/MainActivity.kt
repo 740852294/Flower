@@ -44,6 +44,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     )
 
     private lateinit var tabs: List<TabConfig>
+    private var currentTabIndex = -1
 
     override fun initView(savedInstanceState: Bundle?) {
     }
@@ -147,7 +148,19 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         }
     }
 
+    fun switchTab(index: Int) {
+        if (!::tabs.isInitialized) return
+        selectTab(index)
+    }
+
     private fun selectTab(index: Int) {
+        val previousTab = currentTabIndex
+        if (previousTab != index) {
+            if (index == MainAdapter.PAGE_TOPIC && previousTab != -1) {
+                getUserInfo(false)
+            }
+            currentTabIndex = index
+        }
         tabs.forEach { tab ->
             tab.binding.tabIcon.isSelected = tab.pageIndex == index
         }
