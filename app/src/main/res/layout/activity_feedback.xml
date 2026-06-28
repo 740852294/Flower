@@ -8,176 +8,204 @@
     android:paddingHorizontal="16dp"
     android:paddingBottom="50dp">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="#ffffffff"
-        android:textSize="24sp"
-        tools:text="Feedback" />
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@mipmap/bg_report_title"
-        android:gravity="center_vertical"
-        android:minWidth="240dp"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="3dp">
-
-        <com.hjq.shape.view.ShapeTextView
-            android:id="@+id/tvFeedbackTypeLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:includeFontPadding="false"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            tools:text="Feedback Type" />
-
-        <com.hjq.shape.view.ShapeTextView
-            android:id="@+id/tvFeedbackTypeRequired"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:gravity="center_vertical"
-            android:includeFontPadding="false"
-            android:textColor="#D9001B"
-            android:textSize="16sp"
-            tools:text="(Required)" />
-    </LinearLayout>
-
-
-    <com.hjq.shape.layout.ShapeLinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="8dp"
-        app:shape_radiusInBottomEnd="10dp"
-        app:shape_radiusInBottomStart="10dp"
-        app:shape_radiusInTopEnd="10dp"
-        app:shape_radiusInTopStart="0dp"
-        app:shape_solidColor="#202328"
-        app:shape_strokeColor="#F77417"
-        app:shape_strokeSize="1dp">
+        android:layout_height="0px"
+        android:layout_weight="1">
 
-    </com.hjq.shape.layout.ShapeLinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@mipmap/bg_report_title"
-        android:gravity="center_vertical"
-        android:minWidth="240dp"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="3dp">
-
-        <com.hjq.shape.view.ShapeTextView
-            android:id="@+id/tvFeedbackContentLabel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:includeFontPadding="false"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            tools:text="Feedback content" />
-
-    </LinearLayout>
-
-    <com.hjq.shape.layout.ShapeLinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="88dp"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="16dp"
-        app:shape_radiusInBottomEnd="10dp"
-        app:shape_radiusInBottomStart="10dp"
-        app:shape_radiusInTopEnd="10dp"
-        app:shape_radiusInTopStart="0dp"
-        app:shape_solidColor="#202328"
-        app:shape_strokeColor="#F77417"
-        app:shape_strokeSize="1dp">
-
-        <com.hjq.shape.view.ShapeEditText
-            android:id="@+id/etFeedbackContent"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="start|top"
-            android:padding="8dp"
-            android:textColor="@color/white"
-            android:textColorHint="#979797"
-            android:textSize="12sp"
-            app:shape_radius="10dp"
-            app:shape_solidColor="#2F2F2F"
-            tools:hint="Please fill in your comments or suggestions. You can also leave a message if you have other questions." />
-
-    </com.hjq.shape.layout.ShapeLinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:background="@mipmap/bg_report_title"
-        android:gravity="center_vertical"
-        android:minWidth="240dp"
-        android:orientation="horizontal"
-        android:paddingHorizontal="16dp"
-        android:paddingVertical="3dp">
-
-        <com.hjq.shape.view.ShapeTextView
-            android:id="@+id/tvEmailLabel"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:includeFontPadding="false"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            tools:text="Mailbox" />
+            android:orientation="vertical">
 
-        <com.hjq.shape.view.ShapeTextView
-            android:id="@+id/tvEmailRequired"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:gravity="center_vertical"
-            android:includeFontPadding="false"
-            android:textColor="#D9001B"
-            android:textSize="16sp"
-            tools:text="(Required)" />
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffffff"
+                android:textSize="24sp"
+                tools:text="Feedback" />
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@mipmap/bg_report_title"
+                android:gravity="center_vertical"
+                android:minWidth="240dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="3dp">
 
-    <com.hjq.shape.layout.ShapeLinearLayout
+                <com.hjq.shape.view.ShapeTextView
+                    android:id="@+id/tvFeedbackTypeLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    tools:text="Feedback Type" />
+
+                <com.hjq.shape.view.ShapeTextView
+                    android:id="@+id/tvFeedbackTypeRequired"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:textColor="#D9001B"
+                    android:textSize="16sp"
+                    tools:text="(Required)" />
+            </LinearLayout>
+
+
+            <com.hjq.shape.layout.ShapeRecyclerView
+                android:id="@+id/rvFeedbackType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:scrollbars="none"
+                app:shape_radiusInBottomEnd="10dp"
+                app:shape_radiusInBottomStart="10dp"
+                app:shape_radiusInTopEnd="10dp"
+                app:shape_radiusInTopStart="0dp"
+                app:shape_solidColor="#202328"
+                app:shape_strokeColor="#F77417"
+                app:shape_strokeSize="1dp">
+
+            </com.hjq.shape.layout.ShapeRecyclerView>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@mipmap/bg_report_title"
+                android:gravity="center_vertical"
+                android:minWidth="240dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="3dp">
+
+                <com.hjq.shape.view.ShapeTextView
+                    android:id="@+id/tvFeedbackContentLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    tools:text="Feedback content" />
+
+            </LinearLayout>
+
+            <com.hjq.shape.layout.ShapeLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="88dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="16dp"
+                app:shape_radiusInBottomEnd="10dp"
+                app:shape_radiusInBottomStart="10dp"
+                app:shape_radiusInTopEnd="10dp"
+                app:shape_radiusInTopStart="0dp"
+                app:shape_solidColor="#202328"
+                app:shape_strokeColor="#F77417"
+                app:shape_strokeSize="1dp">
+
+                <com.hjq.shape.view.ShapeEditText
+                    android:id="@+id/etFeedbackContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="start|top"
+                    android:padding="8dp"
+                    android:textColor="@color/white"
+                    android:textColorHint="#979797"
+                    android:textSize="12sp"
+                    app:shape_radius="10dp"
+                    app:shape_solidColor="#2F2F2F"
+                    tools:hint="Please fill in your comments or suggestions. You can also leave a message if you have other questions." />
+
+            </com.hjq.shape.layout.ShapeLinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:background="@mipmap/bg_report_title"
+                android:gravity="center_vertical"
+                android:minWidth="240dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="3dp">
+
+                <com.hjq.shape.view.ShapeTextView
+                    android:id="@+id/tvEmailLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    tools:text="Mailbox" />
+
+                <com.hjq.shape.view.ShapeTextView
+                    android:id="@+id/tvEmailRequired"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center_vertical"
+                    android:includeFontPadding="false"
+                    android:textColor="#D9001B"
+                    android:textSize="16sp"
+                    tools:text="(Required)" />
+
+            </LinearLayout>
+
+            <com.hjq.shape.layout.ShapeLinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="16dp"
+                app:shape_radiusInBottomEnd="10dp"
+                app:shape_radiusInBottomStart="10dp"
+                app:shape_radiusInTopEnd="10dp"
+                app:shape_radiusInTopStart="0dp"
+                app:shape_solidColor="#202328"
+                app:shape_strokeColor="#F77417"
+                app:shape_strokeSize="1dp">
+
+                <com.hjq.shape.view.ShapeEditText
+                    android:id="@+id/etEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="start|top"
+                    android:maxLines="1"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textColorHint="#979797"
+                    android:textSize="12sp"
+                    app:shape_radius="10dp"
+                    app:shape_solidColor="#2F2F2F"
+                    tools:hint="Please leave your email" />
+
+            </com.hjq.shape.layout.ShapeLinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.hjq.shape.view.ShapeButton
+        android:id="@+id/btnSubmit"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:paddingHorizontal="8dp"
-        android:paddingVertical="16dp"
-        app:shape_radiusInBottomEnd="10dp"
-        app:shape_radiusInBottomStart="10dp"
-        app:shape_radiusInTopEnd="10dp"
-        app:shape_radiusInTopStart="0dp"
-        app:shape_solidColor="#202328"
-        app:shape_strokeColor="#F77417"
-        app:shape_strokeSize="1dp">
-
-        <com.hjq.shape.view.ShapeEditText
-            android:id="@+id/etEmail"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="start|top"
-            android:maxLines="1"
-            android:padding="8dp"
-            android:singleLine="true"
-            android:textColor="@color/white"
-            android:textColorHint="#979797"
-            android:textSize="12sp"
-            app:shape_radius="10dp"
-            app:shape_solidColor="#2F2F2F"
-            tools:hint="Please leave your email" />
-
-    </com.hjq.shape.layout.ShapeLinearLayout>
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:shape_radius="30dp"
+        app:shape_solidGradientEndColor="#FFFD662E"
+        app:shape_solidGradientOrientation="leftToRight"
+        app:shape_solidGradientStartColor="#FFFE9233"
+        tools:text="Submit" />
 
 </LinearLayout>

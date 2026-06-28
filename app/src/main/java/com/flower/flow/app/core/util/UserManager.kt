@@ -37,6 +37,13 @@ object UserManager {
         EventViewModel.workRedDotEvent.postValue = userInfo.mineRedDot
     }
 
+    fun saveUserMsgDot(dot: Boolean) {
+        if (user != null) {
+            user!!.sysNotifyRedDot = dot
+            saveUser(user!!)
+        }
+    }
+
     fun clearUser() {
         user = null
         val iCookieJar = RxHttpPlugins.getOkHttpClient().cookieJar as ICookieJar

@@ -21,7 +21,7 @@ data class UserInfo(
     @SerializedName("password")
     val password: String = "",
     @SerializedName("sysNotifyRedDot")
-    val sysNotifyRedDot: Boolean = false,
+    var sysNotifyRedDot: Boolean = false,
     @SerializedName("clearTaskMsg")
     val clearTaskMsg: String = "",
 ) : Parcelable

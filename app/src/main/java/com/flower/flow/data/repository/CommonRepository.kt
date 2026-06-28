@@ -4,6 +4,7 @@ import com.flower.flow.app.core.net.NetUrl
 import com.flower.flow.data.model.entity.AppLanguageConfig
 import com.flower.flow.data.model.entity.GlobalConfig
 import com.flower.flow.data.model.entity.LanguageItem
+import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.model.entity.VersionCheckInfo
 import com.flower.flow.data.model.entity.WebUrl
 import rxhttp.wrapper.coroutines.Await
@@ -55,6 +56,30 @@ object CommonRepository {
 
     fun getGlobalConfig(): Await<GlobalConfig> {
         return RxHttp.get(NetUrl.Common.SYSTEM_CONFIG)
+            .toAwaitResponse()
+    }
+
+    /**
+     * 获取意见反馈或举报类型，type: 1=意见反馈，2=举报
+     */
+    fun getSysTypeList(type: Int): Await<List<SysTypeItem>> {
+        return RxHttp.get(NetUrl.Common.ENUM_LIST)
+            .add("type", type)
+            .toAwaitResponse()
+    }
+
+    /**
+     * 提交意见反馈
+     */
+    fun addAdvice(
+        content: String,
+        contact: String,
+        sysTypeId: Int,
+    ): Await<Any> {
+        return RxHttp.postForm(NetUrl.Common.ADVICE_ADD)
+            .add("content", content)
+            .add("contact", contact)
+            .add("sysTypeId", sysTypeId)
             .toAwaitResponse()
     }
 }

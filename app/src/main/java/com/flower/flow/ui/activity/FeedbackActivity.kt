@@ -1,25 +1,103 @@
 package com.flower.flow.ui.activity
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.FrameLayout
+import com.drake.brv.utils.models
+import com.drake.brv.utils.setup
+import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.vm.FeedbackViewModel
 import com.flower.flow.databinding.ActivityFeedbackBinding
+import com.flower.flow.databinding.LayoutItemFeedbackTypeBinding
+import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.toast
+import me.hgj.jetpackmvvm.ext.view.vertical
 
 class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding>() {
 
+    private var feedbackTypePosition = -1
+
+    override val title: String
+        get() = FlowCopyStore.get(FlowCopyKey.FEEDBACK_ENTRY)
+
+    @SuppressLint("NotifyDataSetChanged")
     override fun initView(savedInstanceState: Bundle?) {
         val isShowBtn = (App.globalConfig?.reportEntranceShow ?: 0) == 1
         if (isShowBtn) {
             addSaveBtn()
         }
         setText()
+
+        mBind.rvFeedbackType.vertical()
+            .setup {
+
+                addType<SysTypeItem>(R.layout.layout_item_feedback_type)
+
+                onCreate {
+                    getBindingOrNull<LayoutItemFeedbackTypeBinding>()?.run {
+
+                    }
+                }
+
+                onBind {
+                    getBindingOrNull<LayoutItemFeedbackTypeBinding>()?.run {
+                        val model = getModel<SysTypeItem>()
+                        tvName.text = model.name
+                        if (feedbackTypePosition == modelPosition) {
+                            ivSelect.setImageResource(R.mipmap.ic_feedback_type_item_selected)
+                        } else {
+                            ivSelect.setImageResource(R.mipmap.ic_feedback_type_item_unselect)
+                        }
+                    }
+                }
+
+                onClick(R.id.llItem) {
+                    feedbackTypePosition = modelPosition
+                    notifyDataSetChanged()
+                }
+            }
+    }
+
+    override fun onBindViewClick() {
+        mBind.btnSubmit.clickNoRepeat {
+            val selectedType = getSelectedFeedbackType()
+            if (selectedType == null) {
+                FlowCopyStore.get(FlowCopyKey.FEEDBACK_TYPE_PICK).toast()
+                return@clickNoRepeat
+            }
+
+            val email = mBind.etEmail.text.toString().trim()
+            if (email.isEmpty()) {
+                FlowCopyStore.get(FlowCopyKey.CONTACT_INPUT_HINT).toast()
+                return@clickNoRepeat
+            }
+
+            val content = mBind.etFeedbackContent.text.toString().trim()
+            mViewModel.submitFeedback(content, email, selectedType.id).obs(this) {
+                onSuccess {
+                    UserManager.saveUserMsgDot(true)
+                    finish()
+                }
+                onError { error ->
+                    error.toast()
+                }
+            }
+        }
+    }
+
+    private fun getSelectedFeedbackType(): SysTypeItem? {
+        return (mBind.rvFeedbackType.models as? List<SysTypeItem>)
+            ?.getOrNull(feedbackTypePosition)
     }
 
     fun addSaveBtn() {
@@ -62,5 +140,17 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         mBind.tvEmailRequired.text =
             String.format("(%s)", FlowCopyStore.get(FlowCopyKey.REQUIRED_MARK))
         mBind.etEmail.hint = FlowCopyStore.get(FlowCopyKey.CONTACT_INPUT_HINT)
+        mBind.btnSubmit.text = FlowCopyStore.get(FlowCopyKey.SEND_ACTION)
+    }
+
+    override fun createObserver() {
+        mViewModel.loadFeedbackTypes().obs(this) {
+            onSuccess { list ->
+                mBind.rvFeedbackType.models = list
+            }
+            onError { error ->
+                error.toast()
+            }
+        }
     }
 }

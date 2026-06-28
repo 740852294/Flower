@@ -41,5 +41,7 @@ object NetUrl {
         const val SYSTEM_CONFIG = "sys/getGlobal"
         //枚举列表 type：1=意见反馈，2=举报
         const val ENUM_LIST = "sys/listSysType"
+        //提交意见反馈
+        const val ADVICE_ADD = "advice/add"
     }
 }
