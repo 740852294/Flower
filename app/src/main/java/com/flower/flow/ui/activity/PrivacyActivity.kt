@@ -151,7 +151,7 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
         }
     }
 
-    private enum class PolicyRoute(val requestType: Int) {
+    enum class PolicyRoute(val requestType: Int) {
         PRIVACY(1),
         TERMS(2),
     }

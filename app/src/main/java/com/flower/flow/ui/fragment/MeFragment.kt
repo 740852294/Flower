@@ -21,6 +21,7 @@ import com.flower.flow.databinding.FragmentMeBinding
 import com.flower.flow.ui.activity.EditUserInfoActivity
 import com.flower.flow.ui.activity.IntegralRechargeActivity
 import com.flower.flow.ui.activity.MainActivity
+import com.flower.flow.ui.activity.SettingActivity
 import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.adapter.MainAdapter
 import me.hgj.jetpackmvvm.core.net.interception.logging.util.LogUtils
@@ -80,6 +81,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.rlWorkAdd.clickNoRepeat {
             FlowCopyStore.get(FlowCopyKey.TASK_EMPTY_HINT).toast()
             (activity as? MainActivity)?.switchTab(MainAdapter.PAGE_TOPIC)
+        }
+
+        mBind.settingBtn.clickNoRepeat {
+            openActivity<SettingActivity>()
         }
     }
 

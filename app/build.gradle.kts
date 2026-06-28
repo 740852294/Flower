@@ -72,12 +72,14 @@ android {
         debug {
             isMinifyEnabled = false
             buildConfigField("String", "BASE_HTTP_API", "\"http://8.148.151.104:7068/\"")
+            buildConfigField("String", "CIPHER_KEY", "\"aikogpap1s2e2288\"")
         }
 
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             buildConfigField("String", "BASE_HTTP_API", "\"http://8.148.151.104:7068/\"")
+            buildConfigField("String", "CIPHER_KEY", "\"aikogpap1s2e2288\"")
         }
     }
 

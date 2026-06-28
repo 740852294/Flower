@@ -39,5 +39,7 @@ object NetUrl {
         const val UPDATE_INFO = "sys/checkVersion"
         //系统配置
         const val SYSTEM_CONFIG = "sys/getGlobal"
+        //枚举列表 type：1=意见反馈，2=举报
+        const val ENUM_LIST = "sys/listSysType"
     }
 }
