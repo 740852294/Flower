@@ -1,148 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:id="@+id/llContent"
     android:layout_height="match_parent"
     android:background="@mipmap/pic_use_temple_bg"
-    android:paddingHorizontal="16dp"
-    android:paddingTop="16dp">
+    android:orientation="vertical">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/line2"
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.655" />
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/ToolbarTitleTextAppearance" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/line1"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.855" />
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp">
 
-
-    <TextView
-        android:id="@+id/tvName"
-        android:layout_width="0px"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="80dp"
-        android:layout_marginTop="24dp"
-        android:ellipsize="end"
-        android:gravity="center"
-        android:lineSpacingExtra="5dp"
-        android:maxLines="2"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/line2"
-        tools:text="The disco ball spins, and retro martimal martimal martimal martimal" />
-
-    <com.hjq.shape.view.ShapeButton
-        android:id="@+id/btnUse"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/line1"
-        app:shape_radius="30dp"
-        app:shape_solidGradientEndColor="#FFFD662E"
-        app:shape_solidGradientOrientation="leftToRight"
-        app:shape_solidGradientStartColor="#FFFE9233"
-        tools:layout_editor_absoluteX="16dp"
-        tools:text="Use template" />
-
-    <FrameLayout
-        android:layout_width="0px"
-        android:layout_height="0px"
-        app:layout_constraintBottom_toTopOf="@id/line2"
-        app:layout_constraintDimensionRatio="W,296:432"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ImageView
-            android:id="@+id/ivCover"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/line2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            tools:src="@mipmap/ic_pic_loading" />
-
-        <com.hjq.shape.layout.ShapeLinearLayout
-            android:id="@+id/llLockBadge"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="16dp"
-            android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingHorizontal="7dp"
-            android:paddingVertical="4dp"
-            android:visibility="gone"
-            app:shape_radius="25dp"
-            app:shape_solidColor="#0FFFFFFF"
-            app:shape_strokeGradientEndColor="#70FFFFFF"
-            app:shape_strokeGradientOrientation="leftToRight"
-            app:shape_strokeGradientStartColor="#00999999"
-            app:shape_strokeSize="1dp"
-            tools:visibility="visible">
+            app:layout_constraintGuide_percent="0.64" />
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="15dp"
-                android:layout_height="15dp"
-                android:src="@mipmap/ic_me_money" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/line1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.85" />
 
-            <TextView
-                android:id="@+id/tvLockIntegral"
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="80dp"
+            android:layout_marginTop="24dp"
+            android:ellipsize="end"
+            android:gravity="center"
+            android:lineSpacingExtra="5dp"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/line2"
+            tools:text="The disco ball spins, and retro martimal martimal martimal martimal" />
+
+        <com.hjq.shape.view.ShapeButton
+            android:id="@+id/btnUse"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/line1"
+            app:shape_radius="30dp"
+            app:shape_solidGradientEndColor="#FFFD662E"
+            app:shape_solidGradientOrientation="leftToRight"
+            app:shape_solidGradientStartColor="#FFFE9233"
+            tools:layout_editor_absoluteX="16dp"
+            tools:text="Use template" />
+
+        <FrameLayout
+            android:layout_width="0px"
+            android:layout_height="0px"
+            app:layout_constraintBottom_toTopOf="@id/line2"
+            app:layout_constraintDimensionRatio="W,296:432"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivCover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@mipmap/ic_pic_loading" />
+
+            <com.hjq.shape.layout.ShapeLinearLayout
+                android:id="@+id/llLockBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="3dp"
-                android:includeFontPadding="false"
-                android:textColor="@color/white"
-                android:textSize="15sp"
-                tools:text="20" />
+                android:layout_gravity="end"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="7dp"
+                android:paddingVertical="4dp"
+                android:visibility="gone"
+                app:shape_radius="25dp"
+                app:shape_solidColor="#0FFFFFFF"
+                app:shape_strokeGradientEndColor="#70FFFFFF"
+                app:shape_strokeGradientOrientation="leftToRight"
+                app:shape_strokeGradientStartColor="#00999999"
+                app:shape_strokeSize="1dp"
+                tools:visibility="visible">
 
-        </com.hjq.shape.layout.ShapeLinearLayout>
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="15dp"
+                    android:layout_height="15dp"
+                    android:src="@mipmap/ic_me_money" />
 
-        <ImageView
-            android:id="@+id/ivSampleSingle"
-            android:layout_width="52dp"
-            android:layout_height="74dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="12dp"
-            android:scaleType="centerCrop"
-            android:visibility="gone"
-            tools:src="@mipmap/ic_pic_loading"
-            tools:visibility="visible" />
+                <TextView
+                    android:id="@+id/tvLockIntegral"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    tools:text="20" />
 
-        <LinearLayout
-            android:id="@+id/llSampleBottom"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_marginBottom="12dp"
-            android:orientation="horizontal"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <ImageView
-                android:id="@+id/ivSampleLeft"
-                android:layout_width="52dp"
-                android:layout_height="74dp"
-                android:scaleType="centerCrop" />
+            </com.hjq.shape.layout.ShapeLinearLayout>
 
             <ImageView
-                android:id="@+id/ivSampleRight"
+                android:id="@+id/ivSampleSingle"
                 android:layout_width="52dp"
                 android:layout_height="74dp"
-                android:scaleType="centerCrop" />
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                tools:src="@mipmap/ic_pic_loading"
+                tools:visibility="visible" />
 
-        </LinearLayout>
-    </FrameLayout>
+            <LinearLayout
+                android:id="@+id/llSampleBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:id="@+id/ivSampleLeft"
+                    android:layout_width="52dp"
+                    android:layout_height="74dp"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:id="@+id/ivSampleRight"
+                    android:layout_width="52dp"
+                    android:layout_height="74dp"
+                    android:scaleType="centerCrop" />
+
+            </LinearLayout>
+        </FrameLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

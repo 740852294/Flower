@@ -3,10 +3,12 @@ package com.flower.flow.ui.activity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
+import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.widget.ActionButton
@@ -16,12 +18,22 @@ import com.flower.flow.databinding.ActivityTagUseTemplateBinding
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
+import me.hgj.jetpackmvvm.ext.util.statusPadding
 
 class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplateBinding>() {
 
     val templateItem: TagTemplateItem? by bundle<TagTemplateItem>(null, "TagTemple")
 
+    override val showTitle: Boolean
+        get() = false
+
     override fun initView(savedInstanceState: Bundle?) {
+
+        mBind.llContent.statusPadding()
+        mBind.toolbar.initClose("") {
+            finish()
+        }
+
         val isShowBtn = (App.globalConfig?.reportEntranceShow ?: 0) == 1
         if (isShowBtn) {
             addReportBtn()
