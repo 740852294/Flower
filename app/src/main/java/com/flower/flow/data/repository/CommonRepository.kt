@@ -1,5 +1,6 @@
 package com.flower.flow.data.repository
 
+import com.flower.flow.app.core.net.parses.MsgResponseParser
 import com.flower.flow.app.core.net.NetUrl
 import com.flower.flow.data.model.entity.AppLanguageConfig
 import com.flower.flow.data.model.entity.GlobalConfig
@@ -8,6 +9,7 @@ import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.model.entity.VersionCheckInfo
 import com.flower.flow.data.model.entity.WebUrl
 import rxhttp.wrapper.coroutines.Await
+import rxhttp.wrapper.coroutines.CallAwait
 import rxhttp.wrapper.coroutines.CallFlow
 import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toAwaitResponse
@@ -81,5 +83,20 @@ object CommonRepository {
             .add("contact", contact)
             .add("sysTypeId", sysTypeId)
             .toAwaitResponse()
+    }
+
+    /**
+     * 提交举报
+     */
+    fun addReport(
+        content: String,
+        sysTypeId: Int,
+    ): Await<String> {
+        return CallAwait(
+            RxHttp.postForm(NetUrl.Common.REPORT_ADD)
+                .add("content", content)
+                .add("sysTypeId", sysTypeId),
+            MsgResponseParser(String::class.java),
+        )
     }
 }

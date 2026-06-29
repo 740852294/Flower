@@ -20,15 +20,13 @@ import com.flower.flow.databinding.ActivityFeedbackBinding
 import com.flower.flow.databinding.LayoutItemFeedbackTypeBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
 import me.hgj.jetpackmvvm.ext.view.vertical
 
 class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding>() {
 
     private var feedbackTypePosition = -1
-
-    override val title: String
-        get() = FlowCopyStore.get(FlowCopyKey.FEEDBACK_ENTRY)
 
     @SuppressLint("NotifyDataSetChanged")
     override fun initView(savedInstanceState: Bundle?) {
@@ -111,7 +109,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         val saveButton = ActionButton(this).apply {
             text = FlowCopyStore.get(FlowCopyKey.REPORT_ACTION)
             setOnClickListener {
-
+                openActivity<ReportActivity>()
             }
         }
 
@@ -132,13 +130,11 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
     private fun setText() {
         mBind.tvTitle.text = FlowCopyStore.get(FlowCopyKey.FEEDBACK_ENTRY)
         mBind.tvFeedbackTypeLabel.text = FlowCopyStore.get(FlowCopyKey.FEEDBACK_TYPE)
-        mBind.tvFeedbackTypeRequired.text =
-            String.format("(%s)", FlowCopyStore.get(FlowCopyKey.REQUIRED_MARK))
+        mBind.tvFeedbackTypeRequired.text = FlowCopyStore.get(FlowCopyKey.REQUIRED_MARK)
         mBind.tvFeedbackContentLabel.text = FlowCopyStore.get(FlowCopyKey.FEEDBACK_DESC)
         mBind.etFeedbackContent.hint = FlowCopyStore.get(FlowCopyKey.FEEDBACK_HINT)
         mBind.tvEmailLabel.text = FlowCopyStore.get(FlowCopyKey.CONTACT_FIELD)
-        mBind.tvEmailRequired.text =
-            String.format("(%s)", FlowCopyStore.get(FlowCopyKey.REQUIRED_MARK))
+        mBind.tvEmailRequired.text = FlowCopyStore.get(FlowCopyKey.REQUIRED_MARK)
         mBind.etEmail.hint = FlowCopyStore.get(FlowCopyKey.CONTACT_INPUT_HINT)
         mBind.btnSubmit.text = FlowCopyStore.get(FlowCopyKey.SEND_ACTION)
     }

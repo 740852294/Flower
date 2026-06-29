@@ -19,4 +19,7 @@ object EventViewModel {
 
     /** 语言切换  */
     val languageEvent = MutableResult<LanguageItem>()
+
+    /** 刷新系统通知列表 */
+    val systemNotifyRefreshEvent = MutableResult<Boolean>()
 }

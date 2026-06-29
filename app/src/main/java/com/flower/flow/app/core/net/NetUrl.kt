@@ -43,5 +43,7 @@ object NetUrl {
         const val ENUM_LIST = "sys/listSysType"
         //提交意见反馈
         const val ADVICE_ADD = "advice/add"
+        //提交举报
+        const val REPORT_ADD = "report/add"
     }
 }
