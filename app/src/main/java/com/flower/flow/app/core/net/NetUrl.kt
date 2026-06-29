@@ -45,5 +45,7 @@ object NetUrl {
         const val ADVICE_ADD = "advice/add"
         //提交举报
         const val REPORT_ADD = "report/add"
+        //系统通知列表
+        const val SYS_NOTIFY_LIST = "sys/listSysNotify"
     }
 }

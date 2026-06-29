@@ -65,7 +65,7 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
         }
 
         mBind.llNotify.clickNoRepeat {
-
+            openActivity<SystemNotifyActivity>()
         }
 
         mBind.llPrivacy.clickNoRepeat {

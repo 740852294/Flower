@@ -5,6 +5,7 @@ import com.flower.flow.app.core.net.NetUrl
 import com.flower.flow.data.model.entity.AppLanguageConfig
 import com.flower.flow.data.model.entity.GlobalConfig
 import com.flower.flow.data.model.entity.LanguageItem
+import com.flower.flow.data.model.entity.SysNotifyItem
 import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.model.entity.VersionCheckInfo
 import com.flower.flow.data.model.entity.WebUrl
@@ -67,6 +68,14 @@ object CommonRepository {
     fun getSysTypeList(type: Int): Await<List<SysTypeItem>> {
         return RxHttp.get(NetUrl.Common.ENUM_LIST)
             .add("type", type)
+            .toAwaitResponse()
+    }
+
+    /**
+     * 获取系统通知列表
+     */
+    fun getSysNotifyList(): Await<List<SysNotifyItem>> {
+        return RxHttp.get(NetUrl.Common.SYS_NOTIFY_LIST)
             .toAwaitResponse()
     }
 
