@@ -1,5 +1,6 @@
 package com.flower.flow.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.core.view.isVisible
 import com.flower.flow.BuildConfig
@@ -57,7 +58,19 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
 
     override fun onBindViewClick() {
         mBind.llShare.clickNoRepeat {
-
+            mViewModel.getShareInfo().obs(this) {
+                onSuccess { shareInfo ->
+                    val intent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TITLE, shareInfo.title)
+                        putExtra(Intent.EXTRA_TEXT, shareInfo.content)
+                    }
+                    startActivity(Intent.createChooser(intent, shareInfo.title))
+                }
+                onError { error ->
+                    error.toast()
+                }
+            }
         }
 
         mBind.llFeedback.clickNoRepeat {

@@ -15,4 +15,11 @@ class SettingViewModel : BaseViewModel() {
         loadingType = LoadingType.LOADING_DIALOG
     }
 
+    fun getShareInfo() = request {
+        onRequest {
+            CommonRepository.getShareInfo().await()
+        }
+        loadingType = LoadingType.LOADING_DIALOG
+    }
+
 }

@@ -5,6 +5,7 @@ import com.flower.flow.app.core.net.NetUrl
 import com.flower.flow.data.model.entity.AppLanguageConfig
 import com.flower.flow.data.model.entity.GlobalConfig
 import com.flower.flow.data.model.entity.LanguageItem
+import com.flower.flow.data.model.entity.ShareInfo
 import com.flower.flow.data.model.entity.SysNotifyItem
 import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.model.entity.VersionCheckInfo
@@ -76,6 +77,14 @@ object CommonRepository {
      */
     fun getSysNotifyList(): Await<List<SysNotifyItem>> {
         return RxHttp.get(NetUrl.Common.SYS_NOTIFY_LIST)
+            .toAwaitResponse()
+    }
+
+    /**
+     * 获取分享信息
+     */
+    fun getShareInfo(): Await<ShareInfo> {
+        return RxHttp.get(NetUrl.Common.SHARE_INFO)
             .toAwaitResponse()
     }
 
