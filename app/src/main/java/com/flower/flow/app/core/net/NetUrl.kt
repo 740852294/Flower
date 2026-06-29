@@ -50,4 +50,11 @@ object NetUrl {
         //分享信息
         const val SHARE_INFO = "sys/getShareInfo"
     }
+
+    object Template{
+        //模板标签tag列表
+        const val TAG_LIST = "sys/listTag"
+        //标签的模板列表
+        const val TAG_TEMPLATE_LIST = "aiart/pageTagList"
+    }
 }
