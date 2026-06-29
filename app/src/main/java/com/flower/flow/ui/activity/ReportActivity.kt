@@ -8,8 +8,6 @@ import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.FlowCopyStore
-import com.flower.flow.app.core.util.UserManager
-import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.vm.ReportViewModel
@@ -64,8 +62,6 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
             val content = mBind.etReportContent.text.toString().trim()
             mViewModel.submitReport(content, selectedType.id).obs(this) {
                 onSuccess { msg ->
-                    UserManager.saveUserMsgDot(true)
-                    EventViewModel.systemNotifyRefreshEvent.value = true
                     msg.toast()
                     finish()
                 }
