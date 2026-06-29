@@ -1,7 +1,10 @@
 package com.flower.flow.data.model.entity
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class TagTemplateItem(
     @SerializedName("id")
     val id: Int = 0,
@@ -19,4 +22,4 @@ data class TagTemplateItem(
     val useNumMsg: String = "",
     @SerializedName("sampleImgList")
     val sampleImgList: List<String>? = emptyList(),
-)
+) : Parcelable

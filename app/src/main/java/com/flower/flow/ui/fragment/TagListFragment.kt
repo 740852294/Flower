@@ -14,7 +14,9 @@ import com.flower.flow.data.model.entity.TagTemplateItem
 import com.flower.flow.data.vm.TagListViewModel
 import com.flower.flow.databinding.FragmentTagListBinding
 import com.flower.flow.databinding.LayoutItemTagTemplateBinding
+import com.flower.flow.ui.activity.TagUseTemplateActivity
 import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.loadListError
 import me.hgj.jetpackmvvm.ext.util.loadListSuccess
 import me.hgj.jetpackmvvm.ext.util.loadMore
@@ -55,7 +57,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                 }
 
                 onClick(R.id.rootItem) {
-                    // 点击事件待实现
+                    openActivity<TagUseTemplateActivity>("TagTemple" to getModel<TagTemplateItem>())
                 }
             }
     }
@@ -109,6 +111,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                     cornerRadiusDp = SAMPLE_CORNER_RADIUS_DP,
                 )
             }
+
             else -> {
                 binding.llSampleBottom.isVisible = true
                 binding.ivSampleLeft.loadImage(

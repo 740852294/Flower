@@ -32,7 +32,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
     override fun initView(savedInstanceState: Bundle?) {
         val isShowBtn = (App.globalConfig?.reportEntranceShow ?: 0) == 1
         if (isShowBtn) {
-            addSaveBtn()
+            addReportBtn()
         }
         setText()
 
@@ -98,7 +98,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
             ?.getOrNull(feedbackTypePosition)
     }
 
-    fun addSaveBtn() {
+    fun addReportBtn() {
         mToolbar.menu.clear()
         mToolbar.setContentInsetEndWithActions(0)
 
@@ -106,7 +106,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 
-        val saveButton = ActionButton(this).apply {
+        val reportButton = ActionButton(this).apply {
             text = FlowCopyStore.get(FlowCopyKey.REPORT_ACTION)
             setOnClickListener {
                 openActivity<ReportActivity>()
@@ -117,7 +117,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
             setPadding(0, 0, dp(15), 0)
 
             addView(
-                saveButton,
+                reportButton,
                 FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.WRAP_CONTENT,
                     FrameLayout.LayoutParams.WRAP_CONTENT,
