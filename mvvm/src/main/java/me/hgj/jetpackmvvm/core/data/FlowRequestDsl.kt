@@ -119,7 +119,12 @@ private fun <T> BaseViewModel.executeFlowRequestWithResult(
                     }
 
             } catch (e: CancellationException) {
-                // 请求被取消
+                if (requestParameterDsl.loadingType != LoadingType.LOADING_NULL) {
+                    loadingChange.loading.postValue = LoadingEntity(
+                        loadingType = requestParameterDsl.loadingType,
+                        isShow = false,
+                    )
+                }
                 return@supervisorScope
             } catch (e: Exception) {
                 // 外层异常处理

@@ -100,7 +100,12 @@ private fun <T> BaseViewModel.executeRequestWithResult(requestParameterDsl: Requ
                 requestParameterDsl.resultLiveData?.postValue = ApiResult.Success(result)
 
             } catch (e: CancellationException) {
-                // 请求被取消（例如关闭弹窗取消请求）
+                if (requestParameterDsl.loadingType != LoadingType.LOADING_NULL) {
+                    loadingChange.loading.postValue = LoadingEntity(
+                        loadingType = requestParameterDsl.loadingType,
+                        isShow = false,
+                    )
+                }
                 return@supervisorScope
             } catch (e: Exception) {
                 // ========== 统一错误捕获 ==========

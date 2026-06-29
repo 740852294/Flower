@@ -1,7 +1,7 @@
 package com.flower.flow.app.core.net.parses
 
+import com.flower.flow.app.core.net.AccountCancelledHandler
 import com.flower.flow.app.core.net.NetUrl
-import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.data.model.entity.ApiResponse
 import me.hgj.jetpackmvvm.core.net.AppException
 import okhttp3.Response
@@ -27,10 +27,7 @@ open class ResponseParser<T> : TypeParser<T> {
             t = "" as T
         }
         if (data.errorCode == NetUrl.EXPIRED_CODE) {
-            // 登录过期，清除cookie 和本地 用户信息缓存
-            UserManager.clearUser()
-//            "登录信息已经过期，请重新登录".toast()
-            throw AppException(data.errorCode.toString(), "登录信息已经过期，请重新登录")
+            AccountCancelledHandler.handle(data.errorMsg)
         }
         // errCode 不等于 SUCCESS_CODE，抛出异常
         if (data.errorCode != NetUrl.SUCCESS_CODE) {
