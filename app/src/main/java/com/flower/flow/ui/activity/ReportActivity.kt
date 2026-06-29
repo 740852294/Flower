@@ -66,7 +66,7 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
                     finish()
                 }
                 onError { error ->
-                    error.toast()
+                    error.msg.toast()
                 }
             }
         }
@@ -78,7 +78,7 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
                 mBind.rvReportType.models = list
             }
             onError { error ->
-                error.toast()
+                error.msg.toast()
             }
         }
     }

@@ -16,9 +16,11 @@ import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.vm.SettingViewModel
 import com.flower.flow.databinding.ActivitySettingBinding
 import com.flower.flow.ui.activity.PrivacyActivity.PolicyRoute
+import com.flower.flow.ui.dialog.SwitchAccountDialog
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.copyToClipboard
+import me.hgj.jetpackmvvm.ext.util.finishAllActivity
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
 
@@ -68,7 +70,7 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
                     startActivity(Intent.createChooser(intent, shareInfo.title))
                 }
                 onError { error ->
-                    error.toast()
+                    error.msg.toast()
                 }
             }
         }
@@ -119,6 +121,24 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
                 copyToClipboard(uid, FlowCopyStore.get(FlowCopyKey.ACCOUNT_LABEL))
                 FlowCopyStore.get(FlowCopyKey.COPY_ACTION).toast()
             }
+        }
+
+        mBind.btnChange.clickNoRepeat {
+            SwitchAccountDialog.Builder(this)
+                .setOnSwitchAccount { account, password ->
+                    mViewModel.switchAccount(account, password).obs(this) {
+                        onSuccess { response ->
+                            CacheConfig.userId = response.uid
+                            UserManager.clearUser()
+                            finishAllActivity()
+                            openActivity<MainActivity>()
+                        }
+                        onError { error ->
+                            error.msg.toast()
+                        }
+                    }
+                }
+                .show()
         }
     }
 

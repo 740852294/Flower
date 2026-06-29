@@ -87,7 +87,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
                     finish()
                 }
                 onError { error ->
-                    error.toast()
+                    error.msg.toast()
                 }
             }
         }
@@ -145,7 +145,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
                 mBind.rvFeedbackType.models = list
             }
             onError { error ->
-                error.toast()
+                error.msg.toast()
             }
         }
     }

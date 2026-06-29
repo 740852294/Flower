@@ -137,7 +137,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
                 finish()
             }
             onError { error ->
-                error.toast()
+                error.msg.toast()
             }
         }
     }

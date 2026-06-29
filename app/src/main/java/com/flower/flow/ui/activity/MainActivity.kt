@@ -155,7 +155,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             }
             onError { error ->
                 if (isFirst) {
-                    error.toast()
+                    error.msg.toast()
                 }
             }
         }

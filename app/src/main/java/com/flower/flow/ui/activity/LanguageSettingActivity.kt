@@ -72,7 +72,7 @@ class LanguageSettingActivity :
                 updateSaveButtonState()
             }
             onError { error ->
-                error.toast()
+                error.msg.toast()
             }
         }
     }
@@ -124,7 +124,7 @@ class LanguageSettingActivity :
                 finish()
             }
             onError { error ->
-                error.toast()
+                error.msg.toast()
             }
         }
     }

@@ -70,7 +70,7 @@ class SystemNotifyActivity :
             }
             onError { error ->
                 mBind.refreshLayout.finishRefresh(false)
-                error.toast()
+                error.msg.toast()
             }
         }
     }
