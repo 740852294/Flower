@@ -19,7 +19,7 @@ data class UserInfo(
     @SerializedName("avatar")
     val avatar: String = "",
     @SerializedName("password")
-    val password: String = "",
+    var password: String = "",
     @SerializedName("sysNotifyRedDot")
     var sysNotifyRedDot: Boolean = false,
     @SerializedName("clearTaskMsg")

@@ -34,4 +34,11 @@ class SettingViewModel : BaseViewModel() {
         loadingType = LoadingType.LOADING_DIALOG
     }
 
+    fun updatePassword(password: String) = request {
+        onRequest {
+            UserRepository.updatePasswordLivedata(password).await()
+        }
+        loadingType = LoadingType.LOADING_DIALOG
+    }
+
 }

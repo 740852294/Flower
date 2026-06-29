@@ -16,6 +16,7 @@ import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.vm.SettingViewModel
 import com.flower.flow.databinding.ActivitySettingBinding
 import com.flower.flow.ui.activity.PrivacyActivity.PolicyRoute
+import com.flower.flow.ui.dialog.ChangePasswordDialog
 import com.flower.flow.ui.dialog.SwitchAccountDialog
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
@@ -29,19 +30,12 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
     override val title: String
         get() = FlowCopyStore.get(FlowCopyKey.SETTINGS_ENTRY)
 
-    private val passwordOriginal: String by lazy {
-        val pwd = UserManager.user?.password ?: ""
-        if (pwd.isNotBlank()) {
-            AesTextCodec.decode(pwd) ?: ""
-        } else {
-            ""
-        }
-    }
-
+    private var passwordPlain: String = ""
     private var isShowPassword = false
 
     override fun initView(savedInstanceState: Bundle?) {
         setText()
+        passwordPlain = decodePassword(UserManager.user?.password.orEmpty())
 
         UserManager.user?.apply {
             val isShow = this.sysNotifyRedDot
@@ -96,7 +90,20 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
         }
 
         mBind.llPassword.clickNoRepeat {
-            "修改密码".toast()
+            ChangePasswordDialog.Builder(this)
+                .setOnChangePassword { password ->
+                    mViewModel.updatePassword(password).obs(this) {
+                        onSuccess {
+                            passwordPlain = password
+                            resetPasswordMask()
+                            UserManager.saveUserPassword(password)
+                        }
+                        onError { error ->
+                            error.msg.toast()
+                        }
+                    }
+                }
+                .show()
         }
 
         mBind.ivPassword.clickNoRepeat {
@@ -104,13 +111,13 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
                 isShowPassword = false
                 mBind.tvPassword.text = "**********"
                 mBind.ivPassword.setImageResource(R.mipmap.ic_setting_eyes)
-                if (passwordOriginal.isNotBlank()) {
-                    copyToClipboard(passwordOriginal, FlowCopyStore.get(FlowCopyKey.PASSWORD_LABEL))
+                if (passwordPlain.isNotBlank()) {
+                    copyToClipboard(passwordPlain, FlowCopyStore.get(FlowCopyKey.PASSWORD_LABEL))
                     FlowCopyStore.get(FlowCopyKey.COPY_ACTION).toast()
                 }
             } else {
                 isShowPassword = true
-                mBind.tvPassword.text = passwordOriginal
+                mBind.tvPassword.text = passwordPlain
                 mBind.ivPassword.setImageResource(R.mipmap.ic_setting_copy)
             }
         }
@@ -150,6 +157,17 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
         EventViewModel.languageEvent.observe(this) {
             setText()
         }
+    }
+
+    private fun resetPasswordMask() {
+        isShowPassword = false
+        mBind.tvPassword.text = "**********"
+        mBind.ivPassword.setImageResource(R.mipmap.ic_setting_eyes)
+    }
+
+    private fun decodePassword(encryptedPassword: String): String {
+        if (encryptedPassword.isBlank()) return ""
+        return AesTextCodec.decode(encryptedPassword).orEmpty()
     }
 
     private fun setText() {

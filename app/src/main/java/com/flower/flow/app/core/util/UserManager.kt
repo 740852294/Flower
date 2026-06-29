@@ -44,6 +44,13 @@ object UserManager {
         }
     }
 
+    fun saveUserPassword(password: String) {
+        if (user != null && password.isNotEmpty()) {
+            user!!.password = AesTextCodec.encode(password) ?: ""
+            saveUser(user!!)
+        }
+    }
+
     fun clearUser() {
         user = null
         val iCookieJar = RxHttpPlugins.getOkHttpClient().cookieJar as ICookieJar
