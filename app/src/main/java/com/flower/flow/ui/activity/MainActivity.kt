@@ -68,6 +68,17 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             workRedDot = show == true
             updateMeTabRedDot()
         }
+
+        EventViewModel.languageEvent.observe(this) {
+            refreshTabLabels()
+        }
+    }
+
+    private fun refreshTabLabels() {
+        if (!::tabs.isInitialized) return
+        tabs.forEach { tab ->
+            tab.binding.tabLabel.text = FlowCopyStore.get(tab.titleKey)
+        }
     }
 
     private fun updateMeTabRedDot() {

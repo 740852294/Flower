@@ -29,5 +29,13 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
         EventViewModel.mainFragmentDataEvent.observe(viewLifecycleOwner) {
             LogUtils.debugInfo("TagFragment", "收到通知")
         }
+
+        EventViewModel.languageEvent.observe(this) {
+            setText()
+        }
+    }
+
+    private fun setText() {
+
     }
 }

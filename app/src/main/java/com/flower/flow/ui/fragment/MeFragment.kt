@@ -107,6 +107,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                 setUserInfo(user)
             }
         }
+
+        EventViewModel.languageEvent.observe(this) {
+            setText()
+        }
     }
 
     private fun setUserInfo(user: UserInfo) {

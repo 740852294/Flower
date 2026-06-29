@@ -14,14 +14,24 @@ object LanguageConfigHelper {
     suspend fun loadAndCache(): LanguageItem {
         val languageList = CommonRepository.getLanguageListLivedata().await()
         CacheConfig.languageListJson = languageList.toJsonStr()
-        val target = LanguageUtil.resolveTargetLanguage(languageList)
+        val target = resolveLanguageTarget(languageList)
         App.currentLanguageId = target.id
+        cacheLanguageConfig()
+        return target
+    }
 
+    private suspend fun cacheLanguageConfig() {
         val config = CommonRepository.getAppLanguageConfigLivedata().await()
         val remoteTexts = config.toRemoteTextMap()
         val localTexts = FlowCopyMapper.toLocalTexts(remoteTexts)
         FlowCopyStore.save(localTexts)
-        return target
+    }
+
+    private fun resolveLanguageTarget(languageList: List<LanguageItem>): LanguageItem {
+        if (CacheConfig.selectedLanguageId > 0) {
+            languageList.find { it.id == CacheConfig.selectedLanguageId }?.let { return it }
+        }
+        return LanguageUtil.resolveTargetLanguage(languageList)
     }
 
     fun restoreLanguageIdFromCache() {

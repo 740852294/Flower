@@ -77,6 +77,7 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
         }
 
         mBind.llLanguage.clickNoRepeat {
+            openActivity<LanguageSettingActivity>()
         }
 
         mBind.llPassword.clickNoRepeat {
@@ -111,6 +112,10 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
     override fun createObserver() {
         EventViewModel.msgRedDotEvent.observe(this) { show ->
             mBind.redDot.isVisible = show
+        }
+
+        EventViewModel.languageEvent.observe(this) {
+            setText()
         }
     }
 

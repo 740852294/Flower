@@ -29,5 +29,13 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
         EventViewModel.mainFragmentDataEvent.observe(viewLifecycleOwner) {
             LogUtils.debugInfo("TopicFragment", "收到通知")
         }
+
+        EventViewModel.languageEvent.observe(this) {
+            setText()
+        }
+    }
+
+    private fun setText() {
+
     }
 }
