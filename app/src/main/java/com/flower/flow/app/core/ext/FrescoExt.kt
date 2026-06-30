@@ -56,6 +56,7 @@ fun ImageView.loadImage(
     }
 
     val imageOptionsBuilder = ImageOptions.create()
+        .scale(scaleType)
     placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
     imageOptionsBuilder.autoPlay(true)
     imageOptionsBuilder.autoStop(true)
@@ -159,6 +160,7 @@ fun ImageView.loadImageFile(
     @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
     scaleType: ScalingUtils.ScaleType = ScalingUtils.ScaleType.FIT_CENTER,
 ) {
+    this.scaleType = ImageView.ScaleType.FIT_CENTER
     loadImage(
         url = file?.let { Uri.fromFile(it).toString() },
         placeholderRes = placeholderRes,
@@ -184,6 +186,7 @@ fun ImageView.loadAvatarFile(
 
     val imageOptionsBuilder = ImageOptions.create()
         .round(RoundingOptions.asCircle())
+        .scale(scaleType)
     placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
     imageOptionsBuilder.autoPlay(true)
     imageOptionsBuilder.autoStop(true)

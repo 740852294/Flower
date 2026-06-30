@@ -15,6 +15,6 @@ class MaterialUploadViewModel : BaseViewModel() {
         onRequest {
             AiArtRepository.getCreateSubmitPage(id).await()
         }
-        loadingType = LoadingType.LOADING_DIALOG
+        loadingType = LoadingType.LOADING_NULL
     }
 }

@@ -27,15 +27,19 @@
 
         <ImageView
             android:id="@+id/ivCover"
-            android:layout_width="0px"
-            android:layout_height="0px"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="14dp"
             android:layout_marginBottom="14dp"
             android:scaleType="centerCrop"
+            app:layout_constrainedHeight="true"
+            app:layout_constrainedWidth="true"
             app:layout_constraintBottom_toTopOf="@id/llPhotoUpload"
-            app:layout_constraintDimensionRatio="W,318:432"
+            app:layout_constraintDimensionRatio="318:432"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1.0"
             tools:src="@mipmap/ic_pic_loading" />
 
         <com.hjq.shape.layout.ShapeLinearLayout
@@ -53,7 +57,9 @@
             <FrameLayout
                 android:id="@+id/llSingleUpload"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:padding="5dp"
+                android:visibility="gone">
 
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/ivUploadPreview"
@@ -102,7 +108,8 @@
                     android:id="@+id/llUploadSlotLeft"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:padding="5dp">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/ivUploadPreviewLeft"
@@ -139,17 +146,21 @@
 
                 </FrameLayout>
 
-                <View
+                <com.flower.flow.app.core.widget.DashedLineView
                     android:layout_width="1dp"
                     android:layout_height="match_parent"
-                    android:layout_marginVertical="24dp"
-                    android:background="@drawable/bg_material_upload_vertical_dash" />
+                    app:dlv_dashGap="4dp"
+                    app:dlv_dashLength="4dp"
+                    app:dlv_lineColor="#66FFFFFF"
+                    app:dlv_lineWidth="1dp"
+                    app:dlv_orientation="vertical" />
 
                 <FrameLayout
                     android:id="@+id/llUploadSlotRight"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="1"
+                    android:padding="5dp">
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/ivUploadPreviewRight"
