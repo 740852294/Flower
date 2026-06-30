@@ -157,6 +157,13 @@
             android:theme="@style/AppTheme"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
 
+        <activity
+            android:name=".ui.activity.MaterialUploadActivity"
+            android:exported="false"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
+
     </application>
 
 </manifest>

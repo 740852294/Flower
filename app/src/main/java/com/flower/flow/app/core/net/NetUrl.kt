@@ -57,4 +57,9 @@ object NetUrl {
         //标签的模板列表
         const val TAG_TEMPLATE_LIST = "aiart/pageTagList"
     }
+
+    object AiArt{
+        //页面生成作品信息
+        const val UPLOAD_PAGE_INFO = "aiart/getGenerateSubmitPage"
+    }
 }

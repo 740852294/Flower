@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llContent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@mipmap/pic_material_upload_bg"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/transparent"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/AppTheme.PopupOverlay"
+        app:titleCentered="true"
+        app:titleTextAppearance="@style/ToolbarTitleTextAppearance" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="16dp">
+
+        <FrameLayout
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:layout_marginBottom="14dp"
+            app:layout_constraintBottom_toTopOf="@id/llPhotoUpload"
+            app:layout_constraintDimensionRatio="W,318:432"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/ivCover"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                tools:src="@mipmap/ic_pic_loading" />
+
+        </FrameLayout>
+
+        <com.hjq.shape.layout.ShapeLinearLayout
+            android:id="@+id/llPhotoUpload"
+            android:layout_width="289dp"
+            android:layout_height="136dp"
+            android:layout_marginBottom="40dp"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toTopOf="@id/btnCreate"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:shape_radius="15dp"
+            app:shape_solidColor="#FF393A3E">
+
+            <FrameLayout
+                android:id="@+id/llSingleUpload"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/ivUploadPreview"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:id="@+id/llSingleUploadPlaceholder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="26dp"
+                        android:layout_height="26dp"
+                        android:src="@mipmap/ic_material_upload_file_add" />
+
+                    <TextView
+                        android:id="@+id/tvUploadLabel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:includeFontPadding="false"
+                        android:textColor="#99FFFFFF"
+                        android:textSize="12sp"
+                        tools:text="Upload Image" />
+
+                </LinearLayout>
+
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/llDoubleUpload"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <FrameLayout
+                    android:id="@+id/llUploadSlotLeft"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivUploadPreviewLeft"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <LinearLayout
+                        android:id="@+id/llUploadPlaceholderLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@mipmap/ic_material_upload_file_add" />
+
+                        <TextView
+                            android:id="@+id/tvUploadLabelLeft"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:includeFontPadding="false"
+                            android:textColor="#99FFFFFF"
+                            android:textSize="12sp"
+                            tools:text="Upload Image" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginVertical="24dp"
+                    android:background="@drawable/bg_material_upload_vertical_dash" />
+
+                <FrameLayout
+                    android:id="@+id/llUploadSlotRight"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/ivUploadPreviewRight"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="fitCenter"
+                        android:visibility="gone"
+                        tools:visibility="visible" />
+
+                    <LinearLayout
+                        android:id="@+id/llUploadPlaceholderRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="26dp"
+                            android:layout_height="26dp"
+                            android:src="@mipmap/ic_material_upload_file_add" />
+
+                        <TextView
+                            android:id="@+id/tvUploadLabelRight"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:includeFontPadding="false"
+                            android:textColor="#99FFFFFF"
+                            android:textSize="12sp"
+                            tools:text="Upload Image" />
+
+                    </LinearLayout>
+
+                </FrameLayout>
+
+            </LinearLayout>
+
+        </com.hjq.shape.layout.ShapeLinearLayout>
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivLineLeft"
+            android:layout_width="10dp"
+            android:layout_height="45dp"
+            android:layout_marginStart="29dp"
+            android:layout_marginBottom="-13dp"
+            android:src="@mipmap/ic_material_upload_line_left"
+            app:layout_constraintBottom_toTopOf="@+id/llPhotoUpload"
+            app:layout_constraintStart_toStartOf="@+id/llPhotoUpload" />
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivLineRight"
+            android:layout_width="10dp"
+            android:layout_height="45dp"
+            android:layout_marginEnd="29dp"
+            android:layout_marginBottom="-13dp"
+            android:src="@mipmap/ic_material_upload_line_left"
+            app:layout_constraintBottom_toTopOf="@+id/llPhotoUpload"
+            app:layout_constraintEnd_toEndOf="@+id/llPhotoUpload" />
+
+        <com.hjq.shape.layout.ShapeLinearLayout
+            android:id="@+id/btnCreate"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginBottom="30dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:shape_radius="30dp"
+            app:shape_solidGradientEndColor="#FFFD662E"
+            app:shape_solidGradientOrientation="leftToRight"
+            app:shape_solidGradientStartColor="#FFFE9233">
+
+            <TextView
+                android:id="@+id/tvCreate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                tools:text="Generate immediately" />
+
+            <LinearLayout
+                android:id="@+id/llCost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="40dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="19dp"
+                    android:layout_height="19dp"
+                    android:src="@mipmap/ic_me_money" />
+
+                <TextView
+                    android:id="@+id/tvLockIntegral"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="3dp"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    tools:text="20" />
+            </LinearLayout>
+
+        </com.hjq.shape.layout.ShapeLinearLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>

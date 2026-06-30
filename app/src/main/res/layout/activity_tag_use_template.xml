@@ -69,7 +69,6 @@
             app:shape_solidGradientEndColor="#FFFD662E"
             app:shape_solidGradientOrientation="leftToRight"
             app:shape_solidGradientStartColor="#FFFE9233"
-            tools:layout_editor_absoluteX="16dp"
             tools:text="Use template" />
 
         <FrameLayout

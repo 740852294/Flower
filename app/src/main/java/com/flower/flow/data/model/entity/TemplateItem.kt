@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class TagTemplateItem(
+data class TemplateItem(
     @SerializedName("id")
     val id: Int = 0,
     @SerializedName("name")

@@ -3,14 +3,12 @@ package com.flower.flow.ui.fragment
 import android.os.Bundle
 import androidx.core.view.isVisible
 import com.drake.brv.utils.bindingAdapter
-import com.drake.brv.utils.models
 import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
 import com.flower.flow.app.core.ext.loadImage
-import com.flower.flow.app.event.EventViewModel
-import com.flower.flow.data.model.entity.TagTemplateItem
+import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TagListViewModel
 import com.flower.flow.databinding.FragmentTagListBinding
 import com.flower.flow.databinding.LayoutItemTagTemplateBinding
@@ -40,11 +38,11 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
 
         mBind.rvList.grid(SPAN_COUNT)
             .setup {
-                addType<TagTemplateItem>(R.layout.layout_item_tag_template)
+                addType<TemplateItem>(R.layout.layout_item_tag_template)
 
                 onBind {
                     getBindingOrNull<LayoutItemTagTemplateBinding>()?.run {
-                        val model = getModel<TagTemplateItem>()
+                        val model = getModel<TemplateItem>()
                         tvTitle.text = model.name
                         ivCover.loadImage(
                             url = model.img,
@@ -57,7 +55,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                 }
 
                 onClick(R.id.rootItem) {
-                    openActivity<TagUseTemplateActivity>("TagTemple" to getModel<TagTemplateItem>())
+                    openActivity<TagUseTemplateActivity>("TagTemple" to getModel<TemplateItem>())
                 }
             }
     }
@@ -85,7 +83,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
 
     private fun bindLockBadge(
         binding: LayoutItemTagTemplateBinding,
-        model: TagTemplateItem,
+        model: TemplateItem,
     ) {
         val showCost = model.lockIntegral > 0 && model.lockType != 0
         val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(3, 4)

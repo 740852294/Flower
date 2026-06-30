@@ -3,7 +3,6 @@ package com.flower.flow.ui.activity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
-import android.view.View
 import android.widget.FrameLayout
 import androidx.core.view.isVisible
 import com.flower.flow.app.App
@@ -13,16 +12,17 @@ import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.data.model.FlowCopyKey
-import com.flower.flow.data.model.entity.TagTemplateItem
+import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.databinding.ActivityTagUseTemplateBinding
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
+import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 
 class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplateBinding>() {
 
-    val templateItem: TagTemplateItem? by bundle<TagTemplateItem>(null, "TagTemple")
+    val templateItem: TemplateItem? by bundle<TemplateItem>(null, "TagTemple")
 
     override val showTitle: Boolean
         get() = false
@@ -55,7 +55,11 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
     }
 
     override fun onBindViewClick() {
-
+        mBind.btnUse.clickNoRepeat {
+            templateItem?.let {
+                openActivity<MaterialUploadActivity>("TagTemple" to it)
+            }
+        }
     }
 
     override fun createObserver() {
@@ -97,7 +101,7 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
 
     private fun bindLockBadge(
         binding: ActivityTagUseTemplateBinding,
-        model: TagTemplateItem,
+        model: TemplateItem,
     ) {
         val showCost = model.lockIntegral > 0 && model.lockType != 0
         val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(3, 4)
