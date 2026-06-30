@@ -6,9 +6,14 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import com.facebook.drawee.backends.pipeline.Fresco
+import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.loadImage
@@ -18,6 +23,7 @@ import com.flower.flow.app.core.util.GenerateSubmitCache
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.SubmitPageInfo
 import com.flower.flow.data.model.entity.TemplateItem
+import com.flower.flow.data.model.entity.WorkGenerateResult
 import com.flower.flow.data.vm.MaterialUploadViewModel
 import com.flower.flow.databinding.ActivityMaterialUploadBinding
 import com.flower.flow.ui.dialog.CommonMessageDialog
@@ -28,7 +34,12 @@ import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.random.Random
+import kotlin.time.Duration.Companion.milliseconds
 
 class MaterialUploadActivity :
     BaseActivity<MaterialUploadViewModel, ActivityMaterialUploadBinding>() {
@@ -37,6 +48,11 @@ class MaterialUploadActivity :
 
     private var submitPageInfo: SubmitPageInfo? = null
     private var pickSlot = UploadSlot.SINGLE
+    private var generateSimulationJob: Job? = null
+
+    private val generateBackPressedCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() = Unit
+    }
 
     private val photoPickerLauncher = registerForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
@@ -56,6 +72,7 @@ class MaterialUploadActivity :
         get() = false
 
     override fun initView(savedInstanceState: Bundle?) {
+        onBackPressedDispatcher.addCallback(this, generateBackPressedCallback)
         mBind.llContent.statusPadding()
         mBind.toolbar.initClose(templateItem?.name ?: "") {
             finish()
@@ -280,8 +297,9 @@ class MaterialUploadActivity :
 
         val sourcePaths = collectSourcePaths()
         mViewModel.generateWork(templateId, sourceFiles, cacheDir).obs(this) {
-            onSuccess {
+            onSuccess { result ->
                 GenerateSubmitCache.saveLastSuccess(templateId, sourcePaths)
+                handleGenerateResult(result)
             }
             onError { error ->
                 error.msg.toast()
@@ -289,10 +307,83 @@ class MaterialUploadActivity :
         }
     }
 
+    private fun handleGenerateResult(result: WorkGenerateResult) {
+        mBind.flGenerate.visibility = View.VISIBLE
+
+        val uri = Uri.parse("res://${packageName}/${R.drawable.generate}")
+
+        val controller = Fresco.newDraweeControllerBuilder()
+            .setUri(uri)
+            .setAutoPlayAnimations(true)
+            .build()
+
+        mBind.gifView.controller = controller
+        startGenerateSimulation(result)
+    }
+
+    private fun startGenerateSimulation(result: WorkGenerateResult) {
+        generateSimulationJob?.cancel()
+        generateSimulationJob = lifecycleScope.launch {
+            simulateGenerateProgress(result)
+        }
+    }
+
+    private suspend fun simulateGenerateProgress(result: WorkGenerateResult) {
+        generateBackPressedCallback.isEnabled = true
+        updateGenerateTip(result.showMsgOne)
+        mBind.tvGeneratePercent.text = "0%"
+
+        val random = Random.Default
+        val startTime = System.currentTimeMillis()
+        var progress = 0
+        var phaseTwoStarted = false
+
+        while (true) {
+            val elapsed = System.currentTimeMillis() - startTime
+            if (elapsed >= GENERATE_DURATION_MS) {
+                break
+            }
+
+            if (!phaseTwoStarted && elapsed >= GENERATE_PHASE_ONE_MS) {
+                phaseTwoStarted = true
+                updateGenerateTip(result.showMsgTwo)
+            }
+
+            val maxByTime = ((elapsed.toFloat() / GENERATE_DURATION_MS) * 100)
+                .toInt()
+                .coerceIn(0, 99)
+            if (maxByTime > progress) {
+                val step = random.nextInt(
+                    1,
+                    (maxByTime - progress + 2).coerceAtMost(8).coerceAtLeast(2),
+                )
+                progress = (progress + step).coerceAtMost(maxByTime)
+                mBind.tvGeneratePercent.text = "$progress%"
+            }
+
+            delay(random.nextLong(100, 250).milliseconds)
+        }
+
+        mBind.tvGeneratePercent.text = "100%"
+        generateBackPressedCallback.isEnabled = false
+        onGenerateSimulationFinished(result)
+    }
+
+    private fun updateGenerateTip(message: String) {
+        mBind.tvGenerateTip.isVisible = message.isNotBlank()
+        mBind.tvGenerateTip.text = message
+    }
+
+    /**
+     * 弹窗
+     */
+    private fun onGenerateSimulationFinished(result: WorkGenerateResult) {
+    }
+
     private fun hasUploadedPhoto(): Boolean {
         return if (isMultiUpload()) {
             !mViewModel.leftUploadPath.isNullOrBlank() ||
-                !mViewModel.rightUploadPath.isNullOrBlank()
+                    !mViewModel.rightUploadPath.isNullOrBlank()
         } else {
             !mViewModel.singleUploadPath.isNullOrBlank()
         }
@@ -433,5 +524,7 @@ class MaterialUploadActivity :
 
     companion object {
         private const val COVER_CORNER_RADIUS_DP = 15f
+        private const val GENERATE_DURATION_MS = 5_000L
+        private const val GENERATE_PHASE_ONE_MS = 2_000L
     }
 }
