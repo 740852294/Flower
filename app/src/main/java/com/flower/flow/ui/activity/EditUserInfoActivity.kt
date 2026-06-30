@@ -220,7 +220,6 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
 
     private fun handleSelectedImageUri(uri: Uri?) {
         val cachedFile = uri?.let { saveUriToCache(it) } ?: run {
-            FlowCopyStore.get(FlowCopyKey.PHOTO_UPLOAD_FAIL).toast()
             return
         }
 

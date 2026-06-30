@@ -25,30 +25,24 @@
         android:paddingHorizontal="16dp"
         android:paddingTop="16dp">
 
-        <FrameLayout
+        <ImageView
+            android:id="@+id/ivCover"
             android:layout_width="0px"
             android:layout_height="0px"
             android:layout_marginBottom="14dp"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toTopOf="@id/llPhotoUpload"
             app:layout_constraintDimensionRatio="W,318:432"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/ivCover"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                tools:src="@mipmap/ic_pic_loading" />
-
-        </FrameLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@mipmap/ic_pic_loading" />
 
         <com.hjq.shape.layout.ShapeLinearLayout
             android:id="@+id/llPhotoUpload"
             android:layout_width="289dp"
             android:layout_height="136dp"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="50dp"
             android:orientation="horizontal"
             app:layout_constraintBottom_toTopOf="@id/btnCreate"
             app:layout_constraintEnd_toEndOf="parent"

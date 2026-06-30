@@ -152,6 +152,21 @@ private fun ImageView.clearRoundStyle() {
 }
 
 /**
+ * 加载本地图片文件，等比例居中显示。
+ */
+fun ImageView.loadImageFile(
+    file: File?,
+    @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
+    scaleType: ScalingUtils.ScaleType = ScalingUtils.ScaleType.FIT_CENTER,
+) {
+    loadImage(
+        url = file?.let { Uri.fromFile(it).toString() },
+        placeholderRes = placeholderRes,
+        scaleType = scaleType,
+    )
+}
+
+/**
  * 加载头像（本地文件或网络 URL），圆形裁剪显示。
  * @param source 网络 URL（http/https）、content://、file://，或本地文件绝对路径
  */

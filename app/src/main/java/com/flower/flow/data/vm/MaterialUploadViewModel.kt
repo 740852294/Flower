@@ -7,6 +7,10 @@ import me.hgj.jetpackmvvm.core.net.LoadingType
 
 class MaterialUploadViewModel : BaseViewModel() {
 
+    var singleUploadFilePath: String? = null
+    var leftUploadFilePath: String? = null
+    var rightUploadFilePath: String? = null
+
     fun getCreateSubmitPage(id: Int) = request {
         onRequest {
             AiArtRepository.getCreateSubmitPage(id).await()
