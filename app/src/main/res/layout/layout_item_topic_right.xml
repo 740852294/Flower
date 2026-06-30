@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootItem"
+    android:layout_width="match_parent"
+    android:layout_height="166dp"
+    android:layout_marginBottom="16dp">
+
+    <View
+        android:id="@+id/bgView"
+        android:layout_width="match_parent"
+        android:layout_height="136dp"
+        android:background="@drawable/bg_topic_card_right_layer"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/flFirst"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivCover3"
+            android:layout_width="77dp"
+            android:layout_height="128dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="62dp"
+            android:scaleType="centerCrop"
+            tools:src="@mipmap/ic_pic_loading" />
+
+        <ImageView
+            android:id="@+id/ivCover2"
+            android:layout_width="96dp"
+            android:layout_height="144dp"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="31dp"
+            android:scaleType="centerCrop"
+            tools:src="@mipmap/ic_pic_loading" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clTemple1"
+            android:layout_width="114dp"
+            android:layout_height="158dp"
+            android:layout_gravity="end">
+
+            <ImageView
+                android:id="@+id/ivCover1"
+                android:layout_width="0px"
+                android:layout_height="0px"
+                android:scaleType="centerCrop"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@mipmap/ic_pic_loading" />
+
+            <com.hjq.shape.layout.ShapeLinearLayout
+                android:id="@+id/llLockBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="5dp"
+                android:paddingVertical="2dp"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shape_radius="14dp"
+                app:shape_solidColor="#0FFFFFFF"
+                app:shape_strokeGradientEndColor="#70FFFFFF"
+                app:shape_strokeGradientOrientation="leftToRight"
+                app:shape_strokeGradientStartColor="#00999999"
+                app:shape_strokeSize="1dp"
+                tools:visibility="visible">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:src="@mipmap/ic_me_money" />
+
+                <TextView
+                    android:id="@+id/tvLockIntegral"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="2dp"
+                    android:includeFontPadding="false"
+                    android:textColor="@color/white"
+                    android:textSize="9sp"
+                    tools:text="20" />
+
+            </com.hjq.shape.layout.ShapeLinearLayout>
+
+            <ImageView
+                android:id="@+id/ivSampleSingle"
+                android:layout_width="23dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="6dp"
+                android:layout_marginTop="6dp"
+                android:scaleType="centerCrop"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:visibility="visible" />
+
+            <LinearLayout
+                android:id="@+id/llSampleBottom"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="6dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/ivSampleLeft"
+                    android:layout_width="23dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerCrop" />
+
+                <ImageView
+                    android:id="@+id/ivSampleRight"
+                    android:layout_width="23dp"
+                    android:layout_height="32dp"
+                    android:scaleType="centerCrop" />
+
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="14dp"
+        android:layout_marginEnd="16dp"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toStartOf="@id/flFirst"
+        app:layout_constraintStart_toStartOf="@id/bgView"
+        app:layout_constraintTop_toTopOf="@id/bgView"
+        tools:text="Vintage dance hall hall hall hall" />
+
+    <TextView
+        android:id="@+id/tvDesc"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:includeFontPadding="false"
+        android:maxLines="2"
+        android:textColor="@color/white"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/tvName"
+        app:layout_constraintStart_toStartOf="@id/tvName"
+        app:layout_constraintTop_toBottomOf="@id/tvName"
+        tools:text="The disco ball spins,  to make a vivid video video video video video video video video" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivEnter"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginBottom="14dp"
+        android:src="@mipmap/icon_home_topic_item_enter"
+        app:layout_constraintBottom_toBottomOf="@id/bgView"
+        app:layout_constraintEnd_toEndOf="@id/tvName" />
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@id/ivEnter"
+        app:layout_constraintStart_toStartOf="@id/tvName"
+        app:layout_constraintTop_toTopOf="@id/ivEnter">
+
+        <com.hjq.shape.view.ShapeImageView
+            android:id="@+id/ivCover4"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:scaleType="centerCrop"
+            app:shape_radius="16dp"
+            app:shape_solidColor="#666666"
+            app:shape_strokeColor="#000000"
+            app:shape_strokeSize="1dp" />
+
+        <com.hjq.shape.view.ShapeImageView
+            android:id="@+id/ivCover5"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="20dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:shape_radius="16dp"
+            app:shape_solidColor="#666666"
+            app:shape_strokeColor="#000000"
+            app:shape_strokeSize="1dp"
+            tools:visibility="visible" />
+
+        <com.hjq.shape.view.ShapeImageView
+            android:id="@+id/ivCover6"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="40dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            app:shape_radius="16dp"
+            app:shape_solidColor="#666666"
+            app:shape_strokeColor="#000000"
+            app:shape_strokeSize="1dp"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

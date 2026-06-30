@@ -56,6 +56,8 @@ object NetUrl {
         const val TAG_LIST = "sys/listTag"
         //标签的模板列表
         const val TAG_TEMPLATE_LIST = "aiart/pageTagList"
+        //主题列表
+        const val TOPIC_LIST = "home/getInfo"
     }
 
     object AiArt{

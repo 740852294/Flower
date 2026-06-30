@@ -94,10 +94,6 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun createObserver() {
-        EventViewModel.mainFragmentDataEvent.observe(viewLifecycleOwner) {
-            "收到通知".logD("MeFragment")
-        }
-
         EventViewModel.msgRedDotEvent.observe(this) { show ->
             mBind.redDot.isVisible = show
         }

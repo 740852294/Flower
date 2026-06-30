@@ -44,6 +44,8 @@ import me.hgj.jetpackmvvm.ext.util.toast
 import java.io.File
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
+import androidx.core.net.toUri
+import com.flower.flow.app.event.EventViewModel
 
 class MaterialUploadActivity :
     BaseActivity<MaterialUploadViewModel, ActivityMaterialUploadBinding>() {
@@ -312,9 +314,12 @@ class MaterialUploadActivity :
     }
 
     private fun handleGenerateResult(result: WorkGenerateResult) {
+
+        EventViewModel.homeDataRefreshEvent.postValue(true)
+
         mBind.flGenerate.visibility = View.VISIBLE
 
-        val uri = Uri.parse("res://${packageName}/${R.drawable.generate}")
+        val uri = "res://${packageName}/${R.drawable.generate}".toUri()
 
         val controller = Fresco.newDraweeControllerBuilder()
             .setUri(uri)

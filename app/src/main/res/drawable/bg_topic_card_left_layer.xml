@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 底部圆角背景 -->
+    <item android:drawable="@drawable/bg_topic_card_left_base" />
+
+    <!-- 上层光效 -->
+    <item android:drawable="@drawable/bg_topic_card_left_light" />
+
+</layer-list>

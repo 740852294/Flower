@@ -42,6 +42,7 @@ fun ImageView.loadImage(
     cornerRadiiDp: FloatArray? = null,
     borderWidthDp: Float? = null,
     @ColorInt borderColor: Int = Color.WHITE,
+    isAutoPlay: Boolean = true,
 ) {
     if (url.isNullOrBlank()) {
         clearImage()
@@ -58,8 +59,8 @@ fun ImageView.loadImage(
     val imageOptionsBuilder = ImageOptions.create()
         .scale(scaleType)
     placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
-    imageOptionsBuilder.autoPlay(true)
-    imageOptionsBuilder.autoStop(true)
+    imageOptionsBuilder.autoPlay(isAutoPlay)
+    imageOptionsBuilder.autoStop(isAutoPlay)
 
     VitoView.show(
         ImageSourceProvider.forUri(url),
@@ -212,9 +213,9 @@ fun ImageView.loadAvatarFile(
 private fun resolveAvatarSource(source: String): String {
     return when {
         source.startsWith("http://") ||
-            source.startsWith("https://") ||
-            source.startsWith("file://") ||
-            source.startsWith("content://") -> source
+                source.startsWith("https://") ||
+                source.startsWith("file://") ||
+                source.startsWith("content://") -> source
 
         else -> Uri.fromFile(File(source)).toString()
     }

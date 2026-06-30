@@ -8,9 +8,6 @@ import com.kunminx.architecture.domain.message.MutableResult
  * 在这里发送全局事件总线
  */
 object EventViewModel {
-    /** 通知fragment请求数据 */
-    val mainFragmentDataEvent = MutableResult<Boolean>()
-
     /** 消息通知红点 */
     val msgRedDotEvent = MutableResult<Boolean>()
 
@@ -22,4 +19,7 @@ object EventViewModel {
 
     /** 刷新系统通知列表 */
     val systemNotifyRefreshEvent = MutableResult<Boolean>()
+
+    /** 首页数据刷新 */
+    val homeDataRefreshEvent = MutableResult<Boolean>()
 }

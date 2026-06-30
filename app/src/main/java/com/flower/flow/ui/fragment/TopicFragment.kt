@@ -1,11 +1,29 @@
 package com.flower.flow.ui.fragment
 
 import android.os.Bundle
+import androidx.core.view.isVisible
+import com.drake.brv.utils.bindingAdapter
+import com.drake.brv.utils.setup
+import com.flower.flow.R
+import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
+import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.event.EventViewModel
+import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.entity.TopicItem
 import com.flower.flow.data.vm.TopicViewModel
 import com.flower.flow.databinding.FragmentTopicBinding
-import me.hgj.jetpackmvvm.core.net.interception.logging.util.LogUtils
+import com.flower.flow.databinding.LayoutItemTopicLeftBinding
+import com.flower.flow.databinding.LayoutItemTopicRightBinding
+import com.flower.flow.ui.binder.bindTopicItem
+import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.ext.util.loadListError
+import me.hgj.jetpackmvvm.ext.util.loadListSuccess
+import me.hgj.jetpackmvvm.ext.util.refresh
+import me.hgj.jetpackmvvm.ext.util.statusPadding
+import me.hgj.jetpackmvvm.ext.util.toast
+import me.hgj.jetpackmvvm.ext.view.vertical
 
 class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
@@ -19,23 +37,91 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     }
 
     override fun initView(savedInstanceState: Bundle?) {
+        mBind.llContent.statusPadding()
+
+        App.globalConfig?.apply {
+            mBind.llMoney.isVisible = (integralAndVipEntranceShow == 1)
+        }
+
+        UserManager.user?.apply {
+            mBind.tvMoney.text = integralBalance.toString()
+        }
+
+        setText()
+
+        mBind.refreshLayout.refresh {
+            loadTopicList(showPageLoading = false)
+        }
+
+        mBind.rvList.vertical()
+            .setup {
+                addType<TopicItem> { position ->
+                    if (position % 2 == 0) {
+                        R.layout.layout_item_topic_left
+                    } else {
+                        R.layout.layout_item_topic_right
+                    }
+                }
+
+                onBind {
+                    val model = getModel<TopicItem>()
+                    when (itemViewType) {
+                        R.layout.layout_item_topic_left -> {
+                            getBindingOrNull<LayoutItemTopicLeftBinding>()?.bindTopicItem(model)
+                        }
+
+                        R.layout.layout_item_topic_right -> {
+                            getBindingOrNull<LayoutItemTopicRightBinding>()?.bindTopicItem(model)
+                        }
+                    }
+                }
+
+                onClick(R.id.rootItem) {
+                    val model = getModel<TopicItem>()
+                }
+            }
     }
 
     override fun lazyLoadData() {
-        LogUtils.debugInfo("TopicFragment", "lazyLoadData")
+        loadTopicList(showPageLoading = true)
     }
 
     override fun createObserver() {
-        EventViewModel.mainFragmentDataEvent.observe(viewLifecycleOwner) {
-            LogUtils.debugInfo("TopicFragment", "收到通知")
-        }
-
         EventViewModel.languageEvent.observe(this) {
             setText()
+        }
+
+        UserManager.observeUser().observe(viewLifecycleOwner) { user ->
+            user?.apply {
+                mBind.tvMoney.text = integralBalance.toString()
+            }
+        }
+
+        EventViewModel.homeDataRefreshEvent.observe(this) { result ->
+            if (result) {
+                loadTopicList(showPageLoading = true)
+            }
+        }
+    }
+
+    private fun loadTopicList(showPageLoading: Boolean) {
+        mViewModel.loadTopicList(showPageLoading).obs(this) {
+            onSuccess { list ->
+                loadListSuccess(
+                    ArrayList(list),
+                    mBind.rvList.bindingAdapter,
+                    mBind.refreshLayout,
+                    this@TopicFragment,
+                )
+            }
+            onError { status ->
+                loadListError(status, mBind.refreshLayout)
+                status.msg.toast()
+            }
         }
     }
 
     private fun setText() {
-
+        mBind.tvLabel.text = FlowCopyStore.get(FlowCopyKey.VIDEO_APP_DESC)
     }
 }

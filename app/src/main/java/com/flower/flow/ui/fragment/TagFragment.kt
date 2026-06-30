@@ -83,11 +83,8 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
     }
 
     override fun createObserver() {
-        EventViewModel.mainFragmentDataEvent.observe(viewLifecycleOwner) {
-        }
-
         EventViewModel.languageEvent.observe(this) {
-            mBind.rvTagTab.adapter?.notifyDataSetChanged()
+            // todo 重新获取tag列表
         }
     }
 
