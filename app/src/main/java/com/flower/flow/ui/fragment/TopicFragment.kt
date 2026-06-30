@@ -16,8 +16,12 @@ import com.flower.flow.data.vm.TopicViewModel
 import com.flower.flow.databinding.FragmentTopicBinding
 import com.flower.flow.databinding.LayoutItemTopicLeftBinding
 import com.flower.flow.databinding.LayoutItemTopicRightBinding
+import com.flower.flow.ui.activity.IntegralRechargeActivity
+import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.binder.bindTopicItem
 import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.loadListError
 import me.hgj.jetpackmvvm.ext.util.loadListSuccess
 import me.hgj.jetpackmvvm.ext.util.refresh
@@ -84,6 +88,18 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
     override fun lazyLoadData() {
         loadTopicList(showPageLoading = true)
+    }
+
+    override fun onBindViewClick() {
+        mBind.llMoney.clickNoRepeat {
+            val jump = App.globalConfig?.integralEntranceJumpState ?: 0
+            val isVip = UserManager.user?.isVip ?: false
+            if (!isVip && jump == 1) {
+                openActivity<VipJoinActivity>()
+                return@clickNoRepeat
+            }
+            openActivity<IntegralRechargeActivity>()
+        }
     }
 
     override fun createObserver() {
