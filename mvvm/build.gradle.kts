@@ -54,7 +54,8 @@ dependencies {
     implementation(libs.okhttp)
     //refresh刷新
     api(libs.refresh.layout.kernel)
-    api(libs.refresh.header.classics)
+    api(libs.refresh.header.material)
+    api(libs.refresh.footer.ball)
     //利用liveData发送全局消息
     api(libs.unpeek.livedata)
     //通过标签直接生成shape，无需再写shape.xml

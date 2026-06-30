@@ -13,15 +13,12 @@ import com.flower.flow.R
 import com.flower.flow.app.core.ext.dismissAppLoadingExt
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.showAppLoadingExt
-import com.flower.flow.app.core.widget.loadCallBack.EmptyCallback
-import com.flower.flow.app.core.widget.loadCallBack.ErrorCallback
 import com.flower.flow.databinding.IncludeToolbarBinding
 import com.google.android.material.appbar.MaterialToolbar
 import me.hgj.jetpackmvvm.base.ui.BaseVbActivity
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.core.net.LoadingEntity
 import me.hgj.jetpackmvvm.ext.util.getColorExt
-import me.hgj.jetpackmvvm.widget.loadsir.callback.Callback
 
 
 abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : BaseVbActivity<VM, VB>() {
@@ -74,10 +71,6 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : BaseVbActivi
     override fun dismissLoading(setting: LoadingEntity) {
         dismissAppLoadingExt()
     }
-
-    override fun getEmptyStateLayout(): Callback? = EmptyCallback()
-
-    override fun getErrorStateLayout(): Callback? = ErrorCallback()
 
     fun dp(value: Int): Int {
         return (value * resources.displayMetrics.density + 0.5f).toInt()
