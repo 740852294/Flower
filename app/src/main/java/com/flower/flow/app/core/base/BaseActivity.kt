@@ -13,12 +13,15 @@ import com.flower.flow.R
 import com.flower.flow.app.core.ext.dismissAppLoadingExt
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.showAppLoadingExt
+import com.flower.flow.app.core.widget.loadCallBack.EmptyCallback
+import com.flower.flow.app.core.widget.loadCallBack.ErrorCallback
 import com.flower.flow.databinding.IncludeToolbarBinding
 import com.google.android.material.appbar.MaterialToolbar
 import me.hgj.jetpackmvvm.base.ui.BaseVbActivity
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.core.net.LoadingEntity
 import me.hgj.jetpackmvvm.ext.util.getColorExt
+import me.hgj.jetpackmvvm.widget.loadsir.callback.Callback
 
 
 abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : BaseVbActivity<VM, VB>() {
@@ -64,19 +67,17 @@ abstract class BaseActivity<VM : BaseViewModel, VB : ViewBinding> : BaseVbActivi
         return mToolbar
     }
 
-    /**
-     * 这里我自定义了自己项目的 loading ，仅供参考 ，BaseFragment我暂时没有定义，使用的是框架中的默认loading, 如果要改loading，ac/fm都要修改重写
-     */
     override fun showLoading(setting: LoadingEntity) {
         showAppLoadingExt(setting.coroutineScope)
     }
 
-    /**
-     * 关闭(与showLoading配套使用),BaseFragment我暂时没有定义，使用的是框架中的默认loading , 如果要改loading，ac/fm都要修改重写
-     */
     override fun dismissLoading(setting: LoadingEntity) {
         dismissAppLoadingExt()
     }
+
+    override fun getEmptyStateLayout(): Callback? = EmptyCallback()
+
+    override fun getErrorStateLayout(): Callback? = ErrorCallback()
 
     fun dp(value: Int): Int {
         return (value * resources.displayMetrics.density + 0.5f).toInt()

@@ -67,26 +67,31 @@ abstract class BaseVmActivity<VM : BaseViewModel> : AppCompatActivity(), BaseIVi
         mTitleBarView = getTitleBarView()
         dataBindView = initViewDataBind()
         mTitleBarView?.let {
-            if(showTitle){
+            if (showTitle) {
                 //如果显示标题栏，那么添加到页面的第一个
                 findViewById<LinearLayout>(R.id.baseRootView).addView(it, 0)
             }
         }
         initImmersionBar()
-        findViewById<FrameLayout>(R.id.baseContentView).addView(if (dataBindView == null) LayoutInflater.from(this).inflate(layoutId, null) else dataBindView)
+        findViewById<FrameLayout>(R.id.baseContentView).addView(
+            if (dataBindView == null) LayoutInflater.from(
+                this
+            ).inflate(layoutId, null) else dataBindView
+        )
         uiStatusManger = createLoadService()
     }
 
     override fun createObserver() {
         //一些监听放在这里面存放编写 方便管理
     }
+
     /**
      * 创建 LoadService
      */
     private fun createLoadService(): LoadService<*> {
         val loadView = getLoadingView() ?: findViewById(R.id.baseContentView)
         val target = loadView
-        val status =  if (hasCustomStateLayout()) {
+        val status = if (hasCustomStateLayout()) {
             // 如果有自定义状态页，构建新的 LoadSir
             LoadSir.beginBuilder()
                 .setEmptyCallBack(getEmptyStateLayout() ?: LoadSir.getDefault().emptyCallBack)
@@ -126,7 +131,7 @@ abstract class BaseVmActivity<VM : BaseViewModel> : AppCompatActivity(), BaseIVi
         mTitleBarView?.let {
             if (showTitle) {
                 ImmersionBar.with(this).titleBar(it).statusBarDarkFont(statusDark).init()
-            }else{
+            } else {
                 ImmersionBar.with(this).statusBarDarkFont(statusDark).init()
             }
         }
@@ -158,13 +163,13 @@ abstract class BaseVmActivity<VM : BaseViewModel> : AppCompatActivity(), BaseIVi
                         }
                     }
 
-                    LoadingType.LOADING_NULL -> { }
+                    LoadingType.LOADING_NULL -> {}
                 }
             }
             showError.observe(this@BaseVmActivity) {
                 //如果请求错误 并且loadingType类型为 xml 那么控制界面显示为错误布局
                 if (it.loadingType == LoadingType.LOADING_XML) {
-                    showErrorUi(it.msg)
+                    showErrorUi()
                 }
             }
             showSuccess.observe(this@BaseVmActivity) {
@@ -194,15 +199,11 @@ abstract class BaseVmActivity<VM : BaseViewModel> : AppCompatActivity(), BaseIVi
      * 显示 错误 状态界面
      * @param message String
      */
-    override fun showErrorUi(message: String) {
+    override fun showErrorUi() {
         uiStatusManger.showCallback(
-            (getErrorStateLayout()?.javaClass ?: LoadSir.getDefault().errorCallBack::class.java).apply {
+            (getErrorStateLayout()?.javaClass
+                ?: LoadSir.getDefault().errorCallBack::class.java).apply {
                 uiStatusManger.setCallBack(this) { _, view ->
-                    val messageView = view.findViewById<AppCompatTextView>(R.id.state_error_tip)
-                    messageView?.let {
-                        it.text = message
-                        it.visibleOrGone(message.isNotEmpty())
-                    }
                 }
             }
         )
@@ -211,15 +212,11 @@ abstract class BaseVmActivity<VM : BaseViewModel> : AppCompatActivity(), BaseIVi
     /**
      * 显示 空数据 状态界面
      */
-    override fun showEmptyUi(message: String) {
+    override fun showEmptyUi() {
         uiStatusManger.showCallback(
-            (getEmptyStateLayout()?.javaClass ?: LoadSir.getDefault().emptyCallBack::class.java).apply {
-                uiStatusManger.setCallBack(this) { _, view ->
-                    val messageView = view.findViewById<AppCompatTextView>(R.id.state_empty_tip)
-                    messageView?.let {
-                        it.text = message
-                        it.visibleOrGone(message.isNotEmpty())
-                    }
+            (getEmptyStateLayout()?.javaClass
+                ?: LoadSir.getDefault().emptyCallBack::class.java).apply {
+                uiStatusManger.setCallBack(this) { _, _ ->
                 }
             }
         )
@@ -228,15 +225,11 @@ abstract class BaseVmActivity<VM : BaseViewModel> : AppCompatActivity(), BaseIVi
     /**
      * 显示 loading 状态界面
      */
-    override fun showLoadingUi(message: String) {
+    override fun showLoadingUi() {
         uiStatusManger.showCallback(
-            (getLoadingStateLayout()?.javaClass ?: LoadSir.getDefault().loadingCallBack::class.java).apply {
-                uiStatusManger.setCallBack(this) { _, view ->
-                    val messageView = view.findViewById<AppCompatTextView>(R.id.state_loading_tip)
-                    messageView?.let {
-                        it.text = message
-                        it.visibleOrGone(message.isNotEmpty())
-                    }
+            (getLoadingStateLayout()?.javaClass
+                ?: LoadSir.getDefault().loadingCallBack::class.java).apply {
+                uiStatusManger.setCallBack(this) { _, _ ->
                 }
             }
         )

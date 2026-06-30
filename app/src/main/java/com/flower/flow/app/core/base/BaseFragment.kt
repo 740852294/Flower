@@ -3,9 +3,12 @@ package com.flower.flow.app.core.base
 import androidx.viewbinding.ViewBinding
 import com.flower.flow.app.core.ext.dismissAppLoadingExt
 import com.flower.flow.app.core.ext.showAppLoadingExt
+import com.flower.flow.app.core.widget.loadCallBack.EmptyCallback
+import com.flower.flow.app.core.widget.loadCallBack.ErrorCallback
 import me.hgj.jetpackmvvm.base.ui.BaseVbFragment
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.core.net.LoadingEntity
+import me.hgj.jetpackmvvm.widget.loadsir.callback.Callback
 
 
 abstract class BaseFragment<VM : BaseViewModel, VB : ViewBinding> (): BaseVbFragment<VM, VB>() {
@@ -23,4 +26,8 @@ abstract class BaseFragment<VM : BaseViewModel, VB : ViewBinding> (): BaseVbFrag
     override fun dismissLoading(setting: LoadingEntity) {
         dismissAppLoadingExt()
     }
+
+    override fun getEmptyStateLayout(): Callback? = EmptyCallback()
+
+    override fun getErrorStateLayout(): Callback? = ErrorCallback()
 }

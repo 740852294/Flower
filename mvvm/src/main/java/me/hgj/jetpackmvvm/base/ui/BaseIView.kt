@@ -34,18 +34,18 @@ interface BaseIView {
     /**
      * 展示加载中界面
      */
-    fun showEmptyUi(message: String = getStringExt(R.string.helper_loading_empty_tip))
+    fun showEmptyUi()
 
     /**
      * 展示加载中界面
      */
-    fun showLoadingUi(message: String = getStringExt(R.string.helper_loading_tip))
+    fun showLoadingUi()
 
     /**
      * 展示错误界面
      * @param message String
      */
-    fun showErrorUi(message: String = getStringExt(R.string.helper_loading_error_tip))
+    fun showErrorUi()
 
     /**
      * 界面显示加载成功

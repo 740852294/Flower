@@ -164,5 +164,5 @@ dependencies {
 
 
     //lottie动画
-    implementation(libs.lottie)
+//    implementation(libs.lottie)
 }

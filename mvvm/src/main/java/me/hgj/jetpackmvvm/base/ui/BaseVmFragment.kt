@@ -181,7 +181,7 @@ abstract class BaseVmFragment<VM : BaseViewModel> : Fragment(), BaseIView {
             //当请求失败时
             showError.observe(viewLifecycleOwner) {
                 if (it.loadingType == LoadingType.LOADING_XML) {
-                    showErrorUi(it.msg)
+                    showErrorUi()
                 }
             }
             //如果是 LoadingType.LOADING_XML，当请求成功时 会显示正常的成功布局
@@ -212,16 +212,11 @@ abstract class BaseVmFragment<VM : BaseViewModel> : Fragment(), BaseIView {
      * 显示 错误 状态界面
      * @param message String
      */
-    override fun showErrorUi(message: String) {
+    override fun showErrorUi() {
         uiStatusManger.showCallback(
             (getErrorStateLayout()?.javaClass
                 ?: LoadSir.getDefault().errorCallBack::class.java).apply {
-                uiStatusManger.setCallBack(this) { _, view ->
-                    val messageView = view.findViewById<AppCompatTextView>(R.id.state_error_tip)
-                    messageView?.let {
-                        it.text = message
-                        it.visibleOrGone(message.isNotEmpty())
-                    }
+                uiStatusManger.setCallBack(this) { _, _ ->
                 }
             }
         )
@@ -230,16 +225,11 @@ abstract class BaseVmFragment<VM : BaseViewModel> : Fragment(), BaseIView {
     /**
      * 显示 空数据 状态界面
      */
-    override fun showEmptyUi(message: String) {
+    override fun showEmptyUi() {
         uiStatusManger.showCallback(
             (getEmptyStateLayout()?.javaClass
                 ?: LoadSir.getDefault().emptyCallBack::class.java).apply {
-                uiStatusManger.setCallBack(this) { _, view ->
-                    val messageView = view.findViewById<AppCompatTextView>(R.id.state_empty_tip)
-                    messageView?.let {
-                        it.text = message
-                        it.visibleOrGone(message.isNotEmpty())
-                    }
+                uiStatusManger.setCallBack(this) { _, _ ->
                 }
             }
         )
@@ -248,16 +238,11 @@ abstract class BaseVmFragment<VM : BaseViewModel> : Fragment(), BaseIView {
     /**
      * 显示 loading 状态界面
      */
-    override fun showLoadingUi(message: String) {
+    override fun showLoadingUi() {
         uiStatusManger.showCallback(
             (getLoadingStateLayout()?.javaClass
                 ?: LoadSir.getDefault().loadingCallBack::class.java).apply {
-                uiStatusManger.setCallBack(this) { _, view ->
-                    val messageView = view.findViewById<AppCompatTextView>(R.id.state_loading_tip)
-                    messageView?.let {
-                        it.text = message
-                        it.visibleOrGone(message.isNotEmpty())
-                    }
+                uiStatusManger.setCallBack(this) { _, _ ->
                 }
             }
         )
