@@ -13,13 +13,18 @@ class TagListViewModel : BaseViewModel() {
         onRequest {
             if (refresh) {
                 currentPage = 1
-            }
-            val result = TemplateRepository.getTagTemplateList(tagId, currentPage).await()
-            if (result.hasMore()) {
+            } else {
                 currentPage++
             }
-            result
+            try {
+                TemplateRepository.getTagTemplateList(tagId, currentPage).await()
+            } catch (e: Exception) {
+                if (!refresh) {
+                    currentPage--
+                }
+                throw e
+            }
         }
-        loadingType = LoadingType.LOADING_XML
+        loadingType = if (refresh) LoadingType.LOADING_XML else LoadingType.LOADING_NULL
     }
 }

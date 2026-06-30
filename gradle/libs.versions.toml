@@ -81,6 +81,8 @@ lottie = { module = "com.airbnb.android:lottie" ,version.ref = "lottie" }
 jetpackmvvm = { module = "com.github.hegaojian:JetpackMvvm", version.ref = "jetpackmvvm" }
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 refresh-header-classics = { module = "io.github.scwang90:refresh-header-classics", version.ref = "refreshLayout" }
+refresh-header-material = { module = "io.github.scwang90:refresh-header-material", version.ref = "refreshLayout" }
+refresh-footer-ball = { module = "io.github.scwang90:refresh-footer-ball", version.ref = "refreshLayout" }
 refresh-layout-kernel = { module = "io.github.scwang90:refresh-layout-kernel", version.ref = "refreshLayout" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 reveallayout = { module = "com.github.goweii:RevealLayout", version.ref = "reveallayout" }

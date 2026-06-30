@@ -5,6 +5,7 @@ import com.flower.flow.R
 import com.flower.flow.app.core.widget.loadCallBack.EmptyCallback
 import com.flower.flow.app.core.widget.loadCallBack.ErrorCallback
 import com.flower.flow.app.core.widget.loadCallBack.LoadingCallback
+import com.scwang.smart.refresh.footer.BallPulseFooter
 import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
@@ -28,14 +29,10 @@ class WidgetTask(
 //            layout.setFooterTriggerRate(0.6f)
 //        }
         SmartRefreshLayout.setDefaultRefreshHeaderCreator { context, _ ->
-            //设置 Head
             MaterialHeader(context)
         }
         SmartRefreshLayout.setDefaultRefreshFooterCreator { context, _ ->
-            //设置 Footer
-            ClassicsFooter(context).apply {
-                setAccentColor(getColorExt(R.color.black))
-            }
+            BallPulseFooter(context)
         }
 
         LoadSir.beginBuilder()

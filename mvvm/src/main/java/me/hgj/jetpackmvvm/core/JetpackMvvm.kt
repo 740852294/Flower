@@ -4,7 +4,7 @@ import android.app.Application
 import android.view.Gravity
 import com.hjq.toast.Toaster
 import com.scwang.smart.refresh.footer.ClassicsFooter
-import com.scwang.smart.refresh.header.ClassicsHeader
+import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import com.tencent.mmkv.MMKV
 import me.hgj.jetpackmvvm.R
@@ -44,6 +44,7 @@ object JetpackMvvm {
             XLog.init(value)
             LogUtils.setLog(value)
         }
+
     /**
      * 框架初始化
      * @param application Application 全局上下文
@@ -73,9 +74,7 @@ object JetpackMvvm {
         }
         SmartRefreshLayout.setDefaultRefreshHeaderCreator { context, _ ->
             //设置 Head
-            ClassicsHeader(context).apply {
-                setAccentColor(getColorExt(R.color.helperColorBlack))
-            }
+            MaterialHeader(context)
         }
         SmartRefreshLayout.setDefaultRefreshFooterCreator { context, _ ->
             //设置 Footer

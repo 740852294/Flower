@@ -72,6 +72,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                     mBind.rvList.bindingAdapter,
                     mBind.refreshLayout,
                     this@TagListFragment,
+                    isRefresh = refresh,
                 )
             }
             onError { status ->

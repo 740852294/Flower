@@ -50,10 +50,12 @@ fun <T> loadListSuccess(
     baseListNetEntity: BasePage<T>,
     bindingAdapter: BindingAdapter,
     smartRefreshLayout: SmartRefreshLayout,
-    uiHost: Any? = null
+    uiHost: Any? = null,
+    isRefresh: Boolean? = null,
 ) {
+    val refresh = isRefresh ?: baseListNetEntity.isRefresh()
     //关闭头部刷新
-    if (baseListNetEntity.isRefresh()) {
+    if (refresh) {
         if (baseListNetEntity.getPageData().isEmpty()) {
             // 是第一页并且第一页没有数据，那么可以给页面设置为空布局
             (uiHost as? BaseVmActivity<*>)?.showEmptyUi()
