@@ -9,10 +9,8 @@ import androidx.lifecycle.lifecycleScope
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.ext.dismissAppLoadingExt
-import com.flower.flow.app.core.ext.showAppLoadingExt
 import com.flower.flow.app.core.util.FlowCopyStore
-import com.flower.flow.app.core.util.UserManager
+import com.flower.flow.app.core.util.MainNavigator
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.MainInitResult
@@ -21,12 +19,12 @@ import com.flower.flow.databinding.ActivityMainBinding
 import com.flower.flow.databinding.LayoutMainBottomTabItemBinding
 import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.dialog.CommonMessageDialog
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
@@ -45,8 +43,26 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     private lateinit var tabs: List<TabConfig>
     private var currentTabIndex = -1
+    private var pendingTabIndex: Int? = null
 
     override fun initView(savedInstanceState: Bundle?) {
+        pendingTabIndex = readTargetTab(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        val tabIndex = readTargetTab(intent) ?: return
+        if (::tabs.isInitialized) {
+            switchTab(tabIndex)
+        } else {
+            pendingTabIndex = tabIndex
+        }
+    }
+
+    private fun readTargetTab(intent: Intent): Int? {
+        val tabIndex = intent.getIntExtra(MainNavigator.EXTRA_TARGET_TAB, -1)
+        return tabIndex.takeIf { it >= 0 }
     }
 
     override fun createObserver() {
@@ -127,7 +143,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         mBind.mainViewPager.adapter = MainAdapter(this)
         mBind.mainViewPager.offscreenPageLimit = mBind.mainViewPager.adapter!!.itemCount
         mBind.mainViewPager.isUserInputEnabled = false
-        selectTab(MainAdapter.PAGE_TOPIC)
+        selectTab(pendingTabIndex ?: MainAdapter.PAGE_TOPIC)
+        pendingTabIndex = null
 
         getUserInfo(isFirst = true, isLoading = true)
         startUserInfoPolling()

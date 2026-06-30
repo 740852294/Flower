@@ -20,23 +20,27 @@ import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.loadImageFile
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.util.GenerateSubmitCache
+import com.flower.flow.app.core.util.MainNavigator
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.SubmitPageInfo
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.model.entity.WorkGenerateResult
 import com.flower.flow.data.vm.MaterialUploadViewModel
 import com.flower.flow.databinding.ActivityMaterialUploadBinding
+import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.dialog.CommonMessageDialog
+import com.flower.flow.ui.dialog.GenerateResultDialog
 import com.hjq.permissions.XXPermissions
 import com.hjq.permissions.permission.PermissionLists
-import me.hgj.jetpackmvvm.core.data.obs
-import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
-import me.hgj.jetpackmvvm.ext.util.intent.bundle
-import me.hgj.jetpackmvvm.ext.util.statusPadding
-import me.hgj.jetpackmvvm.ext.util.toast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.intent.bundle
+import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
+import me.hgj.jetpackmvvm.ext.util.statusPadding
+import me.hgj.jetpackmvvm.ext.util.toast
 import java.io.File
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
@@ -375,9 +379,52 @@ class MaterialUploadActivity :
     }
 
     /**
-     * 弹窗
+     * 5s 模拟生成结束后的处理。
      */
     private fun onGenerateSimulationFinished(result: WorkGenerateResult) {
+        mBind.flGenerate.isVisible = false
+
+        if (GenerateResultDialog.Builder.configForState(result.state) == null) {
+            finish()
+            return
+        }
+
+        val builder = GenerateResultDialog.Builder(this)
+            .setResult(result)
+
+        when (result.state) {
+            WorkGenerateResult.STATE_WAITING -> {
+                builder.setOnConfirm { finish() }
+            }
+
+            WorkGenerateResult.STATE_VIP_INTERCEPT -> {
+                builder
+                    .setOnConfirm {
+                        openActivityForResult<VipJoinActivity> {
+                            MainNavigator.openMainTab(this, MainAdapter.PAGE_USER)
+                        }
+                    }
+                    .setCancelButtonText(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+                    .setOnCancel {
+                        MainNavigator.openMainTab(this, MainAdapter.PAGE_TOPIC)
+                    }
+            }
+
+            WorkGenerateResult.STATE_RECHARGE_INTERCEPT -> {
+                builder
+                    .setOnConfirm {
+                        openActivityForResult<IntegralRechargeActivity> {
+                            MainNavigator.openMainTab(this, MainAdapter.PAGE_USER)
+                        }
+                    }
+                    .setCancelButtonText(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+                    .setOnCancel {
+                        MainNavigator.openMainTab(this, MainAdapter.PAGE_TOPIC)
+                    }
+            }
+        }
+
+        builder.show() ?: finish()
     }
 
     private fun hasUploadedPhoto(): Boolean {

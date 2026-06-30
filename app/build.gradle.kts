@@ -129,6 +129,7 @@ dependencies {
     implementation(project(":mvvm"))
 
     implementation(libs.fresco)
+    implementation(libs.fresco.gif)
     implementation(libs.fresco.vito)
     implementation(libs.fresco.vito.view)
     implementation(libs.fresco.vito.options)

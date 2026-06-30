@@ -66,3 +66,7 @@ fun finishAllActivity() {
     }
     activityList.clear()
 }
+
+fun containsActivity(cls: Class<*>): Boolean {
+    return activityList.any { it.javaClass == cls && !it.isFinishing }
+}

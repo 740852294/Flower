@@ -102,6 +102,7 @@ permissions = { module = "com.github.getActivity:XXPermissions", version.ref = "
 spannable = { module = "com.github.liangjingkanji:spannable", version.ref = "spannable" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 fresco = { module = "com.facebook.fresco:fresco", version.ref = "fresco" }
+fresco-gif = { module = "com.facebook.fresco:animated-gif", version.ref = "fresco" }
 fresco-vito = { module = "com.facebook.fresco:vito", version.ref = "fresco" }
 fresco-vito-view = { module = "com.facebook.fresco:vito-view", version.ref = "fresco" }
 fresco-vito-options = { module = "com.facebook.fresco:vito-options", version.ref = "fresco" }
