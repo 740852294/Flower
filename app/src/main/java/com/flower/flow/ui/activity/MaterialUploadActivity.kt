@@ -9,13 +9,12 @@ import android.provider.OpenableColumns
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
-import androidx.lifecycle.lifecycleScope
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.loadImageFile
 import com.flower.flow.app.core.util.FlowCopyStore
-import com.flower.flow.app.core.util.PhotoCompressUtil
+import com.flower.flow.app.core.util.GenerateSubmitCache
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.SubmitPageInfo
 import com.flower.flow.data.model.entity.TemplateItem
@@ -24,7 +23,6 @@ import com.flower.flow.databinding.ActivityMaterialUploadBinding
 import com.flower.flow.ui.dialog.CommonMessageDialog
 import com.hjq.permissions.XXPermissions
 import com.hjq.permissions.permission.PermissionLists
-import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
@@ -92,6 +90,9 @@ class MaterialUploadActivity :
         mBind.llUploadSlotRight.clickNoRepeat {
             pickSlot = UploadSlot.RIGHT
             openSystemGallery()
+        }
+        mBind.btnCreate.clickNoRepeat {
+            startCreateFlow()
         }
     }
 
@@ -176,40 +177,179 @@ class MaterialUploadActivity :
 
     private fun handleSelectedImageUri(uri: Uri?) {
         val cachedFile = uri?.let { saveUriToCache(it) } ?: run {
+            FlowCopyStore.get(FlowCopyKey.PHOTO_UPLOAD_FAIL).toast()
+            return
+        }
+        showUploadPreview(cachedFile, pickSlot)
+    }
+
+    private fun startCreateFlow() {
+        if (!hasUploadedPhoto()) {
+            FlowCopyStore.get(FlowCopyKey.PHOTO_LIMIT_WARN).toast()
             return
         }
 
-        lifecycleScope.launch {
-            val compressedFiles = PhotoCompressUtil.prepareUploadFiles(
-                listOf(cachedFile),
-                cacheDir,
-            )
-            val compressedFile = compressedFiles.firstOrNull() ?: run {
-                FlowCopyStore.get(FlowCopyKey.PHOTO_UPLOAD_FAIL).toast()
-                return@launch
+        val pageInfo = submitPageInfo ?: SubmitPageInfo()
+        val templateId = templateItem?.id ?: return
+        val sourcePaths = collectSourcePaths()
+
+        if (
+            GenerateSubmitCache.isRepeatCheckEnabled(pageInfo) &&
+            GenerateSubmitCache.isDuplicateUpload(templateId, sourcePaths)
+        ) {
+            val dialogTexts = buildRepeatDialogTexts(pageInfo)
+            if (dialogTexts != null) {
+                showRepeatUploadDialog(pageInfo, dialogTexts)
+                return
             }
-            showCompressedPreview(compressedFile, pickSlot)
+        }
+        proceedAfterRepeatCheck(pageInfo)
+    }
+
+    private fun showRepeatUploadDialog(
+        pageInfo: SubmitPageInfo,
+        dialogTexts: Pair<String, String>,
+    ) {
+        CommonMessageDialog.Builder(this)
+            .setTitle(dialogTexts.first)
+            .setContent(dialogTexts.second)
+            .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
+                proceedAfterRepeatCheck(pageInfo)
+            }
+            .show()
+    }
+
+    private fun proceedAfterRepeatCheck(pageInfo: SubmitPageInfo) {
+        if (pageInfo.isGenerateFreeEverydayPopup) {
+            showGenerateFreeEverydayDialog(pageInfo)
+            return
+        }
+        proceedAfterFreeEverydayCheck(pageInfo)
+    }
+
+    private fun showGenerateFreeEverydayDialog(pageInfo: SubmitPageInfo) {
+        val title = pageInfo.generateFreeEverydayPopupTitle
+            .ifBlank { pageInfo.generateFreeEverydayPopupMsg }
+        val content = pageInfo.generateFreeEverydayPopupMsg
+            .ifBlank { pageInfo.generateFreeEverydayPopupTitle }
+        if (title.isBlank()) return
+
+        CommonMessageDialog.Builder(this)
+            .setTitle(title)
+            .setContent(content)
+            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.ROGER_ACTION))
+            .show()
+    }
+
+    private fun proceedAfterFreeEverydayCheck(pageInfo: SubmitPageInfo) {
+        if (pageInfo.isConsumeIntegralPopup) {
+            showConsumeIntegralDialog(pageInfo)
+            return
+        }
+        submitGenerateWork()
+    }
+
+    private fun showConsumeIntegralDialog(pageInfo: SubmitPageInfo) {
+        val title = pageInfo.consumeIntegralPopupTitle
+            .ifBlank { pageInfo.consumeIntegralPopupMsg }
+        val content = pageInfo.consumeIntegralPopupMsg
+            .ifBlank { pageInfo.consumeIntegralPopupTitle }
+        if (title.isBlank()) {
+            submitGenerateWork()
+            return
+        }
+
+        CommonMessageDialog.Builder(this)
+            .setTitle(title)
+            .setContent(content)
+            .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
+                submitGenerateWork()
+            }
+            .show()
+    }
+
+    private fun submitGenerateWork() {
+        val templateId = templateItem?.id ?: return
+        val sourceFiles = collectSourceFiles()
+        if (sourceFiles.isEmpty()) {
+            FlowCopyStore.get(FlowCopyKey.PHOTO_LIMIT_WARN).toast()
+            return
+        }
+
+        val sourcePaths = collectSourcePaths()
+        mViewModel.generateWork(templateId, sourceFiles, cacheDir).obs(this) {
+            onSuccess {
+                GenerateSubmitCache.saveLastSuccess(templateId, sourcePaths)
+            }
+            onError { error ->
+                error.msg.toast()
+            }
         }
     }
 
-    private fun showCompressedPreview(file: File, slot: UploadSlot) {
+    private fun hasUploadedPhoto(): Boolean {
+        return if (isMultiUpload()) {
+            !mViewModel.leftUploadPath.isNullOrBlank() ||
+                !mViewModel.rightUploadPath.isNullOrBlank()
+        } else {
+            !mViewModel.singleUploadPath.isNullOrBlank()
+        }
+    }
+
+    private fun isMultiUpload(): Boolean {
+        return (templateItem?.uploadNum ?: 1) >= 2
+    }
+
+    private fun collectSourcePaths(): List<String> {
+        return if (isMultiUpload()) {
+            listOfNotNull(mViewModel.leftUploadPath, mViewModel.rightUploadPath)
+        } else {
+            listOfNotNull(mViewModel.singleUploadPath)
+        }
+    }
+
+    private fun collectSourceFiles(): List<File> {
+        return if (isMultiUpload()) {
+            listOfNotNull(
+                mViewModel.leftUploadPath?.let(::File),
+                mViewModel.rightUploadPath?.let(::File),
+            )
+        } else {
+            listOfNotNull(mViewModel.singleUploadPath?.let(::File))
+        }
+    }
+
+    private fun buildRepeatDialogTexts(pageInfo: SubmitPageInfo): Pair<String, String>? {
+        val title = pageInfo.repeatPopupTitle
+        val content = pageInfo.repeatPopupMsg
+        if (title.isBlank() && content.isBlank()) return null
+        return when {
+            title.isNotBlank() && content.isNotBlank() -> title to content
+            title.isNotBlank() -> title to title
+            else -> content to content
+        }
+    }
+
+    private fun showUploadPreview(file: File, slot: UploadSlot) {
         when (slot) {
             UploadSlot.SINGLE -> {
-                mViewModel.singleUploadFilePath = file.absolutePath
+                mViewModel.singleUploadPath = file.absolutePath
                 mBind.ivUploadPreview.loadImageFile(file)
                 mBind.ivUploadPreview.isVisible = true
                 mBind.llSingleUploadPlaceholder.isVisible = false
             }
 
             UploadSlot.LEFT -> {
-                mViewModel.leftUploadFilePath = file.absolutePath
+                mViewModel.leftUploadPath = file.absolutePath
                 mBind.ivUploadPreviewLeft.loadImageFile(file)
                 mBind.ivUploadPreviewLeft.isVisible = true
                 mBind.llUploadPlaceholderLeft.isVisible = false
             }
 
             UploadSlot.RIGHT -> {
-                mViewModel.rightUploadFilePath = file.absolutePath
+                mViewModel.rightUploadPath = file.absolutePath
                 mBind.ivUploadPreviewRight.loadImageFile(file)
                 mBind.ivUploadPreviewRight.isVisible = true
                 mBind.llUploadPlaceholderRight.isVisible = false

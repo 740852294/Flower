@@ -61,5 +61,7 @@ object NetUrl {
     object AiArt{
         //页面生成作品信息
         const val UPLOAD_PAGE_INFO = "aiart/getGenerateSubmitPage"
+        //生成作品
+        const val GENERATE_WORK = "aiart/generateV1"
     }
 }

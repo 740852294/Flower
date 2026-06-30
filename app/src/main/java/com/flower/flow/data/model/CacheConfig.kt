@@ -19,6 +19,12 @@ object CacheConfig {
     /** 语言列表 JSON 缓存 */
     var languageListJson by Cache("")
 
+    /** 上次成功提交的模板 id */
+    var lastGenerateTemplateId by Cache(0)
+
+    /** 上次成功提交的压缩前图片路径 JSON 列表 */
+    var lastGenerateSourcePathsJson by Cache("")
+
     fun hasLanguageConfigCache(): Boolean {
         return copyTextsJson.isNotBlank() && languageListJson.isNotBlank()
     }
