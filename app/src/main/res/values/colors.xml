@@ -12,4 +12,6 @@
 
     <!-- 背景色 -->
     <color name="windowBackground">#141414</color>
+
+    <color name="appColor">#FFF77417</color>
 </resources>

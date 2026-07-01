@@ -67,10 +67,10 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
     }
 
     fun addReportBtn() {
-        mToolbar.menu.clear()
-        mToolbar.setContentInsetEndWithActions(0)
+        mBind.toolbar.menu.clear()
+        mBind.toolbar.setContentInsetEndWithActions(0)
 
-        val item = mToolbar.menu.add("report").apply {
+        val item = mBind.toolbar.menu.add("report").apply {
             setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
         }
 

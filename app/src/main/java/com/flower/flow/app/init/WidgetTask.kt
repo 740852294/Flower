@@ -6,16 +6,12 @@ import com.flower.flow.app.core.widget.ProgressOnlyFooter
 import com.flower.flow.app.core.widget.loadCallBack.EmptyCallback
 import com.flower.flow.app.core.widget.loadCallBack.ErrorCallback
 import com.flower.flow.app.core.widget.loadCallBack.LoadingCallback
-import com.scwang.smart.refresh.footer.BallPulseFooter
-import com.scwang.smart.refresh.footer.ClassicsFooter
 import com.scwang.smart.refresh.header.MaterialHeader
 import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import me.hgj.jetpackmvvm.core.init.BaseInitTask
 import me.hgj.jetpackmvvm.ext.util.getColorExt
 import me.hgj.jetpackmvvm.widget.loadsir.callback.SuccessCallback
 import me.hgj.jetpackmvvm.widget.loadsir.core.LoadSir
-import me.hgj.jetpackmvvm.widget.state.BaseEmptyCallback
-import me.hgj.jetpackmvvm.widget.state.BaseErrorCallback
 
 
 class WidgetTask(
@@ -30,11 +26,13 @@ class WidgetTask(
 //            layout.setFooterTriggerRate(0.6f)
 //        }
         SmartRefreshLayout.setDefaultRefreshHeaderCreator { context, _ ->
-            MaterialHeader(context)
+            MaterialHeader(context).apply {
+                setPrimaryColors(getColorExt(R.color.appColor))
+            }
         }
         SmartRefreshLayout.setDefaultRefreshFooterCreator { context, _ ->
             ProgressOnlyFooter(context).apply {
-                setPrimaryColors(getColorExt(R.color.white))
+                setPrimaryColors(getColorExt(R.color.appColor))
             }
         }
 
