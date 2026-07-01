@@ -3,6 +3,7 @@ package com.flower.flow.ui.dialog
 import android.app.Dialog
 import android.os.Bundle
 import android.view.Gravity
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.DrawableRes
 import androidx.core.view.isVisible
@@ -77,8 +78,20 @@ class GenerateResultDialog private constructor(
             height = activity.dpToPx(config.iconHeightDp)
         }
 
-        timeContainer.isVisible = config.showTimeMsg && result.popupTimeMsg.isNotBlank()
-        timeMsg.text = result.popupTimeMsg
+        val timeStr = result.popupTimeMsg
+        timeContainer.isVisible = config.showTimeMsg && timeStr.isNotBlank()
+        //预计时间：1分钟
+        if (timeStr.isNotBlank()) {
+            val parts = timeStr.split("：", ":", limit = 2)
+            if (parts.size == 2) {
+                timeMsg.text = parts[0] + "："
+                time.visibility = View.VISIBLE
+                time.text = parts[1]
+            } else {
+                timeMsg.text = timeStr
+                time.visibility = View.GONE
+            }
+        }
 
         desc.text = result.popupDescMsg
         desc.isVisible = result.popupDescMsg.isNotBlank()
