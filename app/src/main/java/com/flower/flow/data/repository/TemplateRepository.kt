@@ -27,4 +27,11 @@ object TemplateRepository {
         return RxHttp.get(NetUrl.Template.TOPIC_LIST)
             .toAwaitResponse()
     }
+
+    fun getTopicTemplateList(topicId: Int, pageNum: Int): Await<ApiPagerResponse<TemplateItem>> {
+        return RxHttp.get(NetUrl.Template.TOPIC_TEMPLATE_LIST)
+            .add("topicId", topicId)
+            .add("pageNum", pageNum)
+            .toAwaitResponse()
+    }
 }

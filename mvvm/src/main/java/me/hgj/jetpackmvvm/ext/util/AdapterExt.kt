@@ -72,9 +72,11 @@ fun <T> loadListSuccess(
     if (baseListNetEntity.hasMore()) {
         smartRefreshLayout.finishLoadMore()
         smartRefreshLayout.setNoMoreData(false)
+        smartRefreshLayout.setEnableLoadMore(true)
     } else {
         //如果没有更多数据了，设置 smartRefreshLayout 加载完毕 没有更多数据
-        smartRefreshLayout.finishLoadMoreWithNoMoreData()
+        smartRefreshLayout.finishLoadMore()
+        smartRefreshLayout.setEnableLoadMore(false)
     }
 }
 

@@ -2,6 +2,7 @@ package com.flower.flow.app.init
 
 import android.app.Application
 import com.flower.flow.R
+import com.flower.flow.app.core.widget.ProgressOnlyFooter
 import com.flower.flow.app.core.widget.loadCallBack.EmptyCallback
 import com.flower.flow.app.core.widget.loadCallBack.ErrorCallback
 import com.flower.flow.app.core.widget.loadCallBack.LoadingCallback
@@ -32,7 +33,9 @@ class WidgetTask(
             MaterialHeader(context)
         }
         SmartRefreshLayout.setDefaultRefreshFooterCreator { context, _ ->
-            BallPulseFooter(context)
+            ProgressOnlyFooter(context).apply {
+                setPrimaryColors(getColorExt(R.color.white))
+            }
         }
 
         LoadSir.beginBuilder()
