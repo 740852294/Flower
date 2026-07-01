@@ -79,9 +79,9 @@ class GenerateResultDialog private constructor(
         }
 
         val timeStr = result.popupTimeMsg
-        timeContainer.isVisible = config.showTimeMsg && timeStr.isNotBlank()
+        timeContainer.isVisible = config.showTimeMsg && !timeStr.isNullOrBlank()
         //预计时间：1分钟
-        if (timeStr.isNotBlank()) {
+        if (!timeStr.isNullOrBlank()) {
             val parts = timeStr.split("：", ":", limit = 2)
             if (parts.size == 2) {
                 timeMsg.text = parts[0] + "："

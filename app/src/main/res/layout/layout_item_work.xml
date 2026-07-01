@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rootItem"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.flower.flow.app.core.widget.DrawableBlurImageView
+        android:id="@+id/ivCover"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:layout_constraintDimensionRatio="168:237"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@mipmap/ic_pic_loading" />
+
+    <ImageView
+        android:id="@+id/ivSampleSingle"
+        android:layout_width="32dp"
+        android:layout_height="42dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="9dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/llSampleBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="9dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/ivSampleLeft"
+            android:layout_width="32dp"
+            android:layout_height="44dp"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/ivSampleRight"
+            android:layout_width="32dp"
+            android:layout_height="44dp"
+            android:scaleType="centerCrop" />
+
+    </LinearLayout>
+
+    <com.hjq.shape.view.ShapeView
+        android:id="@+id/lockDot"
+        android:layout_width="8dp"
+        android:layout_height="8dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="11dp"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shape_radius="4dp"
+        app:shape_solidColor="#D9001B"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivSelect"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:src="@mipmap/ic_work_item_unselect"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/ivDownload"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginBottom="5dp"
+        android:padding="5dp"
+        android:src="@mipmap/ic_work_download"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/llTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="9dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/ivDownload"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/ivDownload"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@mipmap/ic_work_time" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:includeFontPadding="false"
+            android:textColor="#d9d9d9"
+            android:textSize="12sp"
+            tools:text="00:06" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llProgress"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="28dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone">
+
+        <TextView
+            android:id="@+id/tvDownload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:includeFontPadding="false"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            tools:text="DownLoading..." />
+
+        <ProgressBar
+            android:id="@+id/pbDownload"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginTop="5dp"
+            android:max="100"
+            android:progressDrawable="@drawable/progress_work_download"
+            tools:progress="50" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/llStatus"
+        android:layout_width="0px"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/ivStatus"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:src="@mipmap/ic_work_lock"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvStatus1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="7dp"
+            android:gravity="center"
+            android:paddingHorizontal="20dp"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:visibility="gone"
+            tools:text="Generation failed"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvStatus2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="7dp"
+            android:gravity="center"
+            android:paddingHorizontal="20dp"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="Become a member  to unlock immediately"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/tvGenerating"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:paddingHorizontal="20dp"
+            android:textColor="#FFD9D9D9"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="The estimated time is 20 minutes"
+            tools:visibility="visible" />
+
+        <com.hjq.shape.view.ShapeButton
+            android:id="@+id/btnStatus"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginHorizontal="26dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:visibility="gone"
+            app:shape_radius="25dp"
+            app:shape_solidGradientEndColor="#FFFD662E"
+            app:shape_solidGradientOrientation="leftToRight"
+            app:shape_solidGradientStartColor="#FFFE9233"
+            tools:text="Unlock Now"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

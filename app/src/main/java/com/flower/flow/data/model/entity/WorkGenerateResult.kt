@@ -12,7 +12,7 @@ data class WorkGenerateResult(
     @SerializedName("popupTitle")
     val popupTitle: String = "",
     @SerializedName("popupTimeMsg")
-    val popupTimeMsg: String = "",
+    val popupTimeMsg: String? = "",
     @SerializedName("popupDescMsg")
     val popupDescMsg: String = "",
     @SerializedName("popupButtonMsg")
