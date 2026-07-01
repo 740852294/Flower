@@ -48,6 +48,8 @@ class TopicTemplateListActivity :
 
     val topicImg: String by extraAct(EXTRA_TOPIC_IMG, "")
 
+    private var hasNext = false
+
     override val showTitle: Boolean
         get() = false
 
@@ -100,12 +102,17 @@ class TopicTemplateListActivity :
                 onBind {
                     bindTemplateItem(itemView, getModel())
                 }
+
+                onClick(R.id.rootItem) {
+                    openTopicUseTemplate(modelPosition)
+                }
             }
     }
 
     private fun loadTemplates(refresh: Boolean) {
         mViewModel.loadTemplates(topicId, refresh).obs(this) {
             onSuccess { page ->
+                hasNext = page.hasNext
                 loadListSuccess(
                     page,
                     mBind.rvList.bindingAdapter,
@@ -119,6 +126,21 @@ class TopicTemplateListActivity :
                 status.msg.toast()
             }
         }
+    }
+
+    private fun openTopicUseTemplate(position: Int) {
+        val templateList = mBind.rvList.bindingAdapter.models
+            ?.filterIsInstance<TemplateItem>()
+            ?.toTypedArray()
+            ?: emptyArray()
+        openActivity<TopicUseTemplateActivity>(
+            TopicUseTemplateActivity.EXTRA_TOPIC_ID to topicId,
+            TopicUseTemplateActivity.EXTRA_TOPIC_NAME to topicName,
+            TopicUseTemplateActivity.EXTRA_TEMPLATE_LIST to templateList,
+            TopicUseTemplateActivity.EXTRA_HAS_NEXT to hasNext,
+            TopicUseTemplateActivity.EXTRA_CURRENT_PAGE to mViewModel.currentPage,
+            TopicUseTemplateActivity.EXTRA_POSITION to position,
+        )
     }
 
     private fun updateToolbarBackground(scrollY: Int = mBind.nestedScrollView.scrollY) {

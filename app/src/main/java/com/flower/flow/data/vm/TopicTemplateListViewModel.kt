@@ -7,7 +7,8 @@ import me.hgj.jetpackmvvm.core.net.LoadingType
 
 class TopicTemplateListViewModel : BaseViewModel() {
 
-    private var currentPage = 1
+    var currentPage = 1
+        private set
 
     fun loadTemplates(topicId: Int, refresh: Boolean) = request {
         onRequest {

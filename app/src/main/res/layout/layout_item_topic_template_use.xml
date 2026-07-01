@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivCover"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        tools:src="@mipmap/ic_pic_loading" />
+
+    <com.hjq.shape.layout.ShapeLinearLayout
+        android:id="@+id/llLockBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="7dp"
+        android:paddingVertical="4dp"
+        android:visibility="gone"
+        app:shape_radius="25dp"
+        app:shape_solidColor="#66FFFFFF"
+        app:shape_strokeGradientEndColor="#70FFFFFF"
+        app:shape_strokeGradientOrientation="leftToRight"
+        app:shape_strokeGradientStartColor="#00999999"
+        app:shape_strokeSize="1dp"
+        tools:visibility="visible">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:src="@mipmap/ic_me_money" />
+
+        <TextView
+            android:id="@+id/tvLockIntegral"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:includeFontPadding="false"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            tools:text="20" />
+
+    </com.hjq.shape.layout.ShapeLinearLayout>
+
+    <ImageView
+        android:id="@+id/ivSampleSingle"
+        android:layout_width="52dp"
+        android:layout_height="74dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        tools:src="@mipmap/ic_pic_loading"
+        tools:visibility="visible" />
+
+    <LinearLayout
+        android:id="@+id/llSampleBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginBottom="12dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        tools:visibility="visible">
+
+        <ImageView
+            android:id="@+id/ivSampleLeft"
+            android:layout_width="52dp"
+            android:layout_height="74dp"
+            android:scaleType="centerCrop" />
+
+        <ImageView
+            android:id="@+id/ivSampleRight"
+            android:layout_width="52dp"
+            android:layout_height="74dp"
+            android:scaleType="centerCrop" />
+
+    </LinearLayout>
+</FrameLayout>
