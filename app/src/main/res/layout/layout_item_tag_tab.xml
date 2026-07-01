@@ -12,10 +12,11 @@
         android:layout_width="0px"
         android:layout_height="8dp"
         android:layout_gravity="bottom|center_horizontal"
+        android:layout_marginHorizontal="5dp"
         android:layout_marginBottom="-2dp"
+        android:scaleType="centerCrop"
         android:src="@mipmap/ic_tag_indicator"
         android:visibility="invisible"
-        android:layout_marginHorizontal="5dp"
         app:layout_constraintBottom_toBottomOf="@id/tvName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -33,6 +34,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Vintage dance hall" />
+        tools:text="Vintage" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

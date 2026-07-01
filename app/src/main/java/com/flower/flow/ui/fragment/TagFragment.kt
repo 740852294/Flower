@@ -24,6 +24,7 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
     private var selectedTabPosition = 0
     private lateinit var pagerAdapter: TagPagerAdapter
     private var tagList: List<TagItem> = emptyList()
+    private var isFirstTagLoad = true
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -66,25 +67,12 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
     }
 
     override fun lazyLoadData() {
-        mViewModel.loadTagList().obs(this) {
-            onSuccess { list ->
-                tagList = list
-                mBind.rvTagTab.models = list
-                pagerAdapter.submitTags(list)
-                if (list.isNotEmpty() && selectedTabPosition >= list.size) {
-                    selectedTabPosition = 0
-                    mBind.viewPager.setCurrentItem(0, false)
-                }
-            }
-            onError { error ->
-                error.msg.toast()
-            }
-        }
+        loadTagList(showLoading = true)
     }
 
     override fun createObserver() {
         EventViewModel.languageEvent.observe(this) {
-            // todo 重新获取tag列表
+            loadTagList(showLoading = false)
         }
     }
 
@@ -99,6 +87,29 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
         val recyclerWidth = mBind.rvTagTab.width
         val scrollX = itemView.left - (recyclerWidth - itemView.width) / 2
         mBind.rvTagTab.smoothScrollBy(scrollX, 0)
+    }
+
+    private fun loadTagList(showLoading: Boolean) {
+        mViewModel.loadTagList(showLoading).obs(this) {
+            onSuccess { list ->
+                tagList = list
+                mBind.rvTagTab.models = list
+                pagerAdapter.submitTags(
+                    newTags = list,
+                    recreateFragments = !isFirstTagLoad,
+                )
+                isFirstTagLoad = false
+                if (list.isNotEmpty()) {
+                    val targetPosition = selectedTabPosition.coerceIn(list.indices)
+                    selectedTabPosition = targetPosition
+                    mBind.viewPager.setCurrentItem(targetPosition, false)
+                    mBind.rvTagTab.adapter?.notifyDataSetChanged()
+                }
+            }
+            onError { error ->
+                error.msg.toast()
+            }
+        }
     }
 
     companion object {

@@ -3,14 +3,19 @@ package com.flower.flow.ui.activity
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import com.drake.brv.annotaion.DividerOrientation
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.divider
+import com.drake.brv.utils.dividerSpace
 import com.drake.brv.utils.setup
+import com.drake.brv.utils.staggered
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
@@ -23,7 +28,6 @@ import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TopicTemplateListViewModel
 import com.flower.flow.databinding.ActivityTopicTemplateListBinding
-import com.flower.flow.databinding.LayoutItemTopicTemplateBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
@@ -32,7 +36,6 @@ import me.hgj.jetpackmvvm.ext.util.loadListSuccess
 import me.hgj.jetpackmvvm.ext.util.loadMore
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
-import me.hgj.jetpackmvvm.ext.view.grid
 
 class TopicTemplateListActivity :
     BaseActivity<TopicTemplateListViewModel, ActivityTopicTemplateListBinding>() {
@@ -83,30 +86,19 @@ class TopicTemplateListActivity :
     }
 
     private fun setupList() {
-        mBind.rvList.grid(SPAN_COUNT)
-            .divider(R.drawable.divider_horizontal_16)
-            .divider(R.drawable.divider_vertical_8, DividerOrientation.VERTICAL)
+        mBind.rvList.staggered(SPAN_COUNT)
+            .dividerSpace(dp(4),DividerOrientation.HORIZONTAL)
+            .dividerSpace(dp(8),DividerOrientation.VERTICAL)
             .setup {
-                addType<TemplateItem>(R.layout.layout_item_topic_template)
-
-                onBind {
-                    getBindingOrNull<LayoutItemTopicTemplateBinding>()?.run {
-                        val model = getModel<TemplateItem>()
-                        tvTitle.text = model.name
-                        ivCover.loadImage(
-                            url = model.img,
-                            cornerRadiusDp = 10f,
-                        )
-                        val showCost = model.lockIntegral > 0
-                        val showConfig =
-                            (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(2, 3)
-                        val showLock = showCost && showConfig
-                        llLockBadge.isVisible = showLock
-                        if (showLock) {
-                            tvLockIntegral.text = model.lockIntegral.toString()
-                        }
-                        bindSampleImages(this, model.sampleImgList)
+                addType<TemplateItem> { position ->
+                    if (position == 1) {
+                        R.layout.layout_item_topic_template_min
+                    } else {
+                        R.layout.layout_item_topic_template
                     }
+                }
+                onBind {
+                    bindTemplateItem(itemView, getModel())
                 }
             }
     }
@@ -135,39 +127,55 @@ class TopicTemplateListActivity :
         mBind.llToolbar.setBackgroundColor(ContextCompat.getColor(this, colorRes))
     }
 
-    private fun bindSampleImages(
-        binding: LayoutItemTopicTemplateBinding,
-        samples: List<String>?,
-    ) {
-        binding.ivSampleSingle.isVisible = false
-        binding.llSampleBottom.isVisible = false
+    private fun bindTemplateItem(itemView: View, model: TemplateItem) {
+        itemView.findViewById<TextView>(R.id.tvTitle).text = model.name
+        itemView.findViewById<ImageView>(R.id.ivCover).loadImage(
+            url = model.img,
+            cornerRadiusDp = COVER_CORNER_RADIUS_DP,
+        )
+        val showCost = model.lockIntegral > 0
+        val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(2, 3)
+        val showLock = showCost && showConfig
+        itemView.findViewById<View>(R.id.llLockBadge).isVisible = showLock
+        if (showLock) {
+            itemView.findViewById<TextView>(R.id.tvLockIntegral).text =
+                model.lockIntegral.toString()
+        }
+        bindSampleImages(itemView, model.sampleImgList)
+    }
+
+    private fun bindSampleImages(itemView: View, samples: List<String>?) {
+        val ivSampleSingle = itemView.findViewById<ImageView>(R.id.ivSampleSingle)
+        val llSampleBottom = itemView.findViewById<View>(R.id.llSampleBottom)
+        ivSampleSingle.isVisible = false
+        llSampleBottom.isVisible = false
         when {
             samples.isNullOrEmpty() -> return
             samples.size == 1 -> {
-                binding.ivSampleSingle.isVisible = true
-                binding.ivSampleSingle.loadImage(
+                ivSampleSingle.isVisible = true
+                ivSampleSingle.loadImage(
                     url = samples.first(),
-                    cornerRadiusDp = 4f,
+                    cornerRadiusDp = SAMPLE_CORNER_RADIUS_DP,
                 )
             }
 
             else -> {
-                binding.llSampleBottom.isVisible = true
-                binding.ivSampleLeft.loadImage(
+                llSampleBottom.isVisible = true
+                itemView.findViewById<ImageView>(R.id.ivSampleLeft).loadImage(
                     url = samples[0],
                     cornerRadiiDp = floatArrayOf(
-                        4f,
+                        SAMPLE_CORNER_RADIUS_DP,
                         0f,
                         0f,
-                        4f,
+                        SAMPLE_CORNER_RADIUS_DP,
                     ),
                 )
-                binding.ivSampleRight.loadImage(
+                itemView.findViewById<ImageView>(R.id.ivSampleRight).loadImage(
                     url = samples.getOrNull(1),
                     cornerRadiiDp = floatArrayOf(
                         0f,
-                        4f,
-                        4f,
+                        SAMPLE_CORNER_RADIUS_DP,
+                        SAMPLE_CORNER_RADIUS_DP,
                         0f,
                     ),
                 )
@@ -206,6 +214,8 @@ class TopicTemplateListActivity :
 
     companion object {
         private const val SPAN_COUNT = 2
+        private const val COVER_CORNER_RADIUS_DP = 10f
+        private const val SAMPLE_CORNER_RADIUS_DP = 4f
 
         const val EXTRA_TOPIC_ID = "topic_id"
         const val EXTRA_TOPIC_NAME = "topic_name"

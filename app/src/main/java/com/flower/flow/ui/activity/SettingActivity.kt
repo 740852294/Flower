@@ -26,10 +26,6 @@ import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
 
 class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>() {
-
-    override val title: String
-        get() = FlowCopyStore.get(FlowCopyKey.SETTINGS_ENTRY)
-
     private var passwordPlain: String = ""
     private var isShowPassword = false
 
@@ -171,6 +167,7 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
     }
 
     private fun setText() {
+        mToolbar.title = FlowCopyStore.get(FlowCopyKey.SETTINGS_ENTRY)
         mBind.tvShare.text = FlowCopyStore.get(FlowCopyKey.SHARE_ACTION)
         mBind.tvFeedback.text = FlowCopyStore.get(FlowCopyKey.FEEDBACK_ENTRY)
         mBind.tvNotify.text = FlowCopyStore.get(FlowCopyKey.SYSTEM_NOTICE)

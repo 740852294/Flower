@@ -10,8 +10,12 @@ class TagPagerAdapter(
 ) : FragmentStateAdapter(fragment) {
 
     private var tags: List<TagItem> = emptyList()
+    private var generation = 0
 
-    fun submitTags(newTags: List<TagItem>) {
+    fun submitTags(newTags: List<TagItem>, recreateFragments: Boolean = false) {
+        if (recreateFragments) {
+            generation++
+        }
         tags = newTags
         notifyDataSetChanged()
     }
@@ -22,9 +26,17 @@ class TagPagerAdapter(
         return TagListFragment.newInstance(tags[position].id)
     }
 
-    override fun getItemId(position: Int): Long = tags[position].id.toLong()
+    override fun getItemId(position: Int): Long {
+        return tags[position].id.toLong() + generation * GENERATION_ID_OFFSET
+    }
 
     override fun containsItem(itemId: Long): Boolean {
-        return tags.any { it.id.toLong() == itemId }
+        return tags.any { tag ->
+            tag.id.toLong() + generation * GENERATION_ID_OFFSET == itemId
+        }
+    }
+
+    companion object {
+        private const val GENERATION_ID_OFFSET = 1_000_000L
     }
 }

@@ -7,10 +7,10 @@ import me.hgj.jetpackmvvm.core.net.LoadingType
 
 class TagViewModel : BaseViewModel() {
 
-    fun loadTagList() = request {
+    fun loadTagList(isLoading: Boolean) = request {
         onRequest {
             TemplateRepository.getTagList().await()
         }
-        loadingType = LoadingType.LOADING_DIALOG
+        loadingType = if (isLoading) LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL
     }
 }

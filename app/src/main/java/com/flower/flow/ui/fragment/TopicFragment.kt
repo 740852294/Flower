@@ -112,6 +112,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     override fun createObserver() {
         EventViewModel.languageEvent.observe(this) {
             setText()
+            loadTopicList(showPageLoading = true)
         }
 
         UserManager.observeUser().observe(viewLifecycleOwner) { user ->
