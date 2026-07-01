@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="4dp"
     android:layout_marginBottom="8dp"
-    android:background="@drawable/bg_tag_template_item"
+    android:background="@drawable/bg_tag_template_item1"
     android:paddingHorizontal="8dp"
     android:paddingTop="8dp"
     android:paddingBottom="16dp">

@@ -4,19 +4,33 @@ import android.os.Build
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
+import android.view.View
 import android.widget.FrameLayout
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.drake.brv.utils.models
+import com.drake.brv.utils.setup
+import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
+import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.widget.ActionButton
+import com.flower.flow.app.core.widget.CoverFlowScrollListener
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TopicUseTemplateViewModel
 import com.flower.flow.databinding.ActivityTopicUseTemplateBinding
+import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.statusPadding
+import me.hgj.jetpackmvvm.ext.view.horizontal
 
 class TopicUseTemplateActivity :
     BaseActivity<TopicUseTemplateViewModel, ActivityTopicUseTemplateBinding>() {
@@ -34,7 +48,72 @@ class TopicUseTemplateActivity :
     val templateList: List<TemplateItem> by lazy { readTemplateList() }
 
     val currentTemplate: TemplateItem?
-        get() = templateList.getOrNull(position)
+        get() = templateList.getOrNull(selectedPosition)
+
+    private var selectedPosition = 0
+    private var previewPosition = RecyclerView.NO_POSITION
+    private var itemWidth = 0
+    private var itemOverlap = 0
+
+    private val snapHelper = object : PagerSnapHelper() {
+        override fun calculateDistanceToFinalSnap(
+            layoutManager: RecyclerView.LayoutManager,
+            targetView: View,
+        ): IntArray {
+            val childCenter = targetView.left + targetView.width / 2
+            val containerCenter = (layoutManager.paddingLeft +
+                layoutManager.width - layoutManager.paddingRight) / 2
+            return intArrayOf(childCenter - containerCenter, 0)
+        }
+
+        override fun findSnapView(layoutManager: RecyclerView.LayoutManager): View? {
+            if (layoutManager.childCount == 0) return null
+
+            val containerCenter = (layoutManager.paddingLeft +
+                layoutManager.width - layoutManager.paddingRight) / 2
+            var closestView: View? = null
+            var closestDistance = Int.MAX_VALUE
+            for (index in 0 until layoutManager.childCount) {
+                val child = layoutManager.getChildAt(index) ?: continue
+                val childCenter = child.left + child.width / 2
+                val distance = kotlin.math.abs(childCenter - containerCenter)
+                if (distance < closestDistance) {
+                    closestDistance = distance
+                    closestView = child
+                }
+            }
+            return closestView
+        }
+
+        override fun findTargetSnapPosition(
+            layoutManager: RecyclerView.LayoutManager,
+            velocityX: Int,
+            velocityY: Int,
+        ): Int {
+            if (layoutManager.itemCount == 0) return RecyclerView.NO_POSITION
+
+            val direction = when {
+                velocityX > 0 -> 1
+                velocityX < 0 -> -1
+                else -> 0
+            }
+            return (selectedPosition + direction)
+                .coerceIn(0, layoutManager.itemCount - 1)
+        }
+    }
+    private val coverFlowListener = CoverFlowScrollListener()
+
+    private val scrollListener = object : RecyclerView.OnScrollListener() {
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            updatePreviewPosition(recyclerView)
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                updateSelectedPosition(recyclerView)
+            }
+        }
+    }
 
     override val showTitle: Boolean
         get() = false
@@ -48,6 +127,13 @@ class TopicUseTemplateActivity :
         if (isShowBtn) {
             addReportBtn()
         }
+        selectedPosition = if (templateList.isEmpty()) {
+            0
+        } else {
+            position.coerceIn(templateList.indices)
+        }
+        mBind.btnUse.text = FlowCopyStore.get(FlowCopyKey.TEMPLATE_ACTION)
+        setupTemplateCarousel()
     }
 
     private fun readTemplateList(): List<TemplateItem> {
@@ -59,12 +145,147 @@ class TopicUseTemplateActivity :
         }?.filterIsInstance<TemplateItem>() ?: emptyList()
     }
 
-    override fun onBindViewClick() {
+    private fun setupTemplateCarousel() {
+        val rv = mBind.rvTemplate
+        rv.clipChildren = false
+        rv.setHasFixedSize(true)
+        CoverFlowScrollListener.setupDrawingOrder(rv)
+        snapHelper.attachToRecyclerView(rv)
+        rv.addOnScrollListener(coverFlowListener)
+        rv.addOnScrollListener(scrollListener)
+        rv.horizontal()
+            .setup {
+                addType<TemplateItem>(R.layout.layout_item_topic_template_use)
+                onBind {
+                    if (itemWidth > 0) {
+                        val isLast = modelPosition == templateList.lastIndex
+                        itemView.layoutParams = RecyclerView.LayoutParams(
+                            itemWidth,
+                            RecyclerView.LayoutParams.MATCH_PARENT,
+                        ).apply {
+                            marginEnd = if (isLast) 0 else -itemOverlap
+                        }
+                    }
+                    bindTemplateUseItem(itemView, getModel())
+                    coverFlowListener.applyTransform(rv)
+                }
+            }
 
+        mBind.llRv.post {
+            val containerHeight = mBind.llRv.height
+            val containerWidth = mBind.llRv.width
+            if (containerHeight <= 0 || containerWidth <= 0 || templateList.isEmpty()) {
+                return@post
+            }
+            itemWidth = (containerHeight * ASPECT_WIDTH / ASPECT_HEIGHT).toInt()
+            itemOverlap = (itemWidth * ITEM_OVERLAP_RATIO).toInt()
+            coverFlowListener.itemStep = (itemWidth - itemOverlap).toFloat()
+            val sidePadding = (containerWidth - itemWidth).coerceAtLeast(0) / 2
+            rv.setPadding(sidePadding, 0, sidePadding, 0)
+            rv.models = templateList
+            previewPosition = selectedPosition
+            updateTemplateName(templateList.getOrNull(selectedPosition))
+            (rv.layoutManager as? LinearLayoutManager)
+                ?.scrollToPositionWithOffset(selectedPosition, 0)
+            coverFlowListener.applyTransform(rv)
+        }
+    }
+
+    private fun updatePreviewPosition(recyclerView: RecyclerView) {
+        val layoutManager = recyclerView.layoutManager ?: return
+        val centerView = snapHelper.findSnapView(layoutManager) ?: return
+        val position = layoutManager.getPosition(centerView)
+        if (position == RecyclerView.NO_POSITION || position == previewPosition) return
+
+        previewPosition = position
+        updateTemplateName(templateList.getOrNull(position))
+    }
+
+    private fun updateSelectedPosition(recyclerView: RecyclerView) {
+        val layoutManager = recyclerView.layoutManager ?: return
+        val snapView = snapHelper.findSnapView(layoutManager) ?: return
+        val newPosition = layoutManager.getPosition(snapView)
+        if (newPosition == RecyclerView.NO_POSITION) return
+        selectedPosition = newPosition
+        previewPosition = newPosition
+        updateTemplateName(templateList.getOrNull(newPosition))
+    }
+
+    private fun updateTemplateName(item: TemplateItem?) {
+        mBind.tvName.text = item?.name.orEmpty()
+    }
+
+    private fun bindTemplateUseItem(itemView: View, model: TemplateItem) {
+        itemView.findViewById<ImageView>(R.id.ivCover).loadImage(
+            url = model.img,
+            cornerRadiusDp = COVER_CORNER_RADIUS_DP,
+        )
+        val showCost = model.lockIntegral > 0
+        val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(2, 3)
+        val showLock = showCost && showConfig
+        itemView.findViewById<View>(R.id.llLockBadge).isVisible = showLock
+        if (showLock) {
+            itemView.findViewById<TextView>(R.id.tvLockIntegral).text =
+                model.lockIntegral.toString()
+        }
+        bindSampleImages(itemView, model.sampleImgList)
+    }
+
+    private fun bindSampleImages(itemView: View, samples: List<String>?) {
+        val ivSampleSingle = itemView.findViewById<ImageView>(R.id.ivSampleSingle)
+        val llSampleBottom = itemView.findViewById<View>(R.id.llSampleBottom)
+        ivSampleSingle.isVisible = false
+        llSampleBottom.isVisible = false
+        when {
+            samples.isNullOrEmpty() -> return
+            samples.size == 1 -> {
+                ivSampleSingle.isVisible = true
+                ivSampleSingle.loadImage(
+                    url = samples.first(),
+                    cornerRadiusDp = SAMPLE_CORNER_RADIUS_DP,
+                )
+            }
+
+            else -> {
+                llSampleBottom.isVisible = true
+                itemView.findViewById<ImageView>(R.id.ivSampleLeft).loadImage(
+                    url = samples[0],
+                    cornerRadiiDp = floatArrayOf(
+                        SAMPLE_CORNER_RADIUS_DP,
+                        0f,
+                        0f,
+                        SAMPLE_CORNER_RADIUS_DP,
+                    ),
+                )
+                itemView.findViewById<ImageView>(R.id.ivSampleRight).loadImage(
+                    url = samples.getOrNull(1),
+                    cornerRadiiDp = floatArrayOf(
+                        0f,
+                        SAMPLE_CORNER_RADIUS_DP,
+                        SAMPLE_CORNER_RADIUS_DP,
+                        0f,
+                    ),
+                )
+            }
+        }
+    }
+
+    override fun onBindViewClick() {
+        mBind.btnUse.clickNoRepeat {
+            currentTemplate?.let {
+                openActivity<MaterialUploadActivity>("TagTemple" to it)
+            }
+        }
     }
 
     override fun createObserver() {
 
+    }
+
+    override fun onDestroy() {
+        mBind.rvTemplate.removeOnScrollListener(coverFlowListener)
+        mBind.rvTemplate.removeOnScrollListener(scrollListener)
+        super.onDestroy()
     }
 
     fun addReportBtn() {
@@ -97,6 +318,12 @@ class TopicUseTemplateActivity :
     }
 
     companion object {
+        private const val ASPECT_WIDTH = 247f
+        private const val ASPECT_HEIGHT = 358f
+        private const val ITEM_OVERLAP_RATIO = 0.84f
+        private const val COVER_CORNER_RADIUS_DP = 15f
+        private const val SAMPLE_CORNER_RADIUS_DP = 5f
+
         const val EXTRA_TOPIC_ID = "topic_id"
         const val EXTRA_TOPIC_NAME = "topic_name"
         const val EXTRA_TEMPLATE_LIST = "template_list"

@@ -22,6 +22,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
         android:paddingHorizontal="16dp"
         android:paddingTop="30dp">
 
@@ -30,7 +32,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.55" />
+            app:layout_constraintGuide_percent="0.60" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/line1"
@@ -72,13 +74,28 @@
             tools:text="Use template" />
 
         <FrameLayout
+            android:id="@+id/llRv"
             android:layout_width="match_parent"
             android:layout_height="0px"
+            android:layout_marginHorizontal="15dp"
+            android:clipChildren="false"
+            android:clipToPadding="false"
             app:layout_constraintBottom_toTopOf="@id/line2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvTemplate"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipChildren="false"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                tools:itemCount="3"
+                tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_item_topic_template_use"
+                tools:orientation="horizontal" />
 
         </FrameLayout>
 
