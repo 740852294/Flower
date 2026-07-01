@@ -1,6 +1,7 @@
 package com.flower.flow.app.event
 
 import com.flower.flow.data.model.entity.LanguageItem
+import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.model.entity.UserInfo
 import com.kunminx.architecture.domain.message.MutableResult
 
@@ -22,4 +23,14 @@ object EventViewModel {
 
     /** 首页数据刷新 */
     val homeDataRefreshEvent = MutableResult<Boolean>()
+
+    /** 专题模板列表分页同步 */
+    val topicTemplateListSyncEvent = MutableResult<TopicTemplateListSyncEvent>()
 }
+
+data class TopicTemplateListSyncEvent(
+    val topicId: Int,
+    val appendedTemplates: List<TemplateItem>,
+    val currentPage: Int,
+    val hasNext: Boolean,
+)

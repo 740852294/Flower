@@ -12,6 +12,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.models
 import com.drake.brv.utils.setup
 import com.flower.flow.R
@@ -22,14 +23,18 @@ import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.app.core.widget.CoverFlowScrollListener
+import com.flower.flow.app.event.EventViewModel
+import com.flower.flow.app.event.TopicTemplateListSyncEvent
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TopicUseTemplateViewModel
 import com.flower.flow.databinding.ActivityTopicUseTemplateBinding
+import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.statusPadding
+import me.hgj.jetpackmvvm.ext.util.toast
 import me.hgj.jetpackmvvm.ext.view.horizontal
 
 class TopicUseTemplateActivity :
@@ -45,7 +50,7 @@ class TopicUseTemplateActivity :
 
     val position: Int by extraAct(EXTRA_POSITION, 0)
 
-    val templateList: List<TemplateItem> by lazy { readTemplateList() }
+    val templateList: ArrayList<TemplateItem> by lazy { ArrayList(readTemplateList()) }
 
     val currentTemplate: TemplateItem?
         get() = templateList.getOrNull(selectedPosition)
@@ -54,6 +59,9 @@ class TopicUseTemplateActivity :
     private var previewPosition = RecyclerView.NO_POSITION
     private var itemWidth = 0
     private var itemOverlap = 0
+    private var canLoadMore = false
+    private var isLoadingMore = false
+    private val appendedTemplates = arrayListOf<TemplateItem>()
 
     private val snapHelper = object : PagerSnapHelper() {
         override fun calculateDistanceToFinalSnap(
@@ -132,6 +140,8 @@ class TopicUseTemplateActivity :
         } else {
             position.coerceIn(templateList.indices)
         }
+        canLoadMore = hasNext
+        mViewModel.initializeCurrentPage(currentPage)
         mBind.btnUse.text = FlowCopyStore.get(FlowCopyKey.TEMPLATE_ACTION)
         setupTemplateCarousel()
     }
@@ -188,6 +198,7 @@ class TopicUseTemplateActivity :
             (rv.layoutManager as? LinearLayoutManager)
                 ?.scrollToPositionWithOffset(selectedPosition, 0)
             coverFlowListener.applyTransform(rv)
+            loadMoreIfNeeded(selectedPosition)
         }
     }
 
@@ -195,10 +206,13 @@ class TopicUseTemplateActivity :
         val layoutManager = recyclerView.layoutManager ?: return
         val centerView = snapHelper.findSnapView(layoutManager) ?: return
         val position = layoutManager.getPosition(centerView)
-        if (position == RecyclerView.NO_POSITION || position == previewPosition) return
+        if (position == RecyclerView.NO_POSITION) return
 
-        previewPosition = position
-        updateTemplateName(templateList.getOrNull(position))
+        if (position != previewPosition) {
+            previewPosition = position
+            updateTemplateName(templateList.getOrNull(position))
+        }
+        loadMoreIfNeeded(position)
     }
 
     private fun updateSelectedPosition(recyclerView: RecyclerView) {
@@ -209,6 +223,45 @@ class TopicUseTemplateActivity :
         selectedPosition = newPosition
         previewPosition = newPosition
         updateTemplateName(templateList.getOrNull(newPosition))
+        loadMoreIfNeeded(newPosition)
+    }
+
+    private fun loadMoreIfNeeded(position: Int) {
+        val preloadPosition = (templateList.lastIndex - 1).coerceAtLeast(0)
+        if (!canLoadMore || isLoadingMore || position < preloadPosition) return
+
+        isLoadingMore = true
+        mViewModel.loadNextPage(topicId).obs(this) {
+            onSuccess { page ->
+                isLoadingMore = false
+                canLoadMore = page.hasNext
+
+                val knownIds = templateList.mapTo(mutableSetOf()) { it.id }
+                val newItems = page.datas.filter { knownIds.add(it.id) }
+                if (newItems.isNotEmpty()) {
+                    val previousLastIndex = templateList.lastIndex
+                    mBind.rvTemplate.bindingAdapter.addModels(newItems)
+                    if (previousLastIndex >= 0) {
+                        mBind.rvTemplate.bindingAdapter.notifyItemChanged(previousLastIndex)
+                    }
+                    appendedTemplates.addAll(newItems)
+                }
+                syncTopicTemplateList()
+            }
+            onError { error ->
+                isLoadingMore = false
+                error.msg.toast()
+            }
+        }
+    }
+
+    private fun syncTopicTemplateList() {
+        EventViewModel.topicTemplateListSyncEvent.value = TopicTemplateListSyncEvent(
+            topicId = topicId,
+            appendedTemplates = appendedTemplates.toList(),
+            currentPage = mViewModel.currentPage,
+            hasNext = canLoadMore,
+        )
     }
 
     private fun updateTemplateName(item: TemplateItem?) {

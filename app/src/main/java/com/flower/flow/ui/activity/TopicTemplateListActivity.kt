@@ -24,6 +24,8 @@ import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.loadImageFitWidth
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.widget.ActionButton
+import com.flower.flow.app.event.EventViewModel
+import com.flower.flow.app.event.TopicTemplateListSyncEvent
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TopicTemplateListViewModel
@@ -87,6 +89,12 @@ class TopicTemplateListActivity :
         }
     }
 
+    override fun createObserver() {
+        EventViewModel.topicTemplateListSyncEvent.observe(this) { event ->
+            syncTemplates(event)
+        }
+    }
+
     private fun setupList() {
         mBind.rvList.staggered(SPAN_COUNT)
             .dividerSpace(dp(4),DividerOrientation.HORIZONTAL)
@@ -141,6 +149,22 @@ class TopicTemplateListActivity :
             TopicUseTemplateActivity.EXTRA_CURRENT_PAGE to mViewModel.currentPage,
             TopicUseTemplateActivity.EXTRA_POSITION to position,
         )
+    }
+
+    private fun syncTemplates(event: TopicTemplateListSyncEvent) {
+        if (event.topicId != topicId) return
+
+        val existingIds = mBind.rvList.bindingAdapter.models
+            ?.filterIsInstance<TemplateItem>()
+            ?.mapTo(mutableSetOf()) { it.id }
+            ?: mutableSetOf()
+        val newItems = event.appendedTemplates.filter { existingIds.add(it.id) }
+        mBind.rvList.bindingAdapter.addModels(newItems)
+
+        hasNext = event.hasNext
+        mViewModel.updateCurrentPage(event.currentPage)
+        mBind.refreshLayout.setNoMoreData(!hasNext)
+        mBind.refreshLayout.setEnableLoadMore(hasNext)
     }
 
     private fun updateToolbarBackground(scrollY: Int = mBind.nestedScrollView.scrollY) {

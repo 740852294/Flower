@@ -10,6 +10,10 @@ class TopicTemplateListViewModel : BaseViewModel() {
     var currentPage = 1
         private set
 
+    fun updateCurrentPage(page: Int) {
+        currentPage = maxOf(currentPage, page.coerceAtLeast(1))
+    }
+
     fun loadTemplates(topicId: Int, refresh: Boolean) = request {
         onRequest {
             if (refresh) {
