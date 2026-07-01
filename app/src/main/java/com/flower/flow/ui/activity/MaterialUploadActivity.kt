@@ -553,7 +553,7 @@ class MaterialUploadActivity :
     }
 
     private fun bindLockBadge(model: TemplateItem) {
-        val showCost = model.lockIntegral > 0 && model.lockType != 0
+        val showCost = model.lockIntegral > 0
         mBind.llCost.isVisible = showCost
         if (showCost) {
             mBind.tvLockIntegral.text = model.lockIntegral.toString()

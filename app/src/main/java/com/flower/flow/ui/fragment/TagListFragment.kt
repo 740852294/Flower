@@ -86,7 +86,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         binding: LayoutItemTagTemplateBinding,
         model: TemplateItem,
     ) {
-        val showCost = model.lockIntegral > 0 && model.lockType != 0
+        val showCost = model.lockIntegral > 0
         val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(3, 4)
         val showLock = showCost && showConfig
         binding.llLockBadge.isVisible = showLock

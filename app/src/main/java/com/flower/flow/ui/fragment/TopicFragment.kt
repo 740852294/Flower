@@ -17,6 +17,7 @@ import com.flower.flow.databinding.FragmentTopicBinding
 import com.flower.flow.databinding.LayoutItemTopicLeftBinding
 import com.flower.flow.databinding.LayoutItemTopicRightBinding
 import com.flower.flow.ui.activity.IntegralRechargeActivity
+import com.flower.flow.ui.activity.TopicTemplateListActivity
 import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.binder.bindTopicItem
 import me.hgj.jetpackmvvm.core.data.obs
@@ -82,6 +83,12 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
                 onClick(R.id.rootItem) {
                     val model = getModel<TopicItem>()
+                    openActivity<TopicTemplateListActivity>(
+                        TopicTemplateListActivity.EXTRA_TOPIC_ID to model.id,
+                        TopicTemplateListActivity.EXTRA_TOPIC_NAME to model.name,
+                        TopicTemplateListActivity.EXTRA_TOPIC_DESCRIPTION to model.description,
+                        TopicTemplateListActivity.EXTRA_TOPIC_IMG to model.img,
+                    )
                 }
             }
     }

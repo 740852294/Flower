@@ -100,7 +100,7 @@
                 android:paddingVertical="4dp"
                 android:visibility="gone"
                 app:shape_radius="25dp"
-                app:shape_solidColor="#0FFFFFFF"
+                app:shape_solidColor="#66FFFFFF"
                 app:shape_strokeGradientEndColor="#70FFFFFF"
                 app:shape_strokeGradientOrientation="leftToRight"
                 app:shape_strokeGradientStartColor="#00999999"

@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.flower.flow.app.App
 import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.model.entity.TopicItem
 import com.flower.flow.databinding.LayoutItemTopicLeftBinding
 import com.flower.flow.databinding.LayoutItemTopicRightBinding
@@ -88,7 +89,7 @@ internal fun bindTopicItem(refs: TopicItemViewRefs, model: TopicItem) {
             cornerRadiusDp = 10f,
             borderWidthDp = 1f,
         )
-        val showCost = model1.lockIntegral > 0 && model1.lockType != 0
+        val showCost = model1.lockIntegral > 0
         val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(1, 3)
         refs.llLockBadge.isVisible = showCost && showConfig
         refs.tvLockIntegral.text = model1.lockIntegral.toString()
@@ -124,9 +125,9 @@ internal fun bindTopicItem(refs: TopicItemViewRefs, model: TopicItem) {
 
 private fun bindOptionalCover(
     imageView: ImageView,
-    template: com.flower.flow.data.model.entity.TemplateItem?,
+    template: TemplateItem?,
     cornerRadiusDp: Float,
-    borderColor: Int = Color.TRANSPARENT,
+    borderColor: Int = Color.WHITE,
     isAutoPlay: Boolean = true,
 ) {
     if (template != null) {

@@ -9,6 +9,7 @@ import android.net.Uri
 import android.os.Build
 import android.view.View
 import android.view.ViewOutlineProvider
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
@@ -16,7 +17,9 @@ import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.fresco.vito.options.ImageOptions
 import com.facebook.fresco.vito.options.RoundingOptions
 import com.facebook.fresco.vito.source.ImageSourceProvider
+import com.facebook.fresco.vito.listener.BaseImageListener
 import com.facebook.fresco.vito.view.VitoView
+import com.facebook.imagepipeline.image.ImageInfo
 import com.flower.flow.R
 import me.hgj.jetpackmvvm.ext.util.dp2px
 import java.io.File
@@ -67,6 +70,82 @@ fun ImageView.loadImage(
         imageOptionsBuilder.build(),
         this,
     )
+}
+
+/**
+ * 宽度占满父布局，高度按图片比例自适应。
+ *
+ * Fresco Vito 不会触发 ImageView 的 adjustViewBounds，需要在图片加载完成后手动计算高度。
+ */
+fun ImageView.loadImageFitWidth(
+    url: String?,
+    @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
+    isAutoPlay: Boolean = true,
+) {
+    if (url.isNullOrBlank()) {
+        clearImage()
+        return
+    }
+
+    clearRoundStyle()
+    scaleType = ImageView.ScaleType.FIT_CENTER
+
+    val imageOptions = ImageOptions.create()
+        .scale(ScalingUtils.ScaleType.FIT_CENTER)
+        .apply {
+            placeholderRes(placeholderRes, ScalingUtils.ScaleType.FIT_CENTER)
+            autoPlay(isAutoPlay)
+            autoStop(isAutoPlay)
+        }
+        .build()
+
+    val imageListener = object : BaseImageListener() {
+        override fun onFinalImageSet(
+            id: Long,
+            imageOrigin: Int,
+            imageInfo: ImageInfo?,
+            drawable: android.graphics.drawable.Drawable?,
+        ) {
+            val imageWidth = imageInfo?.width ?: return
+            val imageHeight = imageInfo?.height ?: return
+            if (imageWidth <= 0 || imageHeight <= 0) return
+            updateHeightByAspectRatio(imageWidth, imageHeight)
+        }
+    }
+
+    VitoView.show(
+        ImageSourceProvider.forUri(url),
+        imageOptions,
+        null,
+        imageListener,
+        this,
+    )
+}
+
+private fun ImageView.updateHeightByAspectRatio(imageWidth: Int, imageHeight: Int) {
+    fun applyHeight() {
+        val viewWidth = measuredWidth - paddingLeft - paddingRight
+        if (viewWidth <= 0) return
+        val targetHeight = (viewWidth.toFloat() * imageHeight / imageWidth).toInt() +
+            paddingTop + paddingBottom
+        if (layoutParams.height != targetHeight) {
+            layoutParams = layoutParams.apply { height = targetHeight }
+            requestLayout()
+        }
+    }
+
+    if (measuredWidth > 0) {
+        applyHeight()
+        return
+    }
+
+    viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            if (measuredWidth <= 0) return
+            viewTreeObserver.removeOnGlobalLayoutListener(this)
+            applyHeight()
+        }
+    })
 }
 
 private data class RoundStyle(

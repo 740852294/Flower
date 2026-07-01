@@ -104,6 +104,7 @@ androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", ve
 fresco = { module = "com.facebook.fresco:fresco", version.ref = "fresco" }
 fresco-gif = { module = "com.facebook.fresco:animated-gif", version.ref = "fresco" }
 fresco-vito = { module = "com.facebook.fresco:vito", version.ref = "fresco" }
+fresco-vito-core = { module = "com.facebook.fresco:vito-core", version.ref = "fresco" }
 fresco-vito-view = { module = "com.facebook.fresco:vito-view", version.ref = "fresco" }
 fresco-vito-options = { module = "com.facebook.fresco:vito-options", version.ref = "fresco" }
 fresco-vito-source = { module = "com.facebook.fresco:vito-source", version.ref = "fresco" }
