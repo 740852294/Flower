@@ -326,7 +326,10 @@ class TopicUseTemplateActivity :
     override fun onBindViewClick() {
         mBind.btnUse.clickNoRepeat {
             currentTemplate?.let {
-                openActivity<MaterialUploadActivity>("TagTemple" to it)
+                openActivity<MaterialUploadActivity>(
+                    MaterialUploadActivity.EXTRA_TEMPLATE_ITEM to it,
+                    MaterialUploadActivity.EXTRA_SOURCE to MaterialUploadActivity.SOURCE_TOPIC,
+                )
             }
         }
     }

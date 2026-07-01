@@ -22,7 +22,10 @@ import me.hgj.jetpackmvvm.ext.util.statusPadding
 
 class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplateBinding>() {
 
-    val templateItem: TemplateItem? by bundle<TemplateItem>(null, "TagTemple")
+    val templateItem: TemplateItem? by bundle<TemplateItem>(
+        null,
+        MaterialUploadActivity.EXTRA_TEMPLATE_ITEM,
+    )
 
     override val showTitle: Boolean
         get() = false
@@ -57,7 +60,10 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
     override fun onBindViewClick() {
         mBind.btnUse.clickNoRepeat {
             templateItem?.let {
-                openActivity<MaterialUploadActivity>("TagTemple" to it)
+                openActivity<MaterialUploadActivity>(
+                    MaterialUploadActivity.EXTRA_TEMPLATE_ITEM to it,
+                    MaterialUploadActivity.EXTRA_SOURCE to MaterialUploadActivity.SOURCE_TAG,
+                )
             }
         }
     }

@@ -12,6 +12,7 @@ import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TagListViewModel
 import com.flower.flow.databinding.FragmentTagListBinding
 import com.flower.flow.databinding.LayoutItemTagTemplateBinding
+import com.flower.flow.ui.activity.MaterialUploadActivity
 import com.flower.flow.ui.activity.TagUseTemplateActivity
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
@@ -55,7 +56,9 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                 }
 
                 onClick(R.id.rootItem) {
-                    openActivity<TagUseTemplateActivity>("TagTemple" to getModel<TemplateItem>())
+                    openActivity<TagUseTemplateActivity>(
+                        MaterialUploadActivity.EXTRA_TEMPLATE_ITEM to getModel<TemplateItem>(),
+                    )
                 }
             }
     }

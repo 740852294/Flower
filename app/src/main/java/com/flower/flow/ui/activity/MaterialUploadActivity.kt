@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
+import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
@@ -46,11 +47,14 @@ import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 import androidx.core.net.toUri
 import com.flower.flow.app.event.EventViewModel
+import me.hgj.jetpackmvvm.ext.util.finishActivityByClass
 
 class MaterialUploadActivity :
     BaseActivity<MaterialUploadViewModel, ActivityMaterialUploadBinding>() {
 
-    val templateItem: TemplateItem? by bundle<TemplateItem>(null, "TagTemple")
+    val templateItem: TemplateItem? by bundle<TemplateItem>(null, EXTRA_TEMPLATE_ITEM)
+
+    val source: Int by extraAct(EXTRA_SOURCE, SOURCE_UNKNOWN)
 
     private var submitPageInfo: SubmitPageInfo? = null
     private var pickSlot = UploadSlot.SINGLE
@@ -399,7 +403,14 @@ class MaterialUploadActivity :
 
         when (result.state) {
             WorkGenerateResult.STATE_WAITING -> {
-                builder.setOnConfirm { finish() }
+                builder.setOnConfirm {
+                    finish()
+                    if (source == SOURCE_TOPIC){
+                        finishActivityByClass(TopicUseTemplateActivity::class.java)
+                    }else if (source == SOURCE_TAG){
+                        finishActivityByClass(TagUseTemplateActivity::class.java)
+                    }
+                }
             }
 
             WorkGenerateResult.STATE_VIP_INTERCEPT -> {
@@ -575,6 +586,12 @@ class MaterialUploadActivity :
     }
 
     companion object {
+        const val EXTRA_TEMPLATE_ITEM = "TagTemple"
+        const val EXTRA_SOURCE = "source"
+        const val SOURCE_UNKNOWN = 0
+        const val SOURCE_TAG = 1
+        const val SOURCE_TOPIC = 2
+
         private const val COVER_CORNER_RADIUS_DP = 15f
         private const val GENERATE_DURATION_MS = 5_000L
         private const val GENERATE_PHASE_ONE_MS = 2_000L
