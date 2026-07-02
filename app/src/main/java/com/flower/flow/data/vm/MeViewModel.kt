@@ -11,14 +11,14 @@ class MeViewModel : BaseViewModel() {
 
     private var workListPage = 1
 
-    fun initData() = request {
+    fun initData(isLoading: Boolean) = request {
         onRequest {
             val info = UserRepository.getUserInfoLivedata().await()
             UserManager.saveUser(info)
             workListPage = 1
             AiArtRepository.getWorkTaskList(workListPage).await()
         }
-        loadingType = LoadingType.LOADING_DIALOG
+        loadingType = if (isLoading) LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL
     }
 
     fun loadWorkList(refresh: Boolean) = request {

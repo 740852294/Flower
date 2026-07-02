@@ -11,7 +11,7 @@
         android:id="@+id/bgView"
         android:layout_width="match_parent"
         android:layout_height="136dp"
-        android:background="@drawable/bg_topic_card_left_layer"
+        android:background="@mipmap/bg_topic_card_left"
         app:layout_constraintBottom_toBottomOf="parent" />
 
     <FrameLayout

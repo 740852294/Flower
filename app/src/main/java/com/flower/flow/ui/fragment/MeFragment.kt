@@ -33,7 +33,6 @@ import com.flower.flow.ui.activity.MainActivity
 import com.flower.flow.ui.activity.SettingActivity
 import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.adapter.MainAdapter
-import com.scwang.smart.refresh.layout.SmartRefreshLayout
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.dp2px
@@ -85,12 +84,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
 
         mBind.refreshLayout.refresh {
-            mViewModel.initData().obs(viewLifecycleOwner) {
+            mViewModel.initData(false).obs(viewLifecycleOwner) {
                 onSuccess { page ->
                     bindWorkList(
                         page,
                         mBind.rvList.bindingAdapter,
-                        mBind.refreshLayout,
                         isRefresh = true
                     )
                 }
@@ -101,18 +99,17 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
             }
         }
 
-        mBind.refreshLayout.loadMore {
+        mBind.workLoadMoreLayout.loadMore {
             mViewModel.loadWorkList(false).obs(viewLifecycleOwner) {
                 onSuccess { page ->
                     bindWorkList(
                         page,
                         mBind.rvList.bindingAdapter,
-                        mBind.refreshLayout,
                         isRefresh = false
                     )
                 }
                 onError { status ->
-                    loadListError(status, mBind.refreshLayout)
+                    loadListError(status, mBind.workLoadMoreLayout)
                     status.msg.toast()
                 }
             }
@@ -268,12 +265,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun lazyLoadData() {
-        mViewModel.initData().obs(viewLifecycleOwner) {
+        mViewModel.initData(true).obs(viewLifecycleOwner) {
             onSuccess { page ->
                 bindWorkList(
                     page,
                     mBind.rvList.bindingAdapter,
-                    mBind.refreshLayout,
                     isRefresh = true
                 )
             }
@@ -287,23 +283,22 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private fun bindWorkList(
         baseListNetEntity: BasePage<WorkItem>,
         bindingAdapter: BindingAdapter,
-        smartRefreshLayout: SmartRefreshLayout,
         isRefresh: Boolean? = null,
     ) {
         val refresh = isRefresh ?: baseListNetEntity.isRefresh()
         if (refresh) {
             bindingAdapter.models = baseListNetEntity.getPageData()
-            smartRefreshLayout.finishRefresh()
+            mBind.refreshLayout.finishRefresh()
         } else {
             bindingAdapter.addModels(baseListNetEntity.getPageData())
         }
         if (baseListNetEntity.hasMore()) {
-            smartRefreshLayout.finishLoadMore()
-            smartRefreshLayout.setNoMoreData(false)
-            smartRefreshLayout.setEnableLoadMore(true)
+            mBind.workLoadMoreLayout.finishLoadMore()
+            mBind.workLoadMoreLayout.setNoMoreData(false)
+            mBind.workLoadMoreLayout.setEnableLoadMore(true)
         } else {
-            smartRefreshLayout.finishLoadMore()
-            smartRefreshLayout.setEnableLoadMore(false)
+            mBind.workLoadMoreLayout.finishLoadMore()
+            mBind.workLoadMoreLayout.setEnableLoadMore(false)
         }
 
         mBind.rlWorkAdd.isVisible =
