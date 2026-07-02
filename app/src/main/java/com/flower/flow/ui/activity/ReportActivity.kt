@@ -15,6 +15,7 @@ import com.flower.flow.databinding.ActivityReportBinding
 import com.flower.flow.databinding.LayoutItemFeedbackTypeBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.toast
 import me.hgj.jetpackmvvm.ext.view.vertical
 import java.util.Locale
@@ -45,8 +46,10 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
                 }
 
                 onClick(R.id.llItem) {
-                    reportTypePosition = modelPosition
-                    notifyDataSetChanged()
+                    doDebouncedClick {
+                        reportTypePosition = modelPosition
+                        notifyDataSetChanged()
+                    }
                 }
             }
     }

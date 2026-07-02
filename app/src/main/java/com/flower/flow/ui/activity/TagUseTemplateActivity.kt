@@ -82,7 +82,7 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
 
         val reportButton = ActionButton(this).apply {
             text = FlowCopyStore.get(FlowCopyKey.REPORT_ACTION)
-            setOnClickListener {
+            clickNoRepeat {
                 openActivity<ReportActivity>()
             }
         }

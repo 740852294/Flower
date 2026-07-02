@@ -20,6 +20,7 @@ import com.flower.flow.databinding.ActivityFeedbackBinding
 import com.flower.flow.databinding.LayoutItemFeedbackTypeBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
 import me.hgj.jetpackmvvm.ext.view.vertical
@@ -60,8 +61,10 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
                 }
 
                 onClick(R.id.llItem) {
-                    feedbackTypePosition = modelPosition
-                    notifyDataSetChanged()
+                    doDebouncedClick {
+                        feedbackTypePosition = modelPosition
+                        notifyDataSetChanged()
+                    }
                 }
             }
     }
@@ -108,7 +111,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
 
         val reportButton = ActionButton(this).apply {
             text = FlowCopyStore.get(FlowCopyKey.REPORT_ACTION)
-            setOnClickListener {
+            clickNoRepeat {
                 openActivity<ReportActivity>()
             }
         }

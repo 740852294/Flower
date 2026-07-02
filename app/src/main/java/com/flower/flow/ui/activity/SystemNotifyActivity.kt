@@ -16,6 +16,7 @@ import com.flower.flow.data.vm.SystemNotifyViewModel
 import com.flower.flow.databinding.ActivitySystemNotifyBinding
 import com.flower.flow.databinding.LayoutItemSystemNotifyBinding
 import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
 import me.hgj.jetpackmvvm.ext.util.refresh
 import me.hgj.jetpackmvvm.ext.util.toast
@@ -49,8 +50,10 @@ class SystemNotifyActivity :
                 }
 
                 onClick(R.id.btnReply) {
-                    openActivityForResult<FeedbackActivity> {
-                        loadNotifyList(showLoading = true)
+                    doDebouncedClick {
+                        openActivityForResult<FeedbackActivity> {
+                            loadNotifyList(showLoading = true)
+                        }
                     }
                 }
             }

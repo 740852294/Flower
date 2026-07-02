@@ -19,6 +19,7 @@ import com.flower.flow.data.vm.PrivacyViewModel
 import com.flower.flow.databinding.ActivityPrivacyBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.finishAllActivity
 import me.hgj.jetpackmvvm.ext.util.getColorExt
 import me.hgj.jetpackmvvm.ext.util.intent.finish
@@ -111,7 +112,9 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
         builder.setSpan(
             object : ClickableSpan() {
                 override fun onClick(widget: View) {
-                    openPolicyPage(route.requestType)
+                    doDebouncedClick {
+                        openPolicyPage(route.requestType)
+                    }
                 }
 
                 override fun updateDrawState(ds: TextPaint) {

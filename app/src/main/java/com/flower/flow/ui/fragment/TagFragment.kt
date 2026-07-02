@@ -15,6 +15,7 @@ import com.flower.flow.databinding.FragmentTagBinding
 import com.flower.flow.databinding.LayoutItemTagTabBinding
 import com.flower.flow.ui.adapter.TagPagerAdapter
 import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
 import me.hgj.jetpackmvvm.ext.view.horizontal
@@ -58,9 +59,11 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
                 }
 
                 onClick(R.id.llTabItem) {
-                    val position = modelPosition
-                    if (position != selectedTabPosition) {
-                        mBind.viewPager.setCurrentItem(position, true)
+                    doDebouncedClick {
+                        val position = modelPosition
+                        if (position != selectedTabPosition) {
+                            mBind.viewPager.setCurrentItem(position, true)
+                        }
                     }
                 }
             }

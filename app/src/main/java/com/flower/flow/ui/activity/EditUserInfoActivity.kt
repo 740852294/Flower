@@ -74,7 +74,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
         saveButton = ActionButton(this).apply {
             text = FlowCopyStore.get(FlowCopyKey.SAVE_ACTION)
             isEnabled = false
-            setOnClickListener {
+            clickNoRepeat {
                 saveUserInfo()
             }
         }

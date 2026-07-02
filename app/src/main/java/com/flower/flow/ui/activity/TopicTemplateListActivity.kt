@@ -32,6 +32,8 @@ import com.flower.flow.data.vm.TopicTemplateListViewModel
 import com.flower.flow.databinding.ActivityTopicTemplateListBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.intent.extraAct
+import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.loadListError
 import me.hgj.jetpackmvvm.ext.util.loadListSuccess
@@ -112,7 +114,9 @@ class TopicTemplateListActivity :
                 }
 
                 onClick(R.id.rootItem) {
-                    openTopicUseTemplate(modelPosition)
+                    doDebouncedClick {
+                        openTopicUseTemplate(modelPosition)
+                    }
                 }
             }
     }
@@ -239,7 +243,7 @@ class TopicTemplateListActivity :
 
         val reportButton = ActionButton(this).apply {
             text = FlowCopyStore.get(FlowCopyKey.REPORT_ACTION)
-            setOnClickListener {
+            clickNoRepeat {
                 openActivity<ReportActivity>()
             }
         }

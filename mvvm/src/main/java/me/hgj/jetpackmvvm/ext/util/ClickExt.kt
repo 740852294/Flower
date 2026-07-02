@@ -70,6 +70,21 @@ fun View.clickNoRepeat(interval: Long = 500, action: (view: View) -> Unit) {
 }
 
 /**
+ * 防止重复点击公共方法，适用于 BRV item click、ClickableSpan 等非 View 场景
+ * 与 clickNoRepeat 共用同一 lastClickTime，默认 0.5 秒内不可重复触发
+ * @param interval 时间间隔 默认0.5秒
+ * @param action 执行方法
+ */
+fun doDebouncedClick(interval: Long = 500, action: () -> Unit) {
+    val currentTime = System.currentTimeMillis()
+    if (lastClickTime != 0L && (currentTime - lastClickTime < interval)) {
+        return
+    }
+    lastClickTime = currentTime
+    action.invoke()
+}
+
+/**
  * 设置点击事件
  * @param views 需要设置点击事件的view
  * @param onClick 点击触发的方法

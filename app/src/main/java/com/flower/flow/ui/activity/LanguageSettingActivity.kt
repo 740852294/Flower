@@ -22,6 +22,8 @@ import com.flower.flow.data.vm.LanguageSettingViewModel
 import com.flower.flow.databinding.ActivityLanguageSettingBinding
 import com.flower.flow.databinding.LayoutItemLanguageBinding
 import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.toast
 
 class LanguageSettingActivity :
@@ -56,9 +58,11 @@ class LanguageSettingActivity :
                 }
 
                 onClick(R.id.llItem) {
-                    selectedPosition = modelPosition
-                    notifyDataSetChanged()
-                    updateSaveButtonState()
+                    doDebouncedClick {
+                        selectedPosition = modelPosition
+                        notifyDataSetChanged()
+                        updateSaveButtonState()
+                    }
                 }
             }
     }
@@ -88,7 +92,7 @@ class LanguageSettingActivity :
         saveButton = ActionButton(this).apply {
             text = FlowCopyStore.get(FlowCopyKey.SAVE_ACTION)
             isEnabled = false
-            setOnClickListener {
+            clickNoRepeat {
                 applySelectedLanguage()
             }
         }
