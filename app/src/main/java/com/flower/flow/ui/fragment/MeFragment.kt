@@ -20,6 +20,7 @@ import com.flower.flow.app.core.ext.loadAvatarFile
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.util.UserManager
+import com.flower.flow.app.core.util.WorkDownloadStorage
 import com.flower.flow.app.core.widget.CenterImageSpan
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.FlowCopyKey
@@ -36,8 +37,13 @@ import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.activity.WorkPreviewActivity
 import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.dialog.CommonMessageDialog
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
@@ -51,6 +57,8 @@ import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
 import me.hgj.jetpackmvvm.ext.view.grid
 import me.hgj.jetpackmvvm.util.BasePage
+import rxhttp.toDownloadFlow
+import rxhttp.wrapper.param.RxHttp
 import kotlin.time.Duration.Companion.milliseconds
 
 class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
@@ -58,6 +66,12 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private var isSelectionMode = false
     private val selectedTaskIds = mutableSetOf<String>()
     private var workListPollingStarted = false
+    private val downloadStates = mutableMapOf<String, DownloadUiState>()
+    private val downloadJobs = mutableMapOf<String, Job>()
+
+    private data class DownloadUiState(
+        val progress: Int?,
+    )
 
     companion object {
         const val SPAN_COUNT = 2
@@ -74,6 +88,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         const val WORK_STATUS_FAIL = 4
 
         private const val PAYLOAD_SELECTION = "payload_selection"
+
+        private const val PAYLOAD_DOWNLOAD = "payload_download"
 
         private const val WORK_LIST_POLL_INTERVAL = 2 * 60 * 1000L
 
@@ -221,13 +237,19 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                 tvGenerating.visibility = View.GONE
                             }
                         }
+
+                        bindDownloadState(this, model)
                     }
                 }
 
                 onPayload { payloads ->
-                    if (PAYLOAD_SELECTION in payloads) {
-                        getBindingOrNull<LayoutItemWorkBinding>()?.run {
+                    getBindingOrNull<LayoutItemWorkBinding>()?.run {
+                        val model = getModel<WorkItem>()
+                        if (PAYLOAD_SELECTION in payloads) {
                             bindSelectionState(this, getModel())
+                        }
+                        if (PAYLOAD_DOWNLOAD in payloads) {
+                            bindDownloadState(this, model)
                         }
                     }
                 }
@@ -242,12 +264,13 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                             }
                             notifyItemChanged(modelPosition, PAYLOAD_SELECTION)
                             updateDeleteButtonText()
-                        } else {
-                            if (model.state == WORK_STATUS_COMPLETE) {
-                                openActivity<WorkPreviewActivity>(
-                                    WorkPreviewActivity.EXTRA_WORK_ITEM to model
-                                )
-                            }
+                        } else if (
+                            model.state == WORK_STATUS_COMPLETE &&
+                            model.taskId !in downloadStates
+                        ) {
+                            openActivity<WorkPreviewActivity>(
+                                WorkPreviewActivity.EXTRA_WORK_ITEM to model
+                            )
                         }
                     }
                 }
@@ -415,6 +438,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         EventViewModel.workDataRefreshEvent.observe(this) {
             loadData(false)
         }
+
+        EventViewModel.workDownloadEvent.observe(viewLifecycleOwner) { workItem ->
+            startWorkDownload(workItem)
+        }
     }
 
     private fun setUserInfo(user: UserInfo) {
@@ -492,11 +519,116 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         binding: LayoutItemWorkBinding,
         model: WorkItem,
     ) {
-        //只有完成的状态才可以加载下载进入
-        if (model.state == WORK_STATUS_FAIL) {
-            binding.llProgress.visibility = View.VISIBLE
+        val downloadState = downloadStates[model.taskId]
+        binding.llProgress.isVisible = downloadState != null
+        if (downloadState != null) {
             binding.tvDownload.text = model.downloadingMsg.orEmpty()
+            binding.pbDownload.isIndeterminate = downloadState.progress == null
+            downloadState.progress?.let { binding.pbDownload.progress = it }
+            binding.ivDownload.visibility = View.GONE
+        } else {
+            binding.pbDownload.isIndeterminate = false
             binding.pbDownload.progress = 0
+            if (model.state == WORK_STATUS_COMPLETE) {
+                binding.ivDownload.visibility = View.VISIBLE
+            }
+        }
+    }
+
+    private fun startWorkDownload(workItem: WorkItem) {
+        val taskId = workItem.taskId
+        if (
+            taskId.isBlank() ||
+            workItem.outputUrl.isBlank() ||
+            downloadJobs[taskId]?.isActive == true
+        ) {
+            return
+        }
+
+        downloadStates[taskId] = DownloadUiState(progress = 0)
+        notifyDownloadStateChanged(taskId)
+
+        val appContext = requireContext().applicationContext
+        downloadJobs[taskId] = viewLifecycleOwner.lifecycleScope.launch {
+            var destination: WorkDownloadStorage.Destination? = null
+            var downloadCompleted = false
+            try {
+                destination = withContext(Dispatchers.IO) {
+                    WorkDownloadStorage.createDestination(appContext, workItem)
+                }
+                val uri = destination.uri
+                val tempFile = destination.tempFile
+                when {
+                    uri != null -> {
+                        RxHttp.get(workItem.outputUrl)
+                            .toDownloadFlow(appContext, uri)
+                            .onProgress { progress ->
+                                updateDownloadProgress(
+                                    taskId,
+                                    progress.progress.takeIf { progress.totalSize > 0 },
+                                )
+                            }
+                            .collect { }
+                    }
+
+                    tempFile != null -> {
+                        RxHttp.get(workItem.outputUrl)
+                            .toDownloadFlow(tempFile.absolutePath)
+                            .onProgress { progress ->
+                                updateDownloadProgress(
+                                    taskId,
+                                    progress.progress.takeIf { progress.totalSize > 0 },
+                                )
+                            }
+                            .collect { }
+                    }
+                }
+                withContext(Dispatchers.IO) {
+                    WorkDownloadStorage.complete(appContext, destination)
+                }
+                downloadCompleted = true
+            } catch (_: CancellationException) {
+            } catch (_: Throwable) {
+            } finally {
+                if (!downloadCompleted) {
+                    withContext(NonCancellable + Dispatchers.IO) {
+                        WorkDownloadStorage.cleanup(appContext, destination)
+                    }
+                }
+                downloadStates.remove(taskId)
+                downloadJobs.remove(taskId)
+                if (view != null) {
+                    notifyDownloadStateChanged(taskId)
+                }
+            }
+
+            if (downloadCompleted) {
+                recordWorkDownloaded(taskId)
+            }
+        }
+    }
+
+    private fun updateDownloadProgress(taskId: String, progress: Int?) {
+        if (downloadStates[taskId]?.progress == progress) return
+        downloadStates[taskId] = DownloadUiState(progress)
+        notifyDownloadStateChanged(taskId)
+    }
+
+    private fun notifyDownloadStateChanged(taskId: String) {
+        val adapter = mBind.rvList.bindingAdapter
+        val position = adapter.models?.indexOfFirst {
+            (it as? WorkItem)?.taskId == taskId
+        } ?: -1
+        if (position >= 0) {
+            adapter.notifyItemChanged(position, PAYLOAD_DOWNLOAD)
+        }
+    }
+
+    private fun recordWorkDownloaded(taskId: String) {
+        mViewModel.recordWorkDownloaded(taskId).obs(viewLifecycleOwner) {
+            onError { status ->
+                status.msg.toast()
+            }
         }
     }
 

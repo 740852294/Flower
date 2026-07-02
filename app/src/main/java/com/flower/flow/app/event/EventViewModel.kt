@@ -3,6 +3,7 @@ package com.flower.flow.app.event
 import com.flower.flow.data.model.entity.LanguageItem
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.model.entity.UserInfo
+import com.flower.flow.data.model.entity.WorkItem
 import com.kunminx.architecture.domain.message.MutableResult
 
 /**
@@ -29,6 +30,9 @@ object EventViewModel {
 
     /** 作品数据刷新 */
     val workDataRefreshEvent = MutableResult<Boolean>()
+
+    /** 下载作品 */
+    val workDownloadEvent = MutableResult<WorkItem>()
 }
 
 data class TopicTemplateListSyncEvent(

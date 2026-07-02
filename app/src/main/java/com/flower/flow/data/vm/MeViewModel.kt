@@ -46,4 +46,11 @@ class MeViewModel : BaseViewModel() {
         }
         loadingType = LoadingType.LOADING_DIALOG
     }
+
+    fun recordWorkDownloaded(taskId: String) = request {
+        onRequest {
+            AiArtRepository.recordWorkDownloaded(taskId).await()
+        }
+        loadingType = LoadingType.LOADING_DIALOG
+    }
 }

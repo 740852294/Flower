@@ -27,6 +27,12 @@ object AiArtRepository {
         return request.toAwaitResponse()
     }
 
+    fun generateWorkAgain(taskId: String): Await<WorkGenerateResult> {
+        val request = RxHttp.postForm(NetUrl.AiArt.GENERATE_WORK_AGAIN)
+            .add("taskId", taskId)
+        return request.toAwaitResponse()
+    }
+
     fun getWorkTaskList(pageNum: Int): Await<ApiPagerResponse<WorkItem>> {
         return RxHttp.get(NetUrl.AiArt.WORK_LIST)
             .add("pageNum", pageNum)
@@ -34,8 +40,14 @@ object AiArtRepository {
     }
 
     fun deleteWorkTasks(taskIds: List<String>): Await<Any> {
-        return RxHttp.postJson(NetUrl.AiArt.WORK_DELETE)
+        return RxHttp.postForm(NetUrl.AiArt.WORK_DELETE)
             .add("taskIdArr", taskIds)
+            .toAwaitResponse()
+    }
+
+    fun recordWorkDownloaded(taskId: String): Await<Any> {
+        return RxHttp.postForm(NetUrl.AiArt.WORK_DOWNLOAD)
+            .add("taskId", taskId)
             .toAwaitResponse()
     }
 }

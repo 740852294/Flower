@@ -1,5 +1,6 @@
 package com.flower.flow.ui.activity
 
+import android.os.Build
 import android.os.Bundle
 import android.view.ViewTreeObserver
 import androidx.core.view.isVisible
@@ -11,10 +12,13 @@ import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.applyCornerRadius
 import com.flower.flow.app.core.ext.loadImageFitWidth
 import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.WorkItem
 import com.flower.flow.databinding.ActivityWorkPreviewBinding
 import com.flower.flow.ui.dialog.CommonMessageDialog
+import com.hjq.permissions.XXPermissions
+import com.hjq.permissions.permission.PermissionLists
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
@@ -25,6 +29,8 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
     private val workItem: WorkItem by bundle(WorkItem(), EXTRA_WORK_ITEM)
 
     private var player: ExoPlayer? = null
+    private var pendingDownloadFromSettings = false
+    private var downloadDispatched = false
 
     override val title: String
         get() = ""
@@ -59,11 +65,20 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
                 .setTitle(FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION))
                 .setContent(workItem.saveLocalPopupMsg.orEmpty())
                 .setConfirmButton(FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION)) {
-                    workItem.saveLocalDownloadingMsg?.toast()
-                    //开始下载
+                    requestWorkDownload()
                 }
                 .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION)) {}
                 .show()
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!pendingDownloadFromSettings) return
+
+        pendingDownloadFromSettings = false
+        if (hasLegacyStoragePermission()) {
+            dispatchWorkDownload()
         }
     }
 
@@ -159,6 +174,53 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         mBind.previewVideo.player = null
         player?.release()
         player = null
+    }
+
+    private fun requestWorkDownload() {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P || hasLegacyStoragePermission()) {
+            dispatchWorkDownload()
+            return
+        }
+
+        val storagePermission = PermissionLists.getWriteExternalStoragePermission()
+        XXPermissions.with(this)
+            .permission(storagePermission)
+            .request { _, deniedList ->
+                when {
+                    deniedList.isEmpty() -> dispatchWorkDownload()
+                    XXPermissions.isDoNotAskAgainPermissions(this, deniedList) -> {
+                        showStoragePermanentDenyDialog()
+                    }
+                }
+            }
+    }
+
+    private fun showStoragePermanentDenyDialog() {
+        CommonMessageDialog.Builder(this)
+            .setTitle(FlowCopyStore.get(FlowCopyKey.PERM_STORE_HEAD))
+            .setContent(FlowCopyStore.get(FlowCopyKey.STORAGE_DESC))
+            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
+                pendingDownloadFromSettings = true
+                XXPermissions.startPermissionActivity(this)
+            }
+            .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+            .show()
+    }
+
+    private fun hasLegacyStoragePermission(): Boolean {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) return true
+        return XXPermissions.isGrantedPermission(
+            this,
+            PermissionLists.getWriteExternalStoragePermission(),
+        )
+    }
+
+    private fun dispatchWorkDownload() {
+        if (downloadDispatched) return
+        downloadDispatched = true
+        workItem.saveLocalDownloadingMsg?.toast()
+        EventViewModel.workDownloadEvent.postValue(workItem)
+        finish()
     }
 
     private fun isVideoOutput(url: String): Boolean {
