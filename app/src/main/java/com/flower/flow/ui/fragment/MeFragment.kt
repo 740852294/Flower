@@ -113,7 +113,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.scrollContent.statusPadding()
 
         App.globalConfig?.apply {
-            mBind.llMoney.isVisible = (integralAndVipEntranceShow == 1)
+            mBind.llMoney.isVisible = (exaltabrade == 1)
         }
 
         setText()
@@ -314,7 +314,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
     override fun onBindViewClick() {
         mBind.llMoney.clickNoRepeat {
-            val integral = App.globalConfig?.integralEntranceJumpState ?: 0
+            val integral = App.globalConfig?.framepublic ?: 0
             val isVip = UserManager.user?.isVip ?: false
             if (!isVip && integral == 1) {
                 openActivity<VipJoinActivity>()
@@ -493,7 +493,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private fun setUserInfo(user: UserInfo) {
         val isVip = user.isVip
         mBind.clVip.isVisible =
-            (!isVip) && ((App.globalConfig?.integralAndVipEntranceShow ?: 0) == 1)
+            (!isVip) && ((App.globalConfig?.exaltabrade ?: 0) == 1)
         mBind.ivVipLabel.isVisible = isVip
 
         val avatar = user.avatar

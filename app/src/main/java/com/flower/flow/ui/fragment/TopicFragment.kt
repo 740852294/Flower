@@ -54,7 +54,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
         mBind.llContent.statusPadding()
 
         App.globalConfig?.apply {
-            mBind.llMoney.isVisible = (integralAndVipEntranceShow == 1)
+            mBind.llMoney.isVisible = (exaltabrade == 1)
         }
 
         UserManager.user?.apply {
@@ -151,7 +151,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
     override fun onBindViewClick() {
         mBind.llMoney.clickNoRepeat {
-            val jump = App.globalConfig?.integralEntranceJumpState ?: 0
+            val jump = App.globalConfig?.framepublic ?: 0
             val isVip = UserManager.user?.isVip ?: false
             if (!isVip && jump == 1) {
                 openActivity<VipJoinActivity>()

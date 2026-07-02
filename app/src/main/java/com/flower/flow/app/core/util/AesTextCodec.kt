@@ -10,6 +10,7 @@ object AesTextCodec {
     private const val AES_MODE = "AES/ECB/PKCS5Padding"
     private val UTF_8 = StandardCharsets.UTF_8
 
+    //加密
     fun encode(plainText: String, key: String = BuildConfig.CIPHER_KEY): String? {
         if (plainText.isEmpty()) return plainText
         return runCatching {
@@ -19,6 +20,7 @@ object AesTextCodec {
         }.getOrNull()
     }
 
+    //解密
     fun decode(cipherHex: String, key: String = BuildConfig.CIPHER_KEY): String? {
         if (cipherHex.isEmpty()) return cipherHex
         return runCatching {

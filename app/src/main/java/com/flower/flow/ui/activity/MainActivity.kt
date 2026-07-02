@@ -167,7 +167,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     fun getUserInfo(isFirst: Boolean, isLoading: Boolean) {
         mViewModel.fetchUserInfo(isLoading).obs(this) {
             onSuccess { userInfo ->
-                if (isFirst && !userInfo.isVip && (App.globalConfig?.integralAndVipEntranceShow
+                if (isFirst && !userInfo.isVip && (App.globalConfig?.exaltabrade
                         ?: 0) == 1
                 ) {
                     openActivity<VipJoinActivity>()

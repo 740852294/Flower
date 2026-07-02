@@ -37,7 +37,7 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
             finish()
         }
 
-        val isShowBtn = (App.globalConfig?.reportEntranceShow ?: 0) == 1
+        val isShowBtn = (App.globalConfig?.athleteacanthus ?: 0) == 1
         if (isShowBtn) {
             addReportBtn()
         }
@@ -110,7 +110,7 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
         model: TemplateItem,
     ) {
         val showCost = model.lockIntegral > 0
-        val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(3, 4)
+        val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(3, 4)
         val showLock = showCost && showConfig
         binding.llLockBadge.isVisible = showLock
         if (showLock) {

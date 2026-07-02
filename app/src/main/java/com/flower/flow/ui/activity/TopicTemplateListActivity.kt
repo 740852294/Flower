@@ -85,7 +85,7 @@ class TopicTemplateListActivity :
 
         loadTemplates(refresh = true)
 
-        val isShowBtn = (App.globalConfig?.reportEntranceShow ?: 0) == 1
+        val isShowBtn = (App.globalConfig?.athleteacanthus ?: 0) == 1
         if (isShowBtn) {
             addReportBtn()
         }
@@ -184,7 +184,7 @@ class TopicTemplateListActivity :
             cornerRadiusDp = COVER_CORNER_RADIUS_DP,
         )
         val showCost = model.lockIntegral > 0
-        val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(2, 3)
+        val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(2, 3)
         val showLock = showCost && showConfig
         itemView.findViewById<View>(R.id.llLockBadge).isVisible = showLock
         if (showLock) {

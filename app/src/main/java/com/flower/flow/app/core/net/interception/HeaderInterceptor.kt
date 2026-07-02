@@ -41,12 +41,12 @@ class HeaderInterceptor : Interceptor {
         const val PLATFORM_ANDROID = "1"
 
         object HeaderKey {
-            const val PLATFORM_TYPE = "platformType"
-            const val PLATFORM_INFO = "platformInfo"
-            const val PACKAGE_NAME = "package"
-            const val VERSION = "versionId"
-            const val UID = "uid"
-            const val LANGUAGE_ID = "languageId"
+            const val PLATFORM_TYPE = "sugarmusic"
+            const val PLATFORM_INFO = "clanisolate"
+            const val PACKAGE_NAME = "anthracite"
+            const val VERSION = "collideduly"
+            const val UID = "elephantfloat"
+            const val LANGUAGE_ID = "southgroup"
         }
     }
 }

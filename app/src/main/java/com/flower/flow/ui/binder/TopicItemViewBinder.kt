@@ -111,7 +111,7 @@ internal fun bindTopicItem(
             onFinalImageSet = onFinalImageSet,
         )
         val showCost = model1.lockIntegral > 0
-        val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(1, 3)
+        val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(1, 3)
         refs.llLockBadge.isVisible = showCost && showConfig
         refs.tvLockIntegral.text = model1.lockIntegral.toString()
         bindSampleImages(refs, model1.sampleImgList, onFinalImageSet)

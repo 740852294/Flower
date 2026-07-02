@@ -39,11 +39,11 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
         }
 
         mBind.tvAppVersion.text = String.format("V%s", BuildConfig.VERSION_NAME)
-        mBind.tvAccount.text = CacheConfig.userId
+        mBind.tvAccount.text = AesTextCodec.decode(CacheConfig.userId)
         mBind.tvPassword.text = "**********"
         mBind.ivPassword.setImageResource(R.mipmap.ic_setting_eyes)
 
-        val isAccountAndPassword = (App.globalConfig?.userChangeShow ?: 0) == 1
+        val isAccountAndPassword = (App.globalConfig?.deistdisturb ?: 0) == 1
         mBind.llAccountAndPassword.isVisible = isAccountAndPassword
         mBind.btnChange.isVisible = isAccountAndPassword
     }

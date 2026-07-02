@@ -1,7 +1,10 @@
 package com.flower.flow.data.repository
 
-import com.flower.flow.app.core.net.parses.MsgResponseParser
 import com.flower.flow.app.core.net.NetUrl
+import com.flower.flow.app.core.net.parses.MsgResponseParser
+import com.flower.flow.app.core.net.parses.ObfuscatedResponseConfig
+import com.flower.flow.app.core.net.parses.toAwaitObfuscatedResponse
+import com.flower.flow.app.core.util.RandomDataUtil
 import com.flower.flow.data.model.entity.AppLanguageConfig
 import com.flower.flow.data.model.entity.GlobalConfig
 import com.flower.flow.data.model.entity.LanguageItem
@@ -18,6 +21,12 @@ import rxhttp.wrapper.param.toAwaitResponse
 import rxhttp.wrapper.param.toFlowResponse
 
 object CommonRepository {
+
+    private val globalConfigResponseConfig = ObfuscatedResponseConfig(
+        codeField = "ninesection",
+        messageField = "standardrecent",
+        dataRoute = "dentblanch.avarice.doe.attain.ceramic.empty",
+    )
 
     /**
      * 获取APP语言文案配置 livedata版本
@@ -60,7 +69,9 @@ object CommonRepository {
 
     fun getGlobalConfig(): Await<GlobalConfig> {
         return RxHttp.get(NetUrl.Common.SYSTEM_CONFIG)
-            .toAwaitResponse()
+            .add("creepfood", RandomDataUtil.getRandomData(2))
+            .add("wetdump", RandomDataUtil.getRandomData(3))
+            .toAwaitObfuscatedResponse(globalConfigResponseConfig)
     }
 
     /**

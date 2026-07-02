@@ -15,6 +15,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.loadAvatarFile
+import com.flower.flow.app.core.util.AesTextCodec
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.util.PhotoCompressUtil
 import com.flower.flow.app.core.util.UserManager
@@ -111,7 +112,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
             }
             originalNickname = mBind.etName.text?.toString()?.trim().orEmpty()
 
-            mBind.tvAccount.text = CacheConfig.userId
+            mBind.tvAccount.text = AesTextCodec.decode(CacheConfig.userId)
             updateSaveButtonState()
         }
     }

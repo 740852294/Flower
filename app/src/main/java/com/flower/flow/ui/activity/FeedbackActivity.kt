@@ -31,7 +31,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
 
     @SuppressLint("NotifyDataSetChanged")
     override fun initView(savedInstanceState: Bundle?) {
-        val isShowBtn = (App.globalConfig?.reportEntranceShow ?: 0) == 1
+        val isShowBtn = (App.globalConfig?.athleteacanthus ?: 0) == 1
         if (isShowBtn) {
             addReportBtn()
         }
