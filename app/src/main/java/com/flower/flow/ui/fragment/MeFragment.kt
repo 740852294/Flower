@@ -35,6 +35,7 @@ import com.flower.flow.ui.activity.SettingActivity
 import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.activity.WorkPreviewActivity
 import com.flower.flow.ui.adapter.MainAdapter
+import com.flower.flow.ui.dialog.CommonMessageDialog
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
@@ -85,7 +86,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun initView(savedInstanceState: Bundle?) {
-        mBind.llContent.statusPadding()
+        mBind.scrollContent.statusPadding()
 
         App.globalConfig?.apply {
             mBind.llMoney.isVisible = (integralAndVipEntranceShow == 1)
@@ -487,6 +488,18 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
     }
 
+    private fun bindDownloadState(
+        binding: LayoutItemWorkBinding,
+        model: WorkItem,
+    ) {
+        //只有完成的状态才可以加载下载进入
+        if (model.state == WORK_STATUS_FAIL) {
+            binding.llProgress.visibility = View.VISIBLE
+            binding.tvDownload.text = model.downloadingMsg.orEmpty()
+            binding.pbDownload.progress = 0
+        }
+    }
+
     private fun updateDeleteButtonText() {
         val copyKey = if (isSelectionMode && selectedTaskIds.isEmpty()) {
             FlowCopyKey.CANCEL_ACTION
@@ -498,14 +511,23 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
     private fun deleteSelectedWorks(taskIds: List<String>) {
         if (taskIds.isEmpty()) return
-        mViewModel.deleteWorkTasks(taskIds).obs(viewLifecycleOwner) {
-            onSuccess {
-                exitSelectionMode()
-                loadData(isLoading = true)
-            }
-            onError { status ->
-                status.msg.toast()
-            }
+        activity?.let {
+            CommonMessageDialog.Builder(it)
+                .setTitle(FlowCopyStore.get(FlowCopyKey.NOTICE_HEAD))
+                .setContent(FlowCopyStore.get(FlowCopyKey.TASK_DELETE_HINT))
+                .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
+                    mViewModel.deleteWorkTasks(taskIds).obs(viewLifecycleOwner) {
+                        onSuccess {
+                            exitSelectionMode()
+                            loadData(isLoading = true)
+                        }
+                        onError { status ->
+                            status.msg.toast()
+                        }
+                    }
+                }
+                .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+                .show()
         }
     }
 

@@ -24,9 +24,9 @@ data class WorkItem(
     @SerializedName("saveLocalPopupMsg")
     val saveLocalPopupMsg: String? = "",
     @SerializedName("saveLocalDownloadingMsg")
-    val saveLocalDownloadingMsg: String = "",
+    val saveLocalDownloadingMsg: String? = "",
     @SerializedName("downloadingMsg")
-    val downloadingMsg: String = "",
+    val downloadingMsg: String? = "",
     @SerializedName("estimatTimeMsg")
     val estimatTimeMsg: String? = "",
     @SerializedName("videoDurationMsg")

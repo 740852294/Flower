@@ -13,93 +13,86 @@
         android:scaleType="fitCenter"
         android:src="@mipmap/bg_me" />
 
-    <LinearLayout
-        android:id="@+id/llContent"
+    <com.scwang.smart.refresh.layout.SmartRefreshLayout
+        android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
+            android:id="@+id/nestedScrollView"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:gravity="end|center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="15dp">
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            android:overScrollMode="never">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/settingBtn"
-                android:layout_width="34dp"
-                android:layout_height="32dp"
-                android:contentDescription="@null"
-                android:src="@mipmap/ic_me_setting"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <com.hjq.shape.view.ShapeView
-                android:id="@+id/redDot"
-                android:layout_width="8dp"
-                android:layout_height="8dp"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="@id/settingBtn"
-                app:layout_constraintTop_toTopOf="@id/settingBtn"
-                app:shape_radius="4dp"
-                app:shape_solidColor="#D9001B"
-                tools:visibility="visible" />
-
-            <com.hjq.shape.layout.ShapeLinearLayout
-                android:id="@+id/llMoney"
-                android:layout_width="wrap_content"
-                android:layout_height="32dp"
-                android:layout_marginEnd="7dp"
-                android:gravity="center_vertical"
-                android:paddingHorizontal="7dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="@+id/settingBtn"
-                app:layout_constraintEnd_toStartOf="@+id/settingBtn"
-                app:layout_constraintTop_toTopOf="@+id/settingBtn"
-                app:shape_radius="16dp"
-                app:shape_solidColor="#30FFFFFF"
-                tools:visibility="visible">
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="17dp"
-                    android:layout_height="17dp"
-                    android:contentDescription="@null"
-                    android:src="@mipmap/ic_me_money" />
-
-                <TextView
-                    android:id="@+id/tvMoney"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:minWidth="34dp"
-                    android:text="0"
-                    android:textColor="@color/white"
-                    android:textSize="14sp" />
-
-            </com.hjq.shape.layout.ShapeLinearLayout>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <com.scwang.smart.refresh.layout.SmartRefreshLayout
-            android:id="@+id/refreshLayout"
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:layout_weight="1">
-
-            <androidx.core.widget.NestedScrollView
-                android:id="@+id/nestedScrollView"
+            <LinearLayout
+                android:id="@+id/scrollContent"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:overScrollMode="never">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <LinearLayout
-                    android:id="@+id/scrollContent"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="?attr/actionBarSize"
+                    android:gravity="end|center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="15dp">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/settingBtn"
+                        android:layout_width="34dp"
+                        android:layout_height="32dp"
+                        android:contentDescription="@null"
+                        android:src="@mipmap/ic_me_setting"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.hjq.shape.view.ShapeView
+                        android:id="@+id/redDot"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="@id/settingBtn"
+                        app:layout_constraintTop_toTopOf="@id/settingBtn"
+                        app:shape_radius="4dp"
+                        app:shape_solidColor="#D9001B"
+                        tools:visibility="visible" />
+
+                    <com.hjq.shape.layout.ShapeLinearLayout
+                        android:id="@+id/llMoney"
+                        android:layout_width="wrap_content"
+                        android:layout_height="32dp"
+                        android:layout_marginEnd="7dp"
+                        android:gravity="center_vertical"
+                        android:paddingHorizontal="7dp"
+                        android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="@+id/settingBtn"
+                        app:layout_constraintEnd_toStartOf="@+id/settingBtn"
+                        app:layout_constraintTop_toTopOf="@+id/settingBtn"
+                        app:shape_radius="16dp"
+                        app:shape_solidColor="#30FFFFFF"
+                        tools:visibility="visible">
+
+                        <androidx.appcompat.widget.AppCompatImageView
+                            android:layout_width="17dp"
+                            android:layout_height="17dp"
+                            android:contentDescription="@null"
+                            android:src="@mipmap/ic_me_money" />
+
+                        <TextView
+                            android:id="@+id/tvMoney"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:minWidth="34dp"
+                            android:text="0"
+                            android:textColor="@color/white"
+                            android:textSize="14sp" />
+
+                    </com.hjq.shape.layout.ShapeLinearLayout>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/clInfo"
@@ -351,12 +344,10 @@
                     </LinearLayout>
                 </com.hjq.shape.layout.ShapeFrameLayout>
 
-                </LinearLayout>
+            </LinearLayout>
 
-            </androidx.core.widget.NestedScrollView>
+        </androidx.core.widget.NestedScrollView>
 
-        </com.scwang.smart.refresh.layout.SmartRefreshLayout>
-
-    </LinearLayout>
+    </com.scwang.smart.refresh.layout.SmartRefreshLayout>
 
 </FrameLayout>

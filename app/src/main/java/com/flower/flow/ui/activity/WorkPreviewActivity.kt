@@ -18,6 +18,7 @@ import com.flower.flow.ui.dialog.CommonMessageDialog
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
+import me.hgj.jetpackmvvm.ext.util.toast
 
 class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBinding>() {
 
@@ -58,11 +59,10 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
                 .setTitle(FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION))
                 .setContent(workItem.saveLocalPopupMsg.orEmpty())
                 .setConfirmButton(FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION)) {
-
+                    workItem.saveLocalDownloadingMsg?.toast()
+                    //开始下载
                 }
-                .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION)) {
-
-                }
+                .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION)) {}
                 .show()
         }
     }
