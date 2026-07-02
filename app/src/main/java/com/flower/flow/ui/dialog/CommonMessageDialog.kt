@@ -121,7 +121,7 @@ class CommonMessageDialog private constructor(
         }
 
         fun setCancelButton(
-            text: CharSequence = activity.getText(R.string.common_dialog_cancel),
+            text: CharSequence,
             dismissOnClick: Boolean = true,
             onClick: (CommonMessageDialog) -> Unit = {},
         ) = apply {
@@ -135,7 +135,7 @@ class CommonMessageDialog private constructor(
         ) = setCancelButton(activity.getText(textRes), dismissOnClick, onClick)
 
         fun setConfirmButton(
-            text: CharSequence = activity.getText(R.string.common_dialog_confirm),
+            text: CharSequence,
             dismissOnClick: Boolean = true,
             onClick: (CommonMessageDialog) -> Unit = {},
         ) = apply {
@@ -149,11 +149,6 @@ class CommonMessageDialog private constructor(
         ) = setConfirmButton(activity.getText(textRes), dismissOnClick, onClick)
 
         fun build(): CommonMessageDialog {
-            require(title.isNotBlank()) { "Dialog title must not be blank" }
-            require(content.isNotBlank()) { "Dialog content must not be blank" }
-            require(cancelAction != null || confirmAction != null) {
-                "Dialog must have at least one button"
-            }
             return CommonMessageDialog(
                 activity = activity,
                 titleText = title,

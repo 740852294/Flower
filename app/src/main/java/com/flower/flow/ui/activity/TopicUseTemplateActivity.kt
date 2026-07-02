@@ -1,9 +1,12 @@
 package com.flower.flow.ui.activity
 
+import android.content.Context
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.Gravity
 import android.view.MenuItem
+import android.view.MotionEvent
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.ImageView
@@ -35,7 +38,6 @@ import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
-import me.hgj.jetpackmvvm.ext.view.horizontal
 
 class TopicUseTemplateActivity :
     BaseActivity<TopicUseTemplateViewModel, ActivityTopicUseTemplateBinding>() {
@@ -61,7 +63,10 @@ class TopicUseTemplateActivity :
     private var itemOverlap = 0
     private var canLoadMore = false
     private var isLoadingMore = false
+    private var nextCarouselGestureTime = 0L
+    private var isCarouselGestureBlocked = false
     private val appendedTemplates = arrayListOf<TemplateItem>()
+    private lateinit var carouselLayoutManager: SinglePageLinearLayoutManager
 
     private val snapHelper = object : PagerSnapHelper() {
         override fun calculateDistanceToFinalSnap(
@@ -117,8 +122,34 @@ class TopicUseTemplateActivity :
         }
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                updateSelectedPosition(recyclerView)
+            when (newState) {
+                RecyclerView.SCROLL_STATE_DRAGGING -> {
+                    carouselLayoutManager.beginSinglePageScroll()
+                }
+
+                RecyclerView.SCROLL_STATE_IDLE -> {
+                    carouselLayoutManager.endSinglePageScroll()
+                    updateSelectedPosition(recyclerView)
+                }
+            }
+        }
+    }
+
+    private val carouselTouchListener = object : RecyclerView.SimpleOnItemTouchListener() {
+        override fun onInterceptTouchEvent(recyclerView: RecyclerView, event: MotionEvent): Boolean {
+            if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+                isCarouselGestureBlocked =
+                    recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE ||
+                        SystemClock.elapsedRealtime() < nextCarouselGestureTime
+            }
+            return isCarouselGestureBlocked
+        }
+
+        override fun onTouchEvent(recyclerView: RecyclerView, event: MotionEvent) {
+            if (event.actionMasked == MotionEvent.ACTION_UP ||
+                event.actionMasked == MotionEvent.ACTION_CANCEL
+            ) {
+                isCarouselGestureBlocked = false
             }
         }
     }
@@ -160,26 +191,28 @@ class TopicUseTemplateActivity :
         rv.clipChildren = false
         rv.setHasFixedSize(true)
         CoverFlowScrollListener.setupDrawingOrder(rv)
+        carouselLayoutManager = SinglePageLinearLayoutManager(this)
+        rv.layoutManager = carouselLayoutManager
         snapHelper.attachToRecyclerView(rv)
         rv.addOnScrollListener(coverFlowListener)
         rv.addOnScrollListener(scrollListener)
-        rv.horizontal()
-            .setup {
-                addType<TemplateItem>(R.layout.layout_item_topic_template_use)
-                onBind {
-                    if (itemWidth > 0) {
-                        val isLast = modelPosition == templateList.lastIndex
-                        itemView.layoutParams = RecyclerView.LayoutParams(
-                            itemWidth,
-                            RecyclerView.LayoutParams.MATCH_PARENT,
-                        ).apply {
-                            marginEnd = if (isLast) 0 else -itemOverlap
-                        }
+        rv.addOnItemTouchListener(carouselTouchListener)
+        rv.setup {
+            addType<TemplateItem>(R.layout.layout_item_topic_template_use)
+            onBind {
+                if (itemWidth > 0) {
+                    val isLast = modelPosition == templateList.lastIndex
+                    itemView.layoutParams = RecyclerView.LayoutParams(
+                        itemWidth,
+                        RecyclerView.LayoutParams.MATCH_PARENT,
+                    ).apply {
+                        marginEnd = if (isLast) 0 else -itemOverlap
                     }
-                    bindTemplateUseItem(itemView, getModel())
-                    coverFlowListener.applyTransform(rv)
                 }
+                bindTemplateUseItem(itemView, getModel())
+                coverFlowListener.applyTransform(rv)
             }
+        }
 
         mBind.llRv.post {
             val containerHeight = mBind.llRv.height
@@ -189,7 +222,9 @@ class TopicUseTemplateActivity :
             }
             itemWidth = (containerHeight * ASPECT_WIDTH / ASPECT_HEIGHT).toInt()
             itemOverlap = (itemWidth * ITEM_OVERLAP_RATIO).toInt()
-            coverFlowListener.itemStep = (itemWidth - itemOverlap).toFloat()
+            val itemStep = itemWidth - itemOverlap
+            coverFlowListener.itemStep = itemStep.toFloat()
+            carouselLayoutManager.pageDistancePx = itemStep
             val sidePadding = (containerWidth - itemWidth).coerceAtLeast(0) / 2
             rv.setPadding(sidePadding, 0, sidePadding, 0)
             rv.models = templateList
@@ -220,6 +255,10 @@ class TopicUseTemplateActivity :
         val snapView = snapHelper.findSnapView(layoutManager) ?: return
         val newPosition = layoutManager.getPosition(snapView)
         if (newPosition == RecyclerView.NO_POSITION) return
+        if (newPosition != selectedPosition) {
+            nextCarouselGestureTime =
+                SystemClock.elapsedRealtime() + CAROUSEL_DEBOUNCE_DURATION_MS
+        }
         selectedPosition = newPosition
         previewPosition = newPosition
         updateTemplateName(templateList.getOrNull(newPosition))
@@ -339,6 +378,7 @@ class TopicUseTemplateActivity :
     }
 
     override fun onDestroy() {
+        mBind.rvTemplate.removeOnItemTouchListener(carouselTouchListener)
         mBind.rvTemplate.removeOnScrollListener(coverFlowListener)
         mBind.rvTemplate.removeOnScrollListener(scrollListener)
         super.onDestroy()
@@ -377,6 +417,7 @@ class TopicUseTemplateActivity :
         private const val ASPECT_WIDTH = 247f
         private const val ASPECT_HEIGHT = 358f
         private const val ITEM_OVERLAP_RATIO = 0.84f
+        private const val CAROUSEL_DEBOUNCE_DURATION_MS = 250L
         private const val COVER_CORNER_RADIUS_DP = 15f
         private const val SAMPLE_CORNER_RADIUS_DP = 5f
 
@@ -386,5 +427,45 @@ class TopicUseTemplateActivity :
         const val EXTRA_HAS_NEXT = "has_next"
         const val EXTRA_CURRENT_PAGE = "current_page"
         const val EXTRA_POSITION = "position"
+    }
+}
+
+private class SinglePageLinearLayoutManager(
+    context: Context,
+) : LinearLayoutManager(context, RecyclerView.HORIZONTAL, false) {
+
+    var pageDistancePx: Int = 0
+
+    private var limitSinglePageScroll = false
+    private var gestureScrollDistance = 0
+
+    fun beginSinglePageScroll() {
+        if (pageDistancePx <= 0) return
+        gestureScrollDistance = 0
+        limitSinglePageScroll = true
+    }
+
+    fun endSinglePageScroll() {
+        limitSinglePageScroll = false
+        gestureScrollDistance = 0
+    }
+
+    override fun scrollHorizontallyBy(
+        dx: Int,
+        recycler: RecyclerView.Recycler,
+        state: RecyclerView.State,
+    ): Int {
+        val allowedDx = if (limitSinglePageScroll && pageDistancePx > 0) {
+            val targetDistance = (gestureScrollDistance + dx)
+                .coerceIn(-pageDistancePx, pageDistancePx)
+            targetDistance - gestureScrollDistance
+        } else {
+            dx
+        }
+        val consumed = super.scrollHorizontallyBy(allowedDx, recycler, state)
+        if (limitSinglePageScroll) {
+            gestureScrollDistance += consumed
+        }
+        return consumed
     }
 }

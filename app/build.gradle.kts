@@ -70,7 +70,7 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             buildConfigField("String", "BASE_HTTP_API", "\"http://8.148.151.104:7068/\"")
             buildConfigField("String", "CIPHER_KEY", "\"aikogpap1s2e2288\"")
         }
@@ -163,13 +163,7 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.preference.ktx)
 
-    //================================网络框架 sart ===========================//
     implementation(libs.okhttp)
     implementation(libs.rxhttp)
     ksp(libs.rxhttp.compiler)
-    //================================网络框架 end ===========================//
-
-
-    //lottie动画
-//    implementation(libs.lottie)
 }
