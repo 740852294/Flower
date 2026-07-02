@@ -102,17 +102,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
             loadData(isLoading = false)
         }
 
-        mBind.workLoadMoreLayout.loadMore {
-            mViewModel.loadWorkList(refresh = false, isLoading = false).obs(viewLifecycleOwner) {
-                onSuccess { page ->
-                    bindWorkList(page, mBind.rvList.bindingAdapter, isRefresh = false)
-                }
-                onError { status ->
-                    loadListError(status, mBind.workLoadMoreLayout)
-                    status.msg.toast()
-                }
-            }
+        mBind.refreshLayout.loadMore {
+            refreshWorkList(refresh = false, isLoading = false)
         }
+
+        setupWorksMinHeightObserver()
 
         mBind.rvList.grid(SPAN_COUNT)
             .dividerSpace(dp2px(8f), DividerOrientation.GRID)
@@ -323,18 +317,18 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             while (true) {
                 delay(WORK_LIST_POLL_INTERVAL.milliseconds)
-                refreshWorkList()
+                refreshWorkList(refresh = true, isLoading = false)
             }
         }
     }
 
-    private fun refreshWorkList() {
-        mViewModel.loadWorkList(refresh = true, isLoading = false).obs(viewLifecycleOwner) {
+    private fun refreshWorkList(refresh: Boolean, isLoading: Boolean) {
+        mViewModel.loadWorkList(refresh = refresh, isLoading = isLoading).obs(viewLifecycleOwner) {
             onSuccess { page ->
-                bindWorkList(page, mBind.rvList.bindingAdapter, isRefresh = true)
+                bindWorkList(page, mBind.rvList.bindingAdapter, isRefresh = refresh)
             }
             onError { status ->
-                loadListError(status, mBind.workLoadMoreLayout)
+                loadListError(status, mBind.refreshLayout)
             }
         }
     }
@@ -370,18 +364,36 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
             bindingAdapter.addModels(baseListNetEntity.getPageData())
         }
         if (baseListNetEntity.hasMore()) {
-            mBind.workLoadMoreLayout.finishLoadMore()
-            mBind.workLoadMoreLayout.setNoMoreData(false)
-            mBind.workLoadMoreLayout.setEnableLoadMore(true)
+            mBind.refreshLayout.finishLoadMore()
+            mBind.refreshLayout.setNoMoreData(false)
+            mBind.refreshLayout.setEnableLoadMore(true)
         } else {
-            mBind.workLoadMoreLayout.finishLoadMore()
-            mBind.workLoadMoreLayout.setEnableLoadMore(false)
+            mBind.refreshLayout.finishLoadMore()
+            mBind.refreshLayout.setEnableLoadMore(false)
         }
 
         mBind.rlWorkAdd.isVisible =
             bindingAdapter.models == null || bindingAdapter.models?.isEmpty() == true
         mBind.btnDelete.isVisible =
             bindingAdapter.models != null && bindingAdapter.models?.isNotEmpty() == true
+        updateWorksMinHeight()
+    }
+
+    private fun setupWorksMinHeightObserver() {
+        mBind.nestedScrollView.viewTreeObserver.addOnGlobalLayoutListener {
+            updateWorksMinHeight()
+        }
+    }
+
+    private fun updateWorksMinHeight() {
+        val viewportHeight = mBind.nestedScrollView.height
+        if (viewportHeight <= 0) return
+
+        val worksTop = mBind.flWorks.top
+        val minHeight = viewportHeight - worksTop
+        if (minHeight > 0 && mBind.flWorks.minimumHeight != minHeight) {
+            mBind.flWorks.minimumHeight = minHeight
+        }
     }
 
     override fun createObserver() {
@@ -420,6 +432,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         mBind.tvOverTip.isVisible = user.clearTaskMsg.isNotEmpty()
         setIconText(mBind.tvOverTip, R.mipmap.ic_me_over_star, user.clearTaskMsg)
+        mBind.scrollContent.post { updateWorksMinHeight() }
     }
 
     private fun setText() {
