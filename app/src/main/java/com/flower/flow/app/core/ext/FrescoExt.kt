@@ -80,14 +80,21 @@ fun ImageView.loadImage(
 fun ImageView.loadImageFitWidth(
     url: String?,
     @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
+    cornerRadiusDp: Float? = null,
     isAutoPlay: Boolean = true,
+    onAspectRatio: ((width: Int, height: Int) -> Unit)? = null,
 ) {
     if (url.isNullOrBlank()) {
         clearImage()
         return
     }
 
-    clearRoundStyle()
+    val roundStyle = buildRoundStyle(cornerRadiusDp, null)
+    if (roundStyle != null) {
+        applyRoundStyle(roundStyle, null, Color.WHITE)
+    } else {
+        clearRoundStyle()
+    }
     scaleType = ImageView.ScaleType.FIT_CENTER
 
     val imageOptions = ImageOptions.create()
@@ -109,7 +116,11 @@ fun ImageView.loadImageFitWidth(
             val imageWidth = imageInfo?.width ?: return
             val imageHeight = imageInfo?.height ?: return
             if (imageWidth <= 0 || imageHeight <= 0) return
-            updateHeightByAspectRatio(imageWidth, imageHeight)
+            if (onAspectRatio != null) {
+                onAspectRatio.invoke(imageWidth, imageHeight)
+            } else {
+                updateHeightByAspectRatio(imageWidth, imageHeight)
+            }
         }
     }
 

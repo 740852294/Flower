@@ -47,6 +47,7 @@ fresco = "3.7.0"
 facebookCore = "17.0.0"
 installReferrer = "2.2"
 playServicesAdsIdentifier = "18.2.0"
+media3 = "1.5.1"
 
 [libraries]
 agentweb = { module = "com.just.agentweb:agentweb", version.ref = "agentweb" }
@@ -114,6 +115,8 @@ fresco-webpsupport = { module = "com.facebook.fresco:webpsupport", version.ref =
 facebook-core = { module = "com.facebook.android:facebook-core", version.ref = "facebookCore" }
 install-referrer = { module = "com.android.installreferrer:installreferrer", version.ref = "installReferrer" }
 play-services-ads-identifier = { module = "com.google.android.gms:play-services-ads-identifier", version.ref = "playServicesAdsIdentifier" }
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

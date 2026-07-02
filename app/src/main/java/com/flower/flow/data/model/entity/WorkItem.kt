@@ -1,7 +1,10 @@
 package com.flower.flow.data.model.entity
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
+import kotlinx.parcelize.Parcelize
 
+@Parcelize
 data class WorkItem(
     @SerializedName("taskId")
     val taskId: String = "",
@@ -19,7 +22,7 @@ data class WorkItem(
     @SerializedName("inputImgList")
     val inputImgList: List<String>? = emptyList(),
     @SerializedName("saveLocalPopupMsg")
-    val saveLocalPopupMsg: String = "",
+    val saveLocalPopupMsg: String? = "",
     @SerializedName("saveLocalDownloadingMsg")
     val saveLocalDownloadingMsg: String = "",
     @SerializedName("downloadingMsg")
@@ -33,4 +36,4 @@ data class WorkItem(
     val aiartImg: String? = "",
     @SerializedName("aiartId")
     val aiartId: Int = 0,
-)
+) : Parcelable

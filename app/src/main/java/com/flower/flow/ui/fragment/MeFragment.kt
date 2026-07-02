@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
 import com.drake.brv.BindingAdapter
 import com.drake.brv.annotaion.DividerOrientation
 import com.drake.brv.utils.bindingAdapter
@@ -32,7 +33,10 @@ import com.flower.flow.ui.activity.IntegralRechargeActivity
 import com.flower.flow.ui.activity.MainActivity
 import com.flower.flow.ui.activity.SettingActivity
 import com.flower.flow.ui.activity.VipJoinActivity
+import com.flower.flow.ui.activity.WorkPreviewActivity
 import com.flower.flow.ui.adapter.MainAdapter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
@@ -46,11 +50,13 @@ import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
 import me.hgj.jetpackmvvm.ext.view.grid
 import me.hgj.jetpackmvvm.util.BasePage
+import kotlin.time.Duration.Companion.milliseconds
 
 class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
     private var isSelectionMode = false
     private val selectedTaskIds = mutableSetOf<String>()
+    private var workListPollingStarted = false
 
     companion object {
         const val SPAN_COUNT = 2
@@ -67,6 +73,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         const val WORK_STATUS_FAIL = 4
 
         private const val PAYLOAD_SELECTION = "payload_selection"
+
+        private const val WORK_LIST_POLL_INTERVAL = 2 * 60 * 1000L
 
         fun newInstance(): MeFragment {
             val args = Bundle()
@@ -95,13 +103,9 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
 
         mBind.workLoadMoreLayout.loadMore {
-            mViewModel.loadWorkList(false).obs(viewLifecycleOwner) {
+            mViewModel.loadWorkList(refresh = false, isLoading = false).obs(viewLifecycleOwner) {
                 onSuccess { page ->
-                    bindWorkList(
-                        page,
-                        mBind.rvList.bindingAdapter,
-                        isRefresh = false
-                    )
+                    bindWorkList(page, mBind.rvList.bindingAdapter, isRefresh = false)
                 }
                 onError { status ->
                     loadListError(status, mBind.workLoadMoreLayout)
@@ -245,7 +249,9 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                             updateDeleteButtonText()
                         } else {
                             if (model.state == WORK_STATUS_COMPLETE) {
-                                //跳转预览
+                                openActivity<WorkPreviewActivity>(
+                                    WorkPreviewActivity.EXTRA_WORK_ITEM to model
+                                )
                             }
                         }
                     }
@@ -308,6 +314,29 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
     override fun lazyLoadData() {
         loadData(isLoading = true)
+        startWorkListPolling()
+    }
+
+    private fun startWorkListPolling() {
+        if (workListPollingStarted) return
+        workListPollingStarted = true
+        viewLifecycleOwner.lifecycleScope.launch {
+            while (true) {
+                delay(WORK_LIST_POLL_INTERVAL.milliseconds)
+                refreshWorkList()
+            }
+        }
+    }
+
+    private fun refreshWorkList() {
+        mViewModel.loadWorkList(refresh = true, isLoading = false).obs(viewLifecycleOwner) {
+            onSuccess { page ->
+                bindWorkList(page, mBind.rvList.bindingAdapter, isRefresh = true)
+            }
+            onError { status ->
+                loadListError(status, mBind.workLoadMoreLayout)
+            }
+        }
     }
 
     private fun loadData(isLoading: Boolean) {

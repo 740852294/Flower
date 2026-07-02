@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingHorizontal="25dp"
+    android:paddingVertical="12dp">
+
+    <com.hjq.shape.layout.ShapeFrameLayout
+        android:id="@+id/preview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:clipToOutline="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:shape_radius="15dp">
+
+        <com.hjq.shape.view.ShapeImageView
+            android:id="@+id/previewImage"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@null"
+            android:scaleType="centerCrop"
+            app:shape_radius="15dp"
+            tools:src="@mipmap/ic_pic_loading" />
+
+        <androidx.media3.ui.PlayerView
+            android:id="@+id/previewVideo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:resize_mode="zoom"
+            app:surface_type="texture_view"
+            app:use_controller="false" />
+
+        <ProgressBar
+            android:id="@+id/videoLoading"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/white"
+            android:visibility="gone" />
+
+    </com.hjq.shape.layout.ShapeFrameLayout>
+
+    <com.hjq.shape.view.ShapeButton
+        android:id="@+id/btnDownload"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/preview"
+        app:shape_radius="30dp"
+        app:shape_solidGradientEndColor="#FFFD662E"
+        app:shape_solidGradientOrientation="leftToRight"
+        app:shape_solidGradientStartColor="#FFFE9233"
+        tools:text="Download" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
