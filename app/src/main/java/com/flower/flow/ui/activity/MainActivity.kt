@@ -25,6 +25,7 @@ import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
+import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
@@ -155,7 +156,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         userInfoPollingStarted = true
         lifecycleScope.launch {
             while (true) {
-                delay(USER_INFO_POLL_INTERVAL)
+                delay(USER_INFO_POLL_INTERVAL.milliseconds)
                 getUserInfo(false, isLoading = false)
             }
         }

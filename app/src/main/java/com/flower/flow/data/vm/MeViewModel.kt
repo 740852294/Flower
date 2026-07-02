@@ -1,6 +1,8 @@
 package com.flower.flow.data.vm
 
 import com.flower.flow.app.core.util.UserManager
+import com.flower.flow.data.model.entity.SubmitPageInfo
+import com.flower.flow.data.model.entity.WorkGenerateResult
 import com.flower.flow.data.repository.AiArtRepository
 import com.flower.flow.data.repository.UserRepository
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
@@ -53,4 +55,32 @@ class MeViewModel : BaseViewModel() {
         }
         loadingType = LoadingType.LOADING_DIALOG
     }
+
+    fun prepareAgainGenerate(aiartId: Int, taskId: String) = request {
+        onRequest {
+            val pageInfo = AiArtRepository.getCreateSubmitPage(aiartId).await()
+            val generateResult = if (
+                pageInfo.isGenerateFreeEverydayPopup ||
+                pageInfo.isConsumeIntegralPopup
+            ) {
+                null
+            } else {
+                AiArtRepository.generateWorkAgain(taskId).await()
+            }
+            AgainGenerateRequestResult(pageInfo, generateResult)
+        }
+        loadingType = LoadingType.LOADING_DIALOG
+    }
+
+    fun continueAgainGenerate(taskId: String) = request {
+        onRequest {
+            AiArtRepository.generateWorkAgain(taskId).await()
+        }
+        loadingType = LoadingType.LOADING_DIALOG
+    }
 }
+
+data class AgainGenerateRequestResult(
+    val pageInfo: SubmitPageInfo,
+    val generateResult: WorkGenerateResult?,
+)

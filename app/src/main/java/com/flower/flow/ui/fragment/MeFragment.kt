@@ -24,7 +24,9 @@ import com.flower.flow.app.core.util.WorkDownloadStorage
 import com.flower.flow.app.core.widget.CenterImageSpan
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.entity.SubmitPageInfo
 import com.flower.flow.data.model.entity.UserInfo
+import com.flower.flow.data.model.entity.WorkGenerateResult
 import com.flower.flow.data.model.entity.WorkItem
 import com.flower.flow.data.vm.MeViewModel
 import com.flower.flow.databinding.FragmentMeBinding
@@ -37,6 +39,7 @@ import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.activity.WorkPreviewActivity
 import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.dialog.CommonMessageDialog
+import com.flower.flow.ui.dialog.GenerateResultDialog
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -271,6 +274,15 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                             openActivity<WorkPreviewActivity>(
                                 WorkPreviewActivity.EXTRA_WORK_ITEM to model
                             )
+                        }
+                    }
+                }
+
+                onClick(R.id.btnStatus) {
+                    doDebouncedClick {
+                        val model = getModel<WorkItem>()
+                        if (!isSelectionMode) {
+                            requestAgainGenerate(model)
                         }
                     }
                 }
@@ -533,6 +545,122 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                 binding.ivDownload.visibility = View.VISIBLE
             }
         }
+    }
+
+    private fun requestAgainGenerate(workItem: WorkItem) {
+        if (workItem.taskId.isBlank()) return
+        mViewModel.prepareAgainGenerate(workItem.aiartId, workItem.taskId)
+            .obs(viewLifecycleOwner) {
+                onSuccess { result ->
+                    val generateResult = result.generateResult
+                    if (generateResult != null) {
+                        handleAgainGenerateResult(generateResult)
+                    } else {
+                        proceedAfterRepeatCheck(result.pageInfo, workItem.taskId)
+                    }
+                }
+                onError { status ->
+                    status.msg.toast()
+                }
+            }
+    }
+
+    private fun proceedAfterRepeatCheck(pageInfo: SubmitPageInfo, taskId: String) {
+        if (pageInfo.isGenerateFreeEverydayPopup) {
+            showGenerateFreeEverydayDialog(pageInfo)
+            return
+        }
+        proceedAfterFreeEverydayCheck(pageInfo, taskId)
+    }
+
+    private fun showGenerateFreeEverydayDialog(pageInfo: SubmitPageInfo) {
+        val title = pageInfo.generateFreeEverydayPopupTitle
+            .ifBlank { pageInfo.generateFreeEverydayPopupMsg }
+        val content = pageInfo.generateFreeEverydayPopupMsg
+            .ifBlank { pageInfo.generateFreeEverydayPopupTitle }
+        if (title.isBlank()) return
+
+        activity?.let { host ->
+            CommonMessageDialog.Builder(host)
+                .setTitle(title)
+                .setContent(content)
+                .setConfirmButton(FlowCopyStore.get(FlowCopyKey.ROGER_ACTION))
+                .show()
+        }
+    }
+
+    private fun proceedAfterFreeEverydayCheck(pageInfo: SubmitPageInfo, taskId: String) {
+        if (pageInfo.isConsumeIntegralPopup) {
+            showConsumeIntegralDialog(pageInfo, taskId)
+            return
+        }
+        submitAgainGenerate(taskId)
+    }
+
+    private fun showConsumeIntegralDialog(pageInfo: SubmitPageInfo, taskId: String) {
+        val title = pageInfo.consumeIntegralPopupTitle
+            .ifBlank { pageInfo.consumeIntegralPopupMsg }
+        val content = pageInfo.consumeIntegralPopupMsg
+            .ifBlank { pageInfo.consumeIntegralPopupTitle }
+        if (title.isBlank()) {
+            submitAgainGenerate(taskId)
+            return
+        }
+
+        activity?.let { host ->
+            CommonMessageDialog.Builder(host)
+                .setTitle(title)
+                .setContent(content)
+                .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+                .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
+                    submitAgainGenerate(taskId)
+                }
+                .show()
+        }
+    }
+
+    private fun submitAgainGenerate(taskId: String) {
+        mViewModel.continueAgainGenerate(taskId).obs(viewLifecycleOwner) {
+            onSuccess(::handleAgainGenerateResult)
+            onError { status ->
+                status.msg.toast()
+            }
+        }
+    }
+
+    private fun handleAgainGenerateResult(result: WorkGenerateResult) {
+        when (result.state) {
+            WorkGenerateResult.STATE_VIP_INTERCEPT -> {
+                showAgainGenerateInterceptDialog(result) {
+                    openActivity<VipJoinActivity>()
+                    loadData(isLoading = false)
+                }
+            }
+
+            WorkGenerateResult.STATE_RECHARGE_INTERCEPT -> {
+                showAgainGenerateInterceptDialog(result) {
+                    openActivity<IntegralRechargeActivity>()
+                    loadData(isLoading = false)
+                }
+            }
+
+            else -> loadData(isLoading = true)
+        }
+    }
+
+    private fun showAgainGenerateInterceptDialog(
+        result: WorkGenerateResult,
+        onConfirm: () -> Unit,
+    ) {
+        val host = activity ?: return
+        GenerateResultDialog.Builder(host)
+            .setResult(result)
+            .setOnConfirm(onConfirm)
+            .setCancelButtonText(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+            .setOnCancel {
+                loadData(isLoading = true)
+            }
+            .show() ?: loadData(isLoading = true)
     }
 
     private fun startWorkDownload(workItem: WorkItem) {
