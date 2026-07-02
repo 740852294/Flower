@@ -9,8 +9,13 @@ class TagListViewModel : BaseViewModel() {
 
     private var currentPage = 1
 
+    fun restoreCurrentPage(page: Int) {
+        currentPage = page.coerceAtLeast(1)
+    }
+
     fun loadTemplates(tagId: Int, refresh: Boolean) = request {
         onRequest {
+            val previousPage = currentPage
             if (refresh) {
                 currentPage = 1
             } else {
@@ -19,9 +24,7 @@ class TagListViewModel : BaseViewModel() {
             try {
                 TemplateRepository.getTagTemplateList(tagId, currentPage).await()
             } catch (e: Exception) {
-                if (!refresh) {
-                    currentPage--
-                }
+                currentPage = previousPage
                 throw e
             }
         }

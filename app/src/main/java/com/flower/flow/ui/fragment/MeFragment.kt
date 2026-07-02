@@ -4,10 +4,13 @@ import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.drake.brv.BindingAdapter
 import com.drake.brv.annotaion.DividerOrientation
 import com.drake.brv.utils.bindingAdapter
@@ -18,6 +21,7 @@ import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
 import com.flower.flow.app.core.ext.loadAvatarFile
 import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.core.util.WorkDownloadStorage
@@ -155,6 +159,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                 ivCover.loadImage(
                                     url = model.aiartImg,
                                     cornerRadiusDp = 15f,
+                                    isAutoPlay = false,
+                                    onFinalImageSet = ::syncAnimationPlayback,
                                 )
                                 ivCover.applyBlurEffect(true, dp2px(15f).toFloat())
                                 bindSampleImages(this, model.inputImgList)
@@ -178,6 +184,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                     ivCover.loadImage(
                                         url = url,
                                         cornerRadiusDp = 15f,
+                                        isAutoPlay = false,
+                                        onFinalImageSet = ::syncAnimationPlayback,
                                     )
                                 }
                                 ivCover.applyBlurEffect(true, dp2px(15f).toFloat())
@@ -208,6 +216,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                     ivCover.loadImage(
                                         url = url,
                                         cornerRadiusDp = 15f,
+                                        isAutoPlay = false,
+                                        onFinalImageSet = ::syncAnimationPlayback,
                                     )
                                 }
                                 ivCover.applyBlurEffect(false)
@@ -227,6 +237,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                     ivCover.loadImage(
                                         url = url,
                                         cornerRadiusDp = 15f,
+                                        isAutoPlay = false,
+                                        onFinalImageSet = ::syncAnimationPlayback,
                                     )
                                 }
                                 ivCover.applyBlurEffect(true, dp2px(15f).toFloat())
@@ -288,6 +300,16 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     }
                 }
             }
+
+        mBind.rvList.addOnChildAttachStateChangeListener(
+            object : RecyclerView.OnChildAttachStateChangeListener {
+                override fun onChildViewAttachedToWindow(view: View) {
+                    setWorkItemAnimationsRunning(view, isResumed && !isHidden)
+                }
+
+                override fun onChildViewDetachedFromWindow(view: View) = Unit
+            }
+        )
     }
 
     override fun onBindViewClick() {
@@ -331,15 +353,24 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        resumeVisibleAnimations()
+    }
+
     override fun onPause() {
-        super.onPause()
+        setVisibleAnimationsRunning(false)
         exitSelectionMode()
+        super.onPause()
     }
 
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (hidden) {
+            setVisibleAnimationsRunning(false)
             exitSelectionMode()
+        } else {
+            resumeVisibleAnimations()
         }
     }
 
@@ -467,7 +498,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         val avatar = user.avatar
         if (avatar.isNotEmpty()) {
-            mBind.ivAvatar.loadAvatarFile(avatar)
+            mBind.ivAvatar.loadAvatarFile(
+                source = avatar,
+                isAutoPlay = false,
+                onFinalImageSet = ::syncAnimationPlayback,
+            )
         }
 
         mBind.tvName.text = user.name
@@ -833,6 +868,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                 binding.ivSampleSingle.loadImage(
                     url = samples.first(),
                     cornerRadiusDp = 10f,
+                    isAutoPlay = false,
+                    onFinalImageSet = ::syncAnimationPlayback,
                 )
             }
 
@@ -846,6 +883,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                         0f,
                         10f,
                     ),
+                    isAutoPlay = false,
+                    onFinalImageSet = ::syncAnimationPlayback,
                 )
                 binding.ivSampleRight.loadImage(
                     url = samples.getOrNull(1),
@@ -855,8 +894,38 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                         10f,
                         0f,
                     ),
+                    isAutoPlay = false,
+                    onFinalImageSet = ::syncAnimationPlayback,
                 )
             }
+        }
+    }
+
+    private fun syncAnimationPlayback(imageView: ImageView) {
+        imageView.setImageAnimationRunning(isResumed && !isHidden)
+    }
+
+    private fun resumeVisibleAnimations() {
+        mBind.rvList.post {
+            if (isResumed && !isHidden) {
+                setVisibleAnimationsRunning(true)
+            }
+        }
+    }
+
+    private fun setVisibleAnimationsRunning(running: Boolean) {
+        mBind.ivAvatar.setImageAnimationRunning(running)
+        mBind.rvList.children.forEach { itemView ->
+            setWorkItemAnimationsRunning(itemView, running)
+        }
+    }
+
+    private fun setWorkItemAnimationsRunning(itemView: View, running: Boolean) {
+        LayoutItemWorkBinding.bind(itemView).run {
+            ivCover.setImageAnimationRunning(running)
+            ivSampleSingle.setImageAnimationRunning(running)
+            ivSampleLeft.setImageAnimationRunning(running)
+            ivSampleRight.setImageAnimationRunning(running)
         }
     }
 }

@@ -1,13 +1,18 @@
 package com.flower.flow.ui.fragment
 
 import android.os.Bundle
+import android.view.View
+import android.widget.ImageView
+import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
 import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TagListViewModel
 import com.flower.flow.databinding.FragmentTagListBinding
@@ -27,9 +32,15 @@ import me.hgj.jetpackmvvm.ext.view.grid
 class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>() {
 
     private var tagId: Int = 0
+    private var isPagerIdle = true
+    private var cacheGeneration = 0
 
     override fun initView(savedInstanceState: Bundle?) {
         tagId = requireArguments().getInt(ARG_TAG_ID)
+        (parentFragment as? TagFragment)?.let { parent ->
+            isPagerIdle = parent.isTagPagerIdle()
+            cacheGeneration = parent.getTemplateCacheGeneration()
+        }
 
         mBind.refreshLayout.refresh {
             loadTemplates(refresh = true)
@@ -50,6 +61,9 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                             url = model.img,
                             cornerRadiusDp = COVER_CORNER_RADIUS_DP,
                             borderWidthDp = COVER_BORDER_WIDTH_DP,
+                            isAutoPlay = false,
+                            resizeToViewport = true,
+                            onFinalImageSet = ::syncAnimationPlayback,
                         )
                         bindLockBadge(this, model)
                         bindSampleImages(this, model.sampleImgList)
@@ -64,15 +78,87 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                     }
                 }
             }
+
+        mBind.rvList.addOnChildAttachStateChangeListener(
+            object : RecyclerView.OnChildAttachStateChangeListener {
+                override fun onChildViewAttachedToWindow(view: View) {
+                    setItemAnimationRunning(view, canPlayAnimations())
+                }
+
+                override fun onChildViewDetachedFromWindow(view: View) = Unit
+            }
+        )
+        mBind.rvList.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        resumeVisibleAnimations()
+                    } else {
+                        setVisibleAnimationsRunning(false)
+                    }
+                }
+            }
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resumeVisibleAnimations()
+    }
+
+    override fun onPause() {
+        setVisibleAnimationsRunning(false)
+        super.onPause()
     }
 
     override fun lazyLoadData() {
-        loadTemplates(refresh = true)
+        if (!restoreTemplatesFromCache()) {
+            loadTemplates(refresh = true)
+        }
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) {
+            setVisibleAnimationsRunning(false)
+        } else {
+            resumeVisibleAnimations()
+        }
+    }
+
+    internal fun setPagerIdle(idle: Boolean) {
+        isPagerIdle = idle
+        if (idle) {
+            resumeVisibleAnimations()
+        } else {
+            setVisibleAnimationsRunning(false)
+        }
+    }
+
+    private fun restoreTemplatesFromCache(): Boolean {
+        val page = (parentFragment as? TagFragment)
+            ?.getCachedTemplates(tagId, cacheGeneration)
+            ?: return false
+        mViewModel.restoreCurrentPage(page.curPage)
+        loadListSuccess(
+            page,
+            mBind.rvList.bindingAdapter,
+            mBind.refreshLayout,
+            this,
+            isRefresh = true,
+        )
+        return true
     }
 
     private fun loadTemplates(refresh: Boolean) {
         mViewModel.loadTemplates(tagId, refresh).obs(this) {
             onSuccess { page ->
+                (parentFragment as? TagFragment)?.cacheTemplates(
+                    tagId,
+                    page,
+                    refresh,
+                    cacheGeneration,
+                )
                 loadListSuccess(
                     page,
                     mBind.rvList.bindingAdapter,
@@ -114,6 +200,8 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                 binding.ivSampleSingle.loadImage(
                     url = samples.first(),
                     cornerRadiusDp = SAMPLE_CORNER_RADIUS_DP,
+                    isAutoPlay = false,
+                    resizeToViewport = true,
                 )
             }
 
@@ -127,6 +215,8 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                         0f,
                         SAMPLE_CORNER_RADIUS_DP,
                     ),
+                    isAutoPlay = false,
+                    resizeToViewport = true,
                 )
                 binding.ivSampleRight.loadImage(
                     url = samples.getOrNull(1),
@@ -136,9 +226,43 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                         SAMPLE_CORNER_RADIUS_DP,
                         0f,
                     ),
+                    isAutoPlay = false,
+                    resizeToViewport = true,
                 )
             }
         }
+    }
+
+    private fun syncAnimationPlayback(imageView: ImageView) {
+        imageView.setImageAnimationRunning(
+            canPlayAnimations() && imageView.isAttachedToWindow,
+        )
+    }
+
+    private fun canPlayAnimations(): Boolean {
+        return isResumed &&
+                !isHidden &&
+                isPagerIdle &&
+                mBind.rvList.scrollState == RecyclerView.SCROLL_STATE_IDLE
+    }
+
+    private fun resumeVisibleAnimations() {
+        mBind.rvList.post {
+            if (canPlayAnimations()) {
+                setVisibleAnimationsRunning(true)
+            }
+        }
+    }
+
+    private fun setVisibleAnimationsRunning(running: Boolean) {
+        mBind.rvList.children.forEach { itemView ->
+            setItemAnimationRunning(itemView, running)
+        }
+    }
+
+    private fun setItemAnimationRunning(itemView: View, running: Boolean) {
+        LayoutItemTagTemplateBinding.bind(itemView).ivCover
+            .setImageAnimationRunning(running)
     }
 
     companion object {

@@ -4,6 +4,8 @@ import android.graphics.Color
 import android.graphics.Outline
 import android.graphics.Path
 import android.graphics.RectF
+import android.graphics.drawable.Animatable
+import android.graphics.drawable.Drawable
 import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Build
@@ -36,6 +38,7 @@ import java.io.File
  * @param cornerRadiiDp 四角圆角半径 [topLeft, topRight, bottomRight, bottomLeft]，单位 dp
  * @param borderWidthDp 边框宽度，单位 dp
  * @param borderColor 边框颜色
+ * @param resizeToViewport 是否按 ImageView 显示尺寸下采样解码
  */
 fun ImageView.loadImage(
     url: String?,
@@ -46,6 +49,8 @@ fun ImageView.loadImage(
     borderWidthDp: Float? = null,
     @ColorInt borderColor: Int = Color.WHITE,
     isAutoPlay: Boolean = true,
+    resizeToViewport: Boolean = false,
+    onFinalImageSet: ((ImageView) -> Unit)? = null,
 ) {
     if (url.isNullOrBlank()) {
         clearImage()
@@ -61,15 +66,42 @@ fun ImageView.loadImage(
 
     val imageOptionsBuilder = ImageOptions.create()
         .scale(scaleType)
+        .resizeToViewport(resizeToViewport)
     placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
     imageOptionsBuilder.autoPlay(isAutoPlay)
-    imageOptionsBuilder.autoStop(isAutoPlay)
+    imageOptionsBuilder.autoStop(true)
+
+    val target = this
+    val imageListener = onFinalImageSet?.let { callback ->
+        object : BaseImageListener() {
+            override fun onFinalImageSet(
+                id: Long,
+                imageOrigin: Int,
+                imageInfo: ImageInfo?,
+                drawable: Drawable?,
+            ) {
+                callback(target)
+            }
+        }
+    }
 
     VitoView.show(
         ImageSourceProvider.forUri(url),
         imageOptionsBuilder.build(),
+        null,
+        imageListener,
         this,
     )
+}
+
+/** 控制 Fresco Vito 加载的 WebP/GIF 动图播放状态，静态图片会被忽略。 */
+fun ImageView.setImageAnimationRunning(running: Boolean) {
+    val animatable = VitoView.getDrawable(this)?.actualImageDrawable as? Animatable ?: return
+    if (running) {
+        if (!animatable.isRunning) animatable.start()
+    } else if (animatable.isRunning) {
+        animatable.stop()
+    }
 }
 
 /**
@@ -267,6 +299,8 @@ fun ImageView.loadAvatarFile(
     source: String?,
     @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
     scaleType: ScalingUtils.ScaleType = ScalingUtils.ScaleType.CENTER_CROP,
+    isAutoPlay: Boolean = true,
+    onFinalImageSet: ((ImageView) -> Unit)? = null,
 ) {
     if (source.isNullOrBlank()) {
         setImageDrawable(null)
@@ -279,12 +313,28 @@ fun ImageView.loadAvatarFile(
         .round(RoundingOptions.asCircle())
         .scale(scaleType)
     placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
-    imageOptionsBuilder.autoPlay(true)
+    imageOptionsBuilder.autoPlay(isAutoPlay)
     imageOptionsBuilder.autoStop(true)
+
+    val target = this
+    val imageListener = onFinalImageSet?.let { callback ->
+        object : BaseImageListener() {
+            override fun onFinalImageSet(
+                id: Long,
+                imageOrigin: Int,
+                imageInfo: ImageInfo?,
+                drawable: Drawable?,
+            ) {
+                callback(target)
+            }
+        }
+    }
 
     VitoView.show(
         ImageSourceProvider.forUri(uri),
         imageOptionsBuilder.build(),
+        null,
+        imageListener,
         this,
     )
 }
@@ -296,8 +346,16 @@ fun ImageView.loadAvatarFile(
     file: File?,
     @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
     scaleType: ScalingUtils.ScaleType = ScalingUtils.ScaleType.CENTER_CROP,
+    isAutoPlay: Boolean = true,
+    onFinalImageSet: ((ImageView) -> Unit)? = null,
 ) {
-    loadAvatarFile(file?.absolutePath, placeholderRes, scaleType)
+    loadAvatarFile(
+        source = file?.absolutePath,
+        placeholderRes = placeholderRes,
+        scaleType = scaleType,
+        isAutoPlay = isAutoPlay,
+        onFinalImageSet = onFinalImageSet,
+    )
 }
 
 private fun resolveAvatarSource(source: String): String {

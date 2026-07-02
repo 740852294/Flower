@@ -1,12 +1,17 @@
 package com.flower.flow.ui.fragment
 
 import android.os.Bundle
+import android.view.View
+import android.widget.ImageView
+import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.RecyclerView
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
+import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.app.core.util.FlowCopyStore
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.event.EventViewModel
@@ -20,6 +25,7 @@ import com.flower.flow.ui.activity.IntegralRechargeActivity
 import com.flower.flow.ui.activity.TopicTemplateListActivity
 import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.binder.bindTopicItem
+import com.flower.flow.ui.binder.setTopicItemAnimationsRunning
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
@@ -75,11 +81,17 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
                     val model = getModel<TopicItem>()
                     when (itemViewType) {
                         R.layout.layout_item_topic_left -> {
-                            getBindingOrNull<LayoutItemTopicLeftBinding>()?.bindTopicItem(model)
+                            getBindingOrNull<LayoutItemTopicLeftBinding>()?.bindTopicItem(
+                                model,
+                                ::syncAnimationPlayback,
+                            )
                         }
 
                         R.layout.layout_item_topic_right -> {
-                            getBindingOrNull<LayoutItemTopicRightBinding>()?.bindTopicItem(model)
+                            getBindingOrNull<LayoutItemTopicRightBinding>()?.bindTopicItem(
+                                model,
+                                ::syncAnimationPlayback,
+                            )
                         }
                     }
                 }
@@ -96,6 +108,35 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
                     }
                 }
             }
+
+        mBind.rvList.addOnChildAttachStateChangeListener(
+            object : RecyclerView.OnChildAttachStateChangeListener {
+                override fun onChildViewAttachedToWindow(view: View) {
+                    setItemAnimationsRunning(view, isResumed && !isHidden)
+                }
+
+                override fun onChildViewDetachedFromWindow(view: View) = Unit
+            }
+        )
+    }
+
+    override fun onResume() {
+        super.onResume()
+        resumeVisibleAnimations()
+    }
+
+    override fun onPause() {
+        setVisibleAnimationsRunning(false)
+        super.onPause()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) {
+            setVisibleAnimationsRunning(false)
+        } else {
+            resumeVisibleAnimations()
+        }
     }
 
     override fun lazyLoadData() {
@@ -153,5 +194,37 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
     private fun setText() {
         mBind.tvLabel.text = FlowCopyStore.get(FlowCopyKey.VIDEO_APP_DESC)
+    }
+
+    private fun syncAnimationPlayback(imageView: ImageView) {
+        imageView.setImageAnimationRunning(isResumed && !isHidden)
+    }
+
+    private fun resumeVisibleAnimations() {
+        mBind.rvList.post {
+            if (isResumed && !isHidden) {
+                setVisibleAnimationsRunning(true)
+            }
+        }
+    }
+
+    private fun setVisibleAnimationsRunning(running: Boolean) {
+        mBind.rvList.children.forEach { itemView ->
+            setItemAnimationsRunning(itemView, running)
+        }
+    }
+
+    private fun setItemAnimationsRunning(itemView: View, running: Boolean) {
+        when (mBind.rvList.getChildViewHolder(itemView).itemViewType) {
+            R.layout.layout_item_topic_left -> {
+                LayoutItemTopicLeftBinding.bind(itemView)
+                    .setTopicItemAnimationsRunning(running)
+            }
+
+            R.layout.layout_item_topic_right -> {
+                LayoutItemTopicRightBinding.bind(itemView)
+                    .setTopicItemAnimationsRunning(running)
+            }
+        }
     }
 }

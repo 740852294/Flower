@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import com.flower.flow.app.App
 import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.model.entity.TopicItem
 import com.flower.flow.databinding.LayoutItemTopicLeftBinding
@@ -68,15 +69,33 @@ internal fun LayoutItemTopicRightBinding.asTopicItemViewRefs() = TopicItemViewRe
     ivSampleRight = ivSampleRight,
 )
 
-internal fun LayoutItemTopicLeftBinding.bindTopicItem(model: TopicItem) {
-    bindTopicItem(asTopicItemViewRefs(), model)
+internal fun LayoutItemTopicLeftBinding.bindTopicItem(
+    model: TopicItem,
+    onFinalImageSet: (ImageView) -> Unit,
+) {
+    bindTopicItem(asTopicItemViewRefs(), model, onFinalImageSet)
 }
 
-internal fun LayoutItemTopicRightBinding.bindTopicItem(model: TopicItem) {
-    bindTopicItem(asTopicItemViewRefs(), model)
+internal fun LayoutItemTopicRightBinding.bindTopicItem(
+    model: TopicItem,
+    onFinalImageSet: (ImageView) -> Unit,
+) {
+    bindTopicItem(asTopicItemViewRefs(), model, onFinalImageSet)
 }
 
-internal fun bindTopicItem(refs: TopicItemViewRefs, model: TopicItem) {
+internal fun LayoutItemTopicLeftBinding.setTopicItemAnimationsRunning(running: Boolean) {
+    asTopicItemViewRefs().setAnimationsRunning(running)
+}
+
+internal fun LayoutItemTopicRightBinding.setTopicItemAnimationsRunning(running: Boolean) {
+    asTopicItemViewRefs().setAnimationsRunning(running)
+}
+
+internal fun bindTopicItem(
+    refs: TopicItemViewRefs,
+    model: TopicItem,
+    onFinalImageSet: (ImageView) -> Unit,
+) {
     refs.tvName.text = model.name
     refs.tvDesc.text = model.description
 
@@ -88,38 +107,50 @@ internal fun bindTopicItem(refs: TopicItemViewRefs, model: TopicItem) {
             url = model1.img,
             cornerRadiusDp = 10f,
             borderWidthDp = 1f,
+            isAutoPlay = false,
+            onFinalImageSet = onFinalImageSet,
         )
         val showCost = model1.lockIntegral > 0
         val showConfig = (App.globalConfig?.templateAbduceIntegralShow ?: 0) in arrayOf(1, 3)
         refs.llLockBadge.isVisible = showCost && showConfig
         refs.tvLockIntegral.text = model1.lockIntegral.toString()
-        bindSampleImages(refs, model1.sampleImgList)
+        bindSampleImages(refs, model1.sampleImgList, onFinalImageSet)
     } else {
         refs.clTemple1.isVisible = false
     }
 
-    bindOptionalCover(refs.ivCover2, modelList?.getOrNull(1), cornerRadiusDp = 10f)
-    bindOptionalCover(refs.ivCover3, modelList?.getOrNull(2), cornerRadiusDp = 10f)
+    bindOptionalCover(
+        refs.ivCover2,
+        modelList?.getOrNull(1),
+        cornerRadiusDp = 10f,
+        onFinalImageSet = onFinalImageSet,
+    )
+    bindOptionalCover(
+        refs.ivCover3,
+        modelList?.getOrNull(2),
+        cornerRadiusDp = 10f,
+        onFinalImageSet = onFinalImageSet,
+    )
     bindOptionalCover(
         refs.ivCover4,
         modelList?.getOrNull(3),
         cornerRadiusDp = 16f,
         borderColor = Color.BLACK,
-        isAutoPlay = false,
+        onFinalImageSet = onFinalImageSet,
     )
     bindOptionalCover(
         refs.ivCover5,
         modelList?.getOrNull(4),
         cornerRadiusDp = 16f,
         borderColor = Color.BLACK,
-        isAutoPlay = false,
+        onFinalImageSet = onFinalImageSet,
     )
     bindOptionalCover(
         refs.ivCover6,
         modelList?.getOrNull(5),
         cornerRadiusDp = 16f,
         borderColor = Color.BLACK,
-        isAutoPlay = false,
+        onFinalImageSet = onFinalImageSet,
     )
 }
 
@@ -128,7 +159,7 @@ private fun bindOptionalCover(
     template: TemplateItem?,
     cornerRadiusDp: Float,
     borderColor: Int = Color.WHITE,
-    isAutoPlay: Boolean = true,
+    onFinalImageSet: (ImageView) -> Unit,
 ) {
     if (template != null) {
         imageView.isVisible = true
@@ -137,7 +168,8 @@ private fun bindOptionalCover(
             cornerRadiusDp = cornerRadiusDp,
             borderWidthDp = 1f,
             borderColor = borderColor,
-            isAutoPlay = isAutoPlay,
+            isAutoPlay = false,
+            onFinalImageSet = onFinalImageSet,
         )
     } else {
         imageView.isVisible = false
@@ -147,6 +179,7 @@ private fun bindOptionalCover(
 private fun bindSampleImages(
     refs: TopicItemViewRefs,
     samples: List<String>?,
+    onFinalImageSet: (ImageView) -> Unit,
 ) {
     refs.ivSampleSingle.isVisible = false
     refs.llSampleBottom.isVisible = false
@@ -157,6 +190,8 @@ private fun bindSampleImages(
             refs.ivSampleSingle.loadImage(
                 url = samples.first(),
                 cornerRadiusDp = 4f,
+                isAutoPlay = false,
+                onFinalImageSet = onFinalImageSet,
             )
         }
 
@@ -165,11 +200,27 @@ private fun bindSampleImages(
             refs.ivSampleLeft.loadImage(
                 url = samples[0],
                 cornerRadiiDp = floatArrayOf(4f, 0f, 0f, 4f),
+                isAutoPlay = false,
+                onFinalImageSet = onFinalImageSet,
             )
             refs.ivSampleRight.loadImage(
                 url = samples.getOrNull(1),
                 cornerRadiiDp = floatArrayOf(0f, 4f, 4f, 0f),
+                isAutoPlay = false,
+                onFinalImageSet = onFinalImageSet,
             )
         }
     }
+}
+
+private fun TopicItemViewRefs.setAnimationsRunning(running: Boolean) {
+    ivCover1.setImageAnimationRunning(running)
+    ivCover2.setImageAnimationRunning(running)
+    ivCover3.setImageAnimationRunning(running)
+    ivCover4.setImageAnimationRunning(running)
+    ivCover5.setImageAnimationRunning(running)
+    ivCover6.setImageAnimationRunning(running)
+    ivSampleSingle.setImageAnimationRunning(running)
+    ivSampleLeft.setImageAnimationRunning(running)
+    ivSampleRight.setImageAnimationRunning(running)
 }

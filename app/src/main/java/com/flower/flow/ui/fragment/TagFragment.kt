@@ -9,7 +9,9 @@ import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseFragment
 import com.flower.flow.app.event.EventViewModel
+import com.flower.flow.data.model.entity.ApiPagerResponse
 import com.flower.flow.data.model.entity.TagItem
+import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TagViewModel
 import com.flower.flow.databinding.FragmentTagBinding
 import com.flower.flow.databinding.LayoutItemTagTabBinding
@@ -26,13 +28,31 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
     private lateinit var pagerAdapter: TagPagerAdapter
     private var tagList: List<TagItem> = emptyList()
     private var isFirstTagLoad = true
+    private var isPagerIdle = true
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             if (selectedTabPosition == position) return
+            val previousPosition = selectedTabPosition
             selectedTabPosition = position
-            mBind.rvTagTab.adapter?.notifyDataSetChanged()
+            mBind.rvTagTab.adapter?.run {
+                if (previousPosition in 0 until itemCount) {
+                    notifyItemChanged(previousPosition)
+                }
+                if (position in 0 until itemCount) {
+                    notifyItemChanged(position)
+                }
+            }
             scrollTabToCenter(position)
+        }
+
+        override fun onPageScrollStateChanged(state: Int) {
+            isPagerIdle = state == ViewPager2.SCROLL_STATE_IDLE
+            childFragmentManager.fragments
+                .filterIsInstance<TagListFragment>()
+                .forEach { fragment ->
+                    fragment.setPagerIdle(isPagerIdle)
+                }
         }
     }
 
@@ -42,6 +62,7 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
 
         pagerAdapter = TagPagerAdapter(this)
         mBind.viewPager.adapter = pagerAdapter
+        mBind.viewPager.offscreenPageLimit = OFFSCREEN_PAGE_LIMIT
         mBind.viewPager.registerOnPageChangeCallback(pageChangeCallback)
 
         mBind.rvTagTab.horizontal()
@@ -75,6 +96,7 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
 
     override fun createObserver() {
         EventViewModel.languageEvent.observe(this) {
+            mViewModel.invalidateTemplateCache()
             loadTagList(showLoading = false)
         }
     }
@@ -105,7 +127,6 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
                 if (list.isNotEmpty()) {
                     val targetPosition = selectedTabPosition.coerceIn(list.indices)
                     selectedTabPosition = targetPosition
-                    mBind.viewPager.offscreenPageLimit = list.size
                     mBind.viewPager.setCurrentItem(targetPosition, false)
                     mBind.rvTagTab.adapter?.notifyDataSetChanged()
                 }
@@ -116,7 +137,31 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
         }
     }
 
+    internal fun isTagPagerIdle(): Boolean = isPagerIdle
+
+    internal fun getTemplateCacheGeneration(): Int {
+        return mViewModel.getTemplateCacheGeneration()
+    }
+
+    internal fun getCachedTemplates(
+        tagId: Int,
+        generation: Int,
+    ): ApiPagerResponse<TemplateItem>? {
+        return mViewModel.getCachedTemplates(tagId, generation)
+    }
+
+    internal fun cacheTemplates(
+        tagId: Int,
+        page: ApiPagerResponse<TemplateItem>,
+        refresh: Boolean,
+        generation: Int,
+    ) {
+        mViewModel.cacheTemplates(tagId, page, refresh, generation)
+    }
+
     companion object {
+        private const val OFFSCREEN_PAGE_LIMIT = 1
+
         fun newInstance(): TagFragment {
             return TagFragment().apply {
                 arguments = Bundle()
