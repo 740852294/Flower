@@ -26,6 +26,9 @@ object EventViewModel {
 
     /** 专题模板列表分页同步 */
     val topicTemplateListSyncEvent = MutableResult<TopicTemplateListSyncEvent>()
+
+    /** 作品数据刷新 */
+    val workDataRefreshEvent = MutableResult<Boolean>()
 }
 
 data class TopicTemplateListSyncEvent(

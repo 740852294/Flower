@@ -32,4 +32,10 @@ object AiArtRepository {
             .add("pageNum", pageNum)
             .toAwaitResponse()
     }
+
+    fun deleteWorkTasks(taskIds: List<String>): Await<Any> {
+        return RxHttp.postJson(NetUrl.AiArt.WORK_DELETE)
+            .add("taskIdArr", taskIds)
+            .toAwaitResponse()
+    }
 }

@@ -39,4 +39,11 @@ class MeViewModel : BaseViewModel() {
         }
         loadingType = if (refresh) LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL
     }
+
+    fun deleteWorkTasks(taskIds: List<String>) = request {
+        onRequest {
+            AiArtRepository.deleteWorkTasks(taskIds).await()
+        }
+        loadingType = LoadingType.LOADING_DIALOG
+    }
 }

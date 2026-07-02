@@ -121,6 +121,9 @@ class MaterialUploadActivity :
         mBind.btnCreate.clickNoRepeat {
             startCreateFlow()
         }
+        mBind.flGenerate.clickNoRepeat {
+
+        }
     }
 
     override fun createObserver() {
@@ -204,7 +207,6 @@ class MaterialUploadActivity :
 
     private fun handleSelectedImageUri(uri: Uri?) {
         val cachedFile = uri?.let { saveUriToCache(it) } ?: run {
-            FlowCopyStore.get(FlowCopyKey.PHOTO_UPLOAD_FAIL).toast()
             return
         }
         showUploadPreview(cachedFile, pickSlot)
@@ -392,6 +394,7 @@ class MaterialUploadActivity :
      */
     private fun onGenerateSimulationFinished(result: WorkGenerateResult) {
         mBind.flGenerate.isVisible = false
+        EventViewModel.workDataRefreshEvent.postValue(true)
 
         if (GenerateResultDialog.Builder.configForState(result.state) == null) {
             finish()
@@ -405,9 +408,9 @@ class MaterialUploadActivity :
             WorkGenerateResult.STATE_WAITING -> {
                 builder.setOnConfirm {
                     finish()
-                    if (source == SOURCE_TOPIC){
+                    if (source == SOURCE_TOPIC) {
                         finishActivityByClass(TopicUseTemplateActivity::class.java)
-                    }else if (source == SOURCE_TAG){
+                    } else if (source == SOURCE_TAG) {
                         finishActivityByClass(TagUseTemplateActivity::class.java)
                     }
                 }

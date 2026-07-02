@@ -69,5 +69,7 @@ object NetUrl {
         const val GENERATE_WORK = "aiart/generateV1"
         //作品列表
         const val WORK_LIST = "aiart/pageTaskList"
+        //删除作品
+        const val WORK_DELETE = "aiart/delTask"
     }
 }

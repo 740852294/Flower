@@ -35,6 +35,7 @@ import com.flower.flow.ui.activity.VipJoinActivity
 import com.flower.flow.ui.adapter.MainAdapter
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.dp2px
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
@@ -47,6 +48,9 @@ import me.hgj.jetpackmvvm.ext.view.grid
 import me.hgj.jetpackmvvm.util.BasePage
 
 class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
+
+    private var isSelectionMode = false
+    private val selectedTaskIds = mutableSetOf<String>()
 
     companion object {
         const val SPAN_COUNT = 2
@@ -61,6 +65,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         const val WORK_STATUS_COMPLETE = 3
 
         const val WORK_STATUS_FAIL = 4
+
+        private const val PAYLOAD_SELECTION = "payload_selection"
 
         fun newInstance(): MeFragment {
             val args = Bundle()
@@ -84,19 +90,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
 
         mBind.refreshLayout.refresh {
-            mViewModel.initData(false).obs(viewLifecycleOwner) {
-                onSuccess { page ->
-                    bindWorkList(
-                        page,
-                        mBind.rvList.bindingAdapter,
-                        isRefresh = true
-                    )
-                }
-                onError { status ->
-                    loadListError(status, mBind.refreshLayout)
-                    status.msg.toast()
-                }
-            }
+            exitSelectionMode()
+            loadData(isLoading = false)
         }
 
         mBind.workLoadMoreLayout.loadMore {
@@ -126,12 +121,15 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
                         val isVip = UserManager.user?.isVip ?: false
 
+                        bindSelectionState(this, model)
+
                         btnStatus.isVisible = !model.againGenerateButtonMsg.isNullOrBlank()
                         btnStatus.text = model.againGenerateButtonMsg ?: ""
 
                         when (model.state) {
                             WORK_STATUS_NONE -> {
-                                lockDot.visibility = View.VISIBLE
+                                lockDot.visibility =
+                                    if (isSelectionMode) View.GONE else View.VISIBLE
                                 llTime.visibility = View.GONE
                                 llProgress.visibility = View.GONE
                                 ivDownload.visibility = View.GONE
@@ -227,8 +225,30 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     }
                 }
 
-                onClick(R.id.rootItem) {
+                onPayload { payloads ->
+                    if (PAYLOAD_SELECTION in payloads) {
+                        getBindingOrNull<LayoutItemWorkBinding>()?.run {
+                            bindSelectionState(this, getModel())
+                        }
+                    }
+                }
 
+                onClick(R.id.rootItem) {
+                    doDebouncedClick {
+                        val model = getModel<WorkItem>()
+                        if (isSelectionMode) {
+                            val taskId = model.taskId
+                            if (!selectedTaskIds.add(taskId)) {
+                                selectedTaskIds.remove(taskId)
+                            }
+                            notifyItemChanged(modelPosition, PAYLOAD_SELECTION)
+                            updateDeleteButtonText()
+                        } else {
+                            if (model.state == WORK_STATUS_COMPLETE) {
+                                //跳转预览
+                            }
+                        }
+                    }
                 }
             }
     }
@@ -249,8 +269,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
 
         mBind.clInfo.clickNoRepeat {
-            openActivityForResult<EditUserInfoActivity> { _ ->
-                (activity as? MainActivity)?.getUserInfo(isFirst = false, isLoading = true)
+            openActivityForResult<EditUserInfoActivity> { result ->
+                if (result != null) {
+                    (activity as? MainActivity)?.getUserInfo(isFirst = false, isLoading = true)
+                }
             }
         }
 
@@ -262,10 +284,34 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.settingBtn.clickNoRepeat {
             openActivity<SettingActivity>()
         }
+
+        mBind.btnDelete.clickNoRepeat {
+            when {
+                !isSelectionMode -> enterSelectionMode()
+                selectedTaskIds.isEmpty() -> exitSelectionMode()
+                else -> deleteSelectedWorks(selectedTaskIds.toList())
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        exitSelectionMode()
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (hidden) {
+            exitSelectionMode()
+        }
     }
 
     override fun lazyLoadData() {
-        mViewModel.initData(true).obs(viewLifecycleOwner) {
+        loadData(isLoading = true)
+    }
+
+    private fun loadData(isLoading: Boolean) {
+        mViewModel.initData(isLoading).obs(viewLifecycleOwner) {
             onSuccess { page ->
                 bindWorkList(
                     page,
@@ -287,7 +333,9 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     ) {
         val refresh = isRefresh ?: baseListNetEntity.isRefresh()
         if (refresh) {
-            bindingAdapter.models = baseListNetEntity.getPageData()
+            exitSelectionMode(notifyItems = false)
+            val pageData = baseListNetEntity.getPageData()
+            bindingAdapter.models = pageData
             mBind.refreshLayout.finishRefresh()
         } else {
             bindingAdapter.addModels(baseListNetEntity.getPageData())
@@ -321,6 +369,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         EventViewModel.languageEvent.observe(this) {
             setText()
         }
+
+        EventViewModel.workDataRefreshEvent.observe(this) {
+            loadData(false)
+        }
     }
 
     private fun setUserInfo(user: UserInfo) {
@@ -346,7 +398,73 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.vipSubtitleText.text = FlowCopyStore.get(FlowCopyKey.VIP_UNLOCK_HINT)
         mBind.btnVip.text = FlowCopyStore.get(FlowCopyKey.VIP_OPEN_HINT)
         mBind.worksLabel.text = FlowCopyStore.get(FlowCopyKey.WORKS_TAB)
-        mBind.btnDelete.text = FlowCopyStore.get(FlowCopyKey.DELETE_ACTION)
+        updateDeleteButtonText()
+    }
+
+    private fun enterSelectionMode() {
+        isSelectionMode = true
+        selectedTaskIds.clear()
+        updateDeleteButtonText()
+        notifySelectionStateChanged()
+    }
+
+    private fun exitSelectionMode(notifyItems: Boolean = true) {
+        if (!isSelectionMode && selectedTaskIds.isEmpty()) return
+
+        isSelectionMode = false
+        selectedTaskIds.clear()
+        updateDeleteButtonText()
+        if (notifyItems) {
+            notifySelectionStateChanged()
+        }
+    }
+
+    private fun notifySelectionStateChanged() {
+        val adapter = mBind.rvList.bindingAdapter
+        val modelCount = adapter.models?.size ?: 0
+        if (modelCount > 0) {
+            adapter.notifyItemRangeChanged(0, modelCount, PAYLOAD_SELECTION)
+        }
+    }
+
+    private fun bindSelectionState(
+        binding: LayoutItemWorkBinding,
+        model: WorkItem,
+    ) {
+        binding.ivSelect.isVisible = isSelectionMode
+        binding.ivSelect.setImageResource(
+            if (model.taskId in selectedTaskIds) {
+                R.mipmap.ic_work_item_selected
+            } else {
+                R.mipmap.ic_work_item_unselect
+            }
+        )
+        if (model.state == WORK_STATUS_NONE) {
+            binding.lockDot.visibility =
+                if (isSelectionMode) View.GONE else View.VISIBLE
+        }
+    }
+
+    private fun updateDeleteButtonText() {
+        val copyKey = if (isSelectionMode && selectedTaskIds.isEmpty()) {
+            FlowCopyKey.CANCEL_ACTION
+        } else {
+            FlowCopyKey.DELETE_ACTION
+        }
+        mBind.btnDelete.text = FlowCopyStore.get(copyKey)
+    }
+
+    private fun deleteSelectedWorks(taskIds: List<String>) {
+        if (taskIds.isEmpty()) return
+        mViewModel.deleteWorkTasks(taskIds).obs(viewLifecycleOwner) {
+            onSuccess {
+                exitSelectionMode()
+                loadData(isLoading = true)
+            }
+            onError { status ->
+                status.msg.toast()
+            }
+        }
     }
 
     fun setIconText(

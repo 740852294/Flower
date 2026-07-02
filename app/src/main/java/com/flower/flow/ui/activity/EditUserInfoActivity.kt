@@ -133,7 +133,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
         val avatarPath = mViewModel.pendingAvatarPath.takeIf { mViewModel.hasPendingAvatar() }
         mViewModel.updateUserInfo(nickname, avatarPath).obs(this) {
             onSuccess {
-                setResult(RESULT_OK)
+                setResult(RESULT_OK, Intent())
                 finish()
             }
             onError { error ->
