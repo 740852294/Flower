@@ -7,11 +7,13 @@ import androidx.core.view.isVisible
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.applyCornerRadius
 import com.flower.flow.app.core.ext.loadImageFitWidth
 import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.VideoPreviewCache
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.FlowCopyKey
 import com.flower.flow.data.model.entity.WorkItem
@@ -109,15 +111,21 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         )
     }
 
+    @OptIn(UnstableApi::class)
     private fun setupVideoPreview(url: String) {
         mBind.previewImage.isVisible = false
         mBind.previewVideo.isVisible = true
         mBind.videoLoading.isVisible = true
 
-        val exoPlayer = ExoPlayer.Builder(this).build().also { player = it }
+        val exoPlayer = VideoPreviewCache.createPlayer(this).also { player = it }
         exoPlayer.repeatMode = Player.REPEAT_MODE_ONE
         exoPlayer.playWhenReady = true
-        exoPlayer.setMediaItem(MediaItem.fromUri(url))
+        exoPlayer.setMediaItem(
+            MediaItem.Builder()
+                .setUri(url)
+                .setCustomCacheKey(workItem.taskId.ifBlank { url })
+                .build()
+        )
         exoPlayer.addListener(object : Player.Listener {
             override fun onVideoSizeChanged(videoSize: VideoSize) {
                 if (videoSize.width > 0 && videoSize.height > 0) {

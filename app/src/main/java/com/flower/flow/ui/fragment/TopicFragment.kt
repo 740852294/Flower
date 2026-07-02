@@ -33,6 +33,8 @@ import me.hgj.jetpackmvvm.ext.view.vertical
 
 class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
+    private var isLazyLoaded = false
+
     companion object {
         fun newInstance(): TopicFragment {
             val args = Bundle()
@@ -98,6 +100,12 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
     override fun lazyLoadData() {
         loadTopicList(showPageLoading = true)
+        isLazyLoaded = true
+    }
+
+    fun refreshHomeTopicList() {
+        if (!isLazyLoaded) return
+        loadTopicList(showPageLoading = false)
     }
 
     override fun onBindViewClick() {
@@ -124,11 +132,6 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
             }
         }
 
-        EventViewModel.homeDataRefreshEvent.observe(this) { result ->
-            if (result) {
-                loadTopicList(showPageLoading = true)
-            }
-        }
     }
 
     private fun loadTopicList(showPageLoading: Boolean) {

@@ -105,6 +105,7 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
                 if (list.isNotEmpty()) {
                     val targetPosition = selectedTabPosition.coerceIn(list.indices)
                     selectedTabPosition = targetPosition
+                    mBind.viewPager.offscreenPageLimit = list.size
                     mBind.viewPager.setCurrentItem(targetPosition, false)
                     mBind.rvTagTab.adapter?.notifyDataSetChanged()
                 }

@@ -46,7 +46,7 @@ import java.io.File
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 import androidx.core.net.toUri
-import com.flower.flow.app.event.EventViewModel
+import me.hgj.jetpackmvvm.ext.util.findActivity
 import me.hgj.jetpackmvvm.ext.util.finishActivityByClass
 
 class MaterialUploadActivity :
@@ -321,7 +321,7 @@ class MaterialUploadActivity :
 
     private fun handleGenerateResult(result: WorkGenerateResult) {
 
-        EventViewModel.homeDataRefreshEvent.postValue(true)
+        findActivity<MainActivity>()?.refreshTopicListSilently()
 
         mBind.flGenerate.visibility = View.VISIBLE
 
@@ -394,7 +394,7 @@ class MaterialUploadActivity :
      */
     private fun onGenerateSimulationFinished(result: WorkGenerateResult) {
         mBind.flGenerate.isVisible = false
-        EventViewModel.workDataRefreshEvent.postValue(true)
+        findActivity<MainActivity>()?.refreshMeWorkListSilently()
 
         if (GenerateResultDialog.Builder.configForState(result.state) == null) {
             finish()

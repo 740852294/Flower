@@ -70,3 +70,9 @@ fun finishAllActivity() {
 fun containsActivity(cls: Class<*>): Boolean {
     return activityList.any { it.javaClass == cls && !it.isFinishing }
 }
+
+fun <T : Activity> findActivity(clazz: Class<T>): T? {
+    return activityList.firstOrNull { clazz.isInstance(it) && !it.isFinishing } as? T
+}
+
+inline fun <reified T : Activity> findActivity(): T? = findActivity(T::class.java)

@@ -22,14 +22,8 @@ object EventViewModel {
     /** 刷新系统通知列表 */
     val systemNotifyRefreshEvent = MutableResult<Boolean>()
 
-    /** 首页数据刷新 */
-    val homeDataRefreshEvent = MutableResult<Boolean>()
-
     /** 专题模板列表分页同步 */
     val topicTemplateListSyncEvent = MutableResult<TopicTemplateListSyncEvent>()
-
-    /** 作品数据刷新 */
-    val workDataRefreshEvent = MutableResult<Boolean>()
 
     /** 下载作品 */
     val workDownloadEvent = MutableResult<WorkItem>()

@@ -69,6 +69,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private var isSelectionMode = false
     private val selectedTaskIds = mutableSetOf<String>()
     private var workListPollingStarted = false
+    private var isLazyLoaded = false
     private val downloadStates = mutableMapOf<String, DownloadUiState>()
     private val downloadJobs = mutableMapOf<String, Job>()
 
@@ -345,6 +346,12 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     override fun lazyLoadData() {
         loadData(isLoading = true)
         startWorkListPolling()
+        isLazyLoaded = true
+    }
+
+    fun refreshWorkListSilently() {
+        if (!isLazyLoaded) return
+        loadData(isLoading = false)
     }
 
     private fun startWorkListPolling() {
@@ -445,10 +452,6 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         EventViewModel.languageEvent.observe(this) {
             setText()
-        }
-
-        EventViewModel.workDataRefreshEvent.observe(this) {
-            loadData(false)
         }
 
         EventViewModel.workDownloadEvent.observe(viewLifecycleOwner) { workItem ->

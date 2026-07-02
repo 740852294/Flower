@@ -19,6 +19,8 @@ import com.flower.flow.databinding.ActivityMainBinding
 import com.flower.flow.databinding.LayoutMainBottomTabItemBinding
 import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.dialog.CommonMessageDialog
+import com.flower.flow.ui.fragment.MeFragment
+import com.flower.flow.ui.fragment.TopicFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
@@ -182,6 +184,20 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     fun switchTab(index: Int) {
         if (!::tabs.isInitialized) return
         selectTab(index)
+    }
+
+    fun refreshTopicListSilently() {
+        if (!::tabs.isInitialized) return
+        val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
+            ?.getFragment(MainAdapter.PAGE_TOPIC) as? TopicFragment
+        fragment?.refreshHomeTopicList()
+    }
+
+    fun refreshMeWorkListSilently() {
+        if (!::tabs.isInitialized) return
+        val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
+            ?.getFragment(MainAdapter.PAGE_USER) as? MeFragment
+        fragment?.refreshWorkListSilently()
     }
 
     private fun selectTab(index: Int) {
