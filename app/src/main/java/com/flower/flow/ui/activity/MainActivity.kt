@@ -50,6 +50,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     override fun initView(savedInstanceState: Bundle?) {
         pendingTabIndex = readTargetTab(intent)
+
+        setupMainContent()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -73,7 +75,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             onSuccess { result ->
                 when (result) {
                     is MainInitResult.ForceUpdate -> showForceUpdateDialog(result)
-                    is MainInitResult.Ready -> setupMainContent()
+                    is MainInitResult.Ready -> initData()
                 }
             }
         }
@@ -148,7 +150,13 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         mBind.mainViewPager.isUserInputEnabled = false
         selectTab(pendingTabIndex ?: MainAdapter.PAGE_TOPIC)
         pendingTabIndex = null
+    }
 
+    private fun initData() {
+        supportFragmentManager.setFragmentResult(
+            TopicFragment.REQUEST_MAIN_DATA_READY,
+            Bundle(),
+        )
         getUserInfo(isFirst = true, isLoading = true)
         startUserInfoPolling()
     }

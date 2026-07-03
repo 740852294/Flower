@@ -42,6 +42,8 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     private var isLazyLoaded = false
 
     companion object {
+        const val REQUEST_MAIN_DATA_READY = "request_main_data_ready"
+
         fun newInstance(): TopicFragment {
             val args = Bundle()
             val fragment = TopicFragment()
@@ -53,15 +55,18 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     override fun initView(savedInstanceState: Bundle?) {
         mBind.llContent.statusPadding()
 
-        App.globalConfig?.apply {
-            mBind.llMoney.isVisible = (exaltabrade == 1)
-        }
-
         UserManager.user?.apply {
             mBind.tvMoney.text = beastamalgam.toString()
         }
 
         setText()
+
+        parentFragmentManager.setFragmentResultListener(
+            REQUEST_MAIN_DATA_READY,
+            viewLifecycleOwner,
+        ) { _, _ ->
+            loadInitialTopicList()
+        }
 
         mBind.refreshLayout.refresh {
             loadTopicList(showPageLoading = false)
@@ -140,8 +145,9 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     }
 
     override fun lazyLoadData() {
-        loadTopicList(showPageLoading = true)
-        isLazyLoaded = true
+        if (App.globalConfig != null){
+            loadInitialTopicList()
+        }
     }
 
     fun refreshHomeTopicList() {
@@ -170,6 +176,10 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
         UserManager.observeUser().observe(viewLifecycleOwner) { user ->
             user?.apply {
                 mBind.tvMoney.text = beastamalgam.toString()
+
+                App.globalConfig?.apply {
+                    mBind.llMoney.isVisible = (exaltabrade == 1)
+                }
             }
         }
 
@@ -190,6 +200,12 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
                 status.msg.toast()
             }
         }
+    }
+
+    private fun loadInitialTopicList() {
+        if (isLazyLoaded || App.globalConfig == null) return
+        loadTopicList(showPageLoading = true)
+        isLazyLoaded = true
     }
 
     private fun setText() {
