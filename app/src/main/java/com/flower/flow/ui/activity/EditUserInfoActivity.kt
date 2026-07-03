@@ -2,9 +2,7 @@ package com.flower.flow.ui.activity
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.view.Gravity
 import android.view.MenuItem
@@ -24,11 +22,9 @@ import com.flower.flow.data.model.CacheConfig
 import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.vm.EditUserInfoViewModel
 import com.flower.flow.databinding.ActivityEditUserInfoBinding
-import com.flower.flow.ui.dialog.CommonMessageDialog
-import com.hjq.permissions.XXPermissions
-import com.hjq.permissions.permission.PermissionLists
-import me.hgj.jetpackmvvm.core.data.obs
+import com.flower.flow.ui.upload.ImagePickDelegate
 import kotlinx.coroutines.launch
+import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.copyToClipboard
 import me.hgj.jetpackmvvm.ext.util.toast
@@ -40,6 +36,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
         get() = AppStrings.get(StringResId.PROFILE_EDIT)
 
     private lateinit var saveButton: ActionButton
+    private lateinit var imagePickDelegate: ImagePickDelegate
     private var originalNickname: String = ""
 
     private val photoPickerLauncher = registerForActivityResult(
@@ -57,6 +54,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
     }
 
     override fun initView(savedInstanceState: Bundle?) {
+        imagePickDelegate = ImagePickDelegate(this, photoPickerLauncher, legacyPickerLauncher)
         addSaveBtn()
         setText()
         mBind.etName.doAfterTextChanged {
@@ -153,69 +151,11 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
         }
 
         mBind.ivAvatar.clickNoRepeat {
-            openSystemGallery()
+            imagePickDelegate.openGallery()
         }
 
         mBind.ivModify.clickNoRepeat {
-            openSystemGallery()
-        }
-    }
-
-    private fun openSystemGallery() {
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                photoPickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
-                )
-            }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                openLegacyPicker()
-            }
-
-            else -> {
-                requestStoragePermissionAndOpen()
-            }
-        }
-    }
-
-    private fun requestStoragePermissionAndOpen() {
-        XXPermissions.with(this)
-            .permission(PermissionLists.getReadExternalStoragePermission())
-            .request { _, deniedList ->
-                if (deniedList.isEmpty()) {
-                    openLegacyPicker()
-                } else if (XXPermissions.isDoNotAskAgainPermissions(this, deniedList)) {
-                    showStoragePermanentDenyDialog()
-                }
-            }
-    }
-
-    private fun showStoragePermanentDenyDialog() {
-        CommonMessageDialog.Builder(this)
-            .setTitle(AppStrings.get(StringResId.PERM_STORE_HEAD))
-            .setContent(AppStrings.get(StringResId.STORAGE_DESC))
-            .setConfirmButton(AppStrings.get(StringResId.CONFIRM_ACTION)) {
-                XXPermissions.startPermissionActivity(this)
-            }
-            .setCancelButton(AppStrings.get(StringResId.CANCEL_ACTION))
-            .show()
-    }
-
-    private fun openLegacyPicker() {
-        var intent = Intent(Intent.ACTION_PICK).apply {
-            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        if (intent.resolveActivity(packageManager) == null) {
-            intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-                type = "image/*"
-                addCategory(Intent.CATEGORY_OPENABLE)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-        }
-        if (intent.resolveActivity(packageManager) != null) {
-            legacyPickerLauncher.launch(intent)
+            imagePickDelegate.openGallery()
         }
     }
 

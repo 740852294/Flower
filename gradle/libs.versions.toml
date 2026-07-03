@@ -23,7 +23,6 @@ toaster = "13.5"
 unpeekLivedata = "7.8.0"
 dialog =  "3.3.0"
 immersionbar =  "3.2.2"
-permissions =  "26.5"
 brv = "1.5.8"
 shapeView = "11.0"
 shapeDrawable = "5.0"
@@ -68,7 +67,6 @@ brv = { module = "com.github.liangjingkanji:BRV", version.ref = "brv" }
 dialog = { module = "com.afollestad.material-dialogs:core", version.ref = "dialog" }
 dialog-lifecycle = { module = "com.afollestad.material-dialogs:lifecycle", version.ref = "dialog" }
 immersionbar = { module = "com.geyifeng.immersionbar:immersionbar", version.ref = "immersionbar" }
-permissions = { module = "com.github.getActivity:XXPermissions", version.ref = "permissions" }
 androidx-activity-ktx = { group = "androidx.activity", name = "activity-ktx", version.ref = "activityKtx" }
 fresco = { module = "com.facebook.fresco:fresco", version.ref = "fresco" }
 fresco-gif = { module = "com.facebook.fresco:animated-gif", version.ref = "fresco" }

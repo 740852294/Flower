@@ -7,32 +7,10 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentActivity
-import com.flower.flow.app.core.util.AppStrings
-import com.flower.flow.data.model.StringResId
-import com.flower.flow.ui.dialog.CommonMessageDialog
-import com.hjq.permissions.XXPermissions
-import com.hjq.permissions.permission.PermissionLists
-
-object StorageAccessPolicy {
-
-    fun canAutoOpenGallery(activity: FragmentActivity): Boolean {
-        return when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> true
-            else -> XXPermissions.isGrantedPermission(
-                activity,
-                PermissionLists.getReadExternalStoragePermission(),
-            )
-        }
-    }
-
-    fun hasReadPermission(activity: FragmentActivity): Boolean {
-        return XXPermissions.isGrantedPermission(
-            activity,
-            PermissionLists.getReadExternalStoragePermission(),
-        )
-    }
-}
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import com.flower.flow.app.core.util.LegacyStoragePermission
+import com.flower.flow.app.core.util.StoragePermissionUi
 
 class ImagePickDelegate(
     private val activity: AppCompatActivity,
@@ -40,10 +18,37 @@ class ImagePickDelegate(
     private val legacyPickerLauncher: ActivityResultLauncher<Intent>,
 ) {
 
-    fun autoOpenIfPossible() {
-        if (StorageAccessPolicy.canAutoOpenGallery(activity)) {
-            openGallery()
+    private var readPermissionRequested = false
+    private var pendingOpenAfterSettings = false
+
+    private val readPermissionLauncher = activity.registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) {
+            readPermissionRequested = false
+            launchLegacyPicker()
+            return@registerForActivityResult
         }
+        if (StoragePermissionUi.isPermanentDenial(
+                activity,
+                LegacyStoragePermission.READ,
+                readPermissionRequested,
+            )
+        ) {
+            showPermanentDenyDialog()
+        }
+    }
+
+    init {
+        activity.lifecycle.addObserver(object : DefaultLifecycleObserver {
+            override fun onResume(owner: LifecycleOwner) {
+                resumeAfterSettingsIfNeeded()
+            }
+        })
+    }
+
+    fun autoOpenIfPossible() {
+        openGallery()
     }
 
     fun openGallery() {
@@ -58,31 +63,30 @@ class ImagePickDelegate(
                 launchLegacyPicker()
             }
 
-            else -> requestLegacyPermissionAndOpen()
+            LegacyStoragePermission.isReadGranted(activity) -> {
+                launchLegacyPicker()
+            }
+
+            else -> {
+                readPermissionRequested = true
+                readPermissionLauncher.launch(LegacyStoragePermission.READ)
+            }
         }
     }
 
-    private fun requestLegacyPermissionAndOpen() {
-        XXPermissions.with(activity)
-            .permission(PermissionLists.getReadExternalStoragePermission())
-            .request { _, deniedList ->
-                when {
-                    deniedList.isEmpty() -> launchLegacyPicker()
-                    XXPermissions.isDoNotAskAgainPermissions(activity, deniedList) ->
-                        showPermanentDenyDialog()
-                }
-            }
+    private fun resumeAfterSettingsIfNeeded() {
+        if (!pendingOpenAfterSettings) return
+        pendingOpenAfterSettings = false
+        if (!LegacyStoragePermission.isReadGranted(activity)) return
+        readPermissionRequested = false
+        launchLegacyPicker()
     }
 
     private fun showPermanentDenyDialog() {
-        CommonMessageDialog.Builder(activity)
-            .setTitle(AppStrings.get(StringResId.PERM_STORE_HEAD))
-            .setContent(AppStrings.get(StringResId.STORAGE_DESC))
-            .setConfirmButton(AppStrings.get(StringResId.CONFIRM_ACTION)) {
-                XXPermissions.startPermissionActivity(activity)
-            }
-            .setCancelButton(AppStrings.get(StringResId.CANCEL_ACTION))
-            .show()
+        StoragePermissionUi.showPermanentDenyDialog(activity) {
+            pendingOpenAfterSettings = true
+            LegacyStoragePermission.openAppSettings(activity)
+        }
     }
 
     private fun launchLegacyPicker() {

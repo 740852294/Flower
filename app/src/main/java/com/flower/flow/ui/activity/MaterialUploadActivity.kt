@@ -2,9 +2,7 @@ package com.flower.flow.ui.activity
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.view.View
 import androidx.activity.OnBackPressedCallback
@@ -28,11 +26,9 @@ import com.flower.flow.data.model.entity.WorkGenerateResult
 import com.flower.flow.data.vm.MaterialUploadViewModel
 import com.flower.flow.databinding.ActivityMaterialUploadBinding
 import com.flower.flow.ui.adapter.MainAdapter
-import com.flower.flow.ui.dialog.CommonMessageDialog
 import com.flower.flow.ui.dialog.GeneratePreCheckPresenter
 import com.flower.flow.ui.dialog.GenerateResultDialog
 import com.flower.flow.ui.upload.ImagePickDelegate
-import com.flower.flow.ui.upload.StorageAccessPolicy
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

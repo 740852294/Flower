@@ -1,9 +1,9 @@
 package com.flower.flow.ui.activity
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.view.ViewTreeObserver
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.view.isVisible
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
@@ -14,14 +14,14 @@ import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.applyCornerRadius
 import com.flower.flow.app.core.ext.loadImageFitWidth
 import com.flower.flow.app.core.util.AppStrings
+import com.flower.flow.app.core.util.LegacyStoragePermission
+import com.flower.flow.app.core.util.StoragePermissionUi
 import com.flower.flow.app.core.util.VideoPreviewCache
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.WorkItem
 import com.flower.flow.databinding.ActivityWorkPreviewBinding
 import com.flower.flow.ui.dialog.CommonMessageDialog
-import com.hjq.permissions.XXPermissions
-import com.hjq.permissions.permission.PermissionLists
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
@@ -34,6 +34,25 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
     private var player: ExoPlayer? = null
     private var pendingDownloadFromSettings = false
     private var downloadDispatched = false
+    private var writePermissionRequested = false
+
+    private val writePermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (granted) {
+            writePermissionRequested = false
+            dispatchWorkDownload()
+            return@registerForActivityResult
+        }
+        if (StoragePermissionUi.isPermanentDenial(
+                this,
+                LegacyStoragePermission.WRITE,
+                writePermissionRequested,
+            )
+        ) {
+            showStoragePermanentDenyDialog()
+        }
+    }
 
     override val title: String
         get() = ""
@@ -186,42 +205,25 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
     }
 
     private fun requestWorkDownload() {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P || hasLegacyStoragePermission()) {
+        if (!LegacyStoragePermission.needsLegacyWritePermission() || hasLegacyStoragePermission()) {
             dispatchWorkDownload()
             return
         }
 
-        val storagePermission = PermissionLists.getWriteExternalStoragePermission()
-        XXPermissions.with(this)
-            .permission(storagePermission)
-            .request { _, deniedList ->
-                when {
-                    deniedList.isEmpty() -> dispatchWorkDownload()
-                    XXPermissions.isDoNotAskAgainPermissions(this, deniedList) -> {
-                        showStoragePermanentDenyDialog()
-                    }
-                }
-            }
+        writePermissionRequested = true
+        writePermissionLauncher.launch(LegacyStoragePermission.WRITE)
     }
 
     private fun showStoragePermanentDenyDialog() {
-        CommonMessageDialog.Builder(this)
-            .setTitle(AppStrings.get(StringResId.PERM_STORE_HEAD))
-            .setContent(AppStrings.get(StringResId.STORAGE_DESC))
-            .setConfirmButton(AppStrings.get(StringResId.CONFIRM_ACTION)) {
-                pendingDownloadFromSettings = true
-                XXPermissions.startPermissionActivity(this)
-            }
-            .setCancelButton(AppStrings.get(StringResId.CANCEL_ACTION))
-            .show()
+        StoragePermissionUi.showPermanentDenyDialog(this) {
+            pendingDownloadFromSettings = true
+            LegacyStoragePermission.openAppSettings(this)
+        }
     }
 
     private fun hasLegacyStoragePermission(): Boolean {
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) return true
-        return XXPermissions.isGrantedPermission(
-            this,
-            PermissionLists.getWriteExternalStoragePermission(),
-        )
+        if (!LegacyStoragePermission.needsLegacyWritePermission()) return true
+        return LegacyStoragePermission.isWriteGranted(this)
     }
 
     private fun dispatchWorkDownload() {
