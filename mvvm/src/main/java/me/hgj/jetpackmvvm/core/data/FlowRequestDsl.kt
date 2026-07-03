@@ -172,9 +172,6 @@ class FlowRequestParameterDsl<T> {
         _onRequest = block
     }
 
-    /** 加载提示内容 */
-    var loadingMessage: String = getStringExt(R.string.helper_loading_tip)
-
     /** 请求时loading类型 默认请求时不显示loading,
      * 注意：如果有多次发送值的应用场景建议传LoadingType.LOADING_NULL ，比如轮询请求，实时数据流等
      * */

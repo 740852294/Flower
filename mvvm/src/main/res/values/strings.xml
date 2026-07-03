@@ -1,7 +1,2 @@
 <resources>
-    <string name="helper_loading_net_error">please check the network and click retry</string>
-    <string name="helper_loading_net_empty">click to retry</string>
-    <string name="helper_loading_error_tip">failed to load</string>
-    <string name="helper_loading_empty_tip">there is currently no data available</string>
-    <string name="helper_loading_tip">request in the network…</string>
 </resources>
