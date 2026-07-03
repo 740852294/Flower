@@ -8,9 +8,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.flower.flow.R
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.databinding.DialogChangePasswordBinding
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.toast
 
@@ -63,21 +63,21 @@ class ChangePasswordDialog private constructor(
     }
 
     private fun bindContent() = with(binding) {
-        title.text = FlowCopyStore.get(FlowCopyKey.PASSWORD_EDIT_HEAD)
-        passwordEditText.hint = FlowCopyStore.get(FlowCopyKey.PASSWORD_INPUT_HINT)
-        tvLimitHint.text = String.format("*%s", FlowCopyStore.get(FlowCopyKey.PASSWORD_LIMIT_HINT))
-        confirmButton.text = FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)
-        cancelButton.text = FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION)
+        title.text = AppStrings.get(StringResId.PASSWORD_EDIT_HEAD)
+        passwordEditText.hint = AppStrings.get(StringResId.PASSWORD_INPUT_HINT)
+        tvLimitHint.text = String.format("*%s", AppStrings.get(StringResId.PASSWORD_LIMIT_HINT))
+        confirmButton.text = AppStrings.get(StringResId.CONFIRM_ACTION)
+        cancelButton.text = AppStrings.get(StringResId.CANCEL_ACTION)
 
         cancelButton.clickNoRepeat { dismiss() }
         confirmButton.clickNoRepeat {
             val password = passwordEditText.text?.toString()?.trim().orEmpty()
             if (password.isEmpty()) {
-                FlowCopyStore.get(FlowCopyKey.PASSWORD_INPUT_HINT).toast()
+                AppStrings.get(StringResId.PASSWORD_INPUT_HINT).toast()
                 return@clickNoRepeat
             }
             if (password.length !in PASSWORD_LENGTH_RANGE) {
-                FlowCopyStore.get(FlowCopyKey.PASSWORD_LIMIT_HINT).toast()
+                AppStrings.get(StringResId.PASSWORD_LIMIT_HINT).toast()
                 return@clickNoRepeat
             }
             dismiss()

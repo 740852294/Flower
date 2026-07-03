@@ -12,11 +12,11 @@ import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.CacheConfig
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.LanguageItem
 import com.flower.flow.data.vm.LanguageSettingViewModel
 import com.flower.flow.databinding.ActivityLanguageSettingBinding
@@ -34,7 +34,7 @@ class LanguageSettingActivity :
     private lateinit var saveButton: ActionButton
 
     override val title: String
-        get() = FlowCopyStore.get(FlowCopyKey.LANGUAGE_SETTING)
+        get() = AppStrings.get(StringResId.LANGUAGE_SETTING)
 
     @SuppressLint("NotifyDataSetChanged")
     override fun initView(savedInstanceState: Bundle?) {
@@ -90,7 +90,7 @@ class LanguageSettingActivity :
         }
 
         saveButton = ActionButton(this).apply {
-            text = FlowCopyStore.get(FlowCopyKey.SAVE_ACTION)
+            text = AppStrings.get(StringResId.SAVE_ACTION)
             isEnabled = false
             clickNoRepeat {
                 applySelectedLanguage()
@@ -115,7 +115,7 @@ class LanguageSettingActivity :
         val selected = (mBind.rvLanguage.models as? List<LanguageItem>)
             ?.getOrNull(selectedPosition)
         if (selected == null) {
-            FlowCopyStore.get(FlowCopyKey.PICK_HINT).toast()
+            AppStrings.get(StringResId.PICK_HINT).toast()
             return
         }
         if (selected.acetoneactuate == currentLanguageId) {

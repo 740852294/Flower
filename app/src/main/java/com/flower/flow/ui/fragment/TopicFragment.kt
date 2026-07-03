@@ -12,10 +12,10 @@ import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
 import com.flower.flow.app.core.ext.setImageAnimationRunning
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.event.EventViewModel
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.TopicItem
 import com.flower.flow.data.vm.TopicViewModel
 import com.flower.flow.databinding.FragmentTopicBinding
@@ -193,7 +193,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     }
 
     private fun setText() {
-        mBind.tvLabel.text = FlowCopyStore.get(FlowCopyKey.VIDEO_APP_DESC)
+        mBind.tvLabel.text = AppStrings.get(StringResId.VIDEO_APP_DESC)
     }
 
     private fun syncAnimationPlayback(imageView: ImageView) {

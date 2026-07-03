@@ -22,11 +22,11 @@ import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.loadImageFitWidth
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.app.event.TopicTemplateListSyncEvent
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TopicTemplateListViewModel
 import com.flower.flow.databinding.ActivityTopicTemplateListBinding
@@ -242,7 +242,7 @@ class TopicTemplateListActivity :
         }
 
         val reportButton = ActionButton(this).apply {
-            text = FlowCopyStore.get(FlowCopyKey.REPORT_ACTION)
+            text = AppStrings.get(StringResId.REPORT_ACTION)
             clickNoRepeat {
                 openActivity<ReportActivity>()
             }

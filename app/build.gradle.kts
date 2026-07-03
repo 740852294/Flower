@@ -166,4 +166,6 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.rxhttp)
     ksp(libs.rxhttp.compiler)
+
+    testImplementation(libs.junit)
 }

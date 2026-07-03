@@ -9,10 +9,10 @@ import androidx.lifecycle.lifecycleScope
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.MainNavigator
 import com.flower.flow.app.event.EventViewModel
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.MainInitResult
 import com.flower.flow.data.vm.MainViewModel
 import com.flower.flow.databinding.ActivityMainBinding
@@ -96,7 +96,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     private fun refreshTabLabels() {
         if (!::tabs.isInitialized) return
         tabs.forEach { tab ->
-            tab.binding.tabLabel.text = FlowCopyStore.get(tab.titleKey)
+            tab.binding.tabLabel.text = AppStrings.get(tab.titleKey)
         }
     }
 
@@ -120,25 +120,25 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             TabConfig(
                 mBind.tabTopic,
                 R.drawable.menu_topic,
-                FlowCopyKey.HOME_TAB,
+                StringResId.HOME_TAB,
                 MainAdapter.PAGE_TOPIC,
             ),
             TabConfig(
                 mBind.tabTag,
                 R.drawable.menu_tag,
-                FlowCopyKey.EXPLORE_TAB,
+                StringResId.EXPLORE_TAB,
                 MainAdapter.PAGE_TAG,
             ),
             TabConfig(
                 mBind.tabMe,
                 R.drawable.menu_me,
-                FlowCopyKey.MINE_TAB,
+                StringResId.MINE_TAB,
                 MainAdapter.PAGE_USER,
             ),
         )
 
         tabs.forEach { tab ->
-            tab.binding.tabLabel.text = FlowCopyStore.get(tab.titleKey)
+            tab.binding.tabLabel.text = AppStrings.get(tab.titleKey)
             tab.binding.tabIcon.setImageResource(tab.iconRes)
             tab.binding.root.clickNoRepeat { selectTab(tab.pageIndex) }
         }

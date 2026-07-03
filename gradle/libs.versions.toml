@@ -34,6 +34,7 @@ facebookCore = "17.0.0"
 installReferrer = "2.2"
 playServicesAdsIdentifier = "18.2.0"
 media3 = "1.5.1"
+junit = "4.13.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -86,6 +87,7 @@ androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", versi
 androidx-media3-ui = { module = "androidx.media3:media3-ui", version.ref = "media3" }
 androidx-media3-datasource = { module = "androidx.media3:media3-datasource", version.ref = "media3" }
 androidx-media3-database = { module = "androidx.media3:media3-database", version.ref = "media3" }
+junit = { module = "junit:junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

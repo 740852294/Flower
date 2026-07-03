@@ -8,11 +8,11 @@ import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.AesTextCodec
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.event.EventViewModel
 import com.flower.flow.data.model.CacheConfig
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.vm.SettingViewModel
 import com.flower.flow.databinding.ActivitySettingBinding
 import com.flower.flow.ui.activity.PrivacyActivity.PolicyRoute
@@ -108,8 +108,8 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
                 mBind.tvPassword.text = "**********"
                 mBind.ivPassword.setImageResource(R.mipmap.ic_setting_eyes)
                 if (passwordPlain.isNotBlank()) {
-                    copyToClipboard(passwordPlain, FlowCopyStore.get(FlowCopyKey.PASSWORD_LABEL))
-                    FlowCopyStore.get(FlowCopyKey.COPY_ACTION).toast()
+                    copyToClipboard(passwordPlain, AppStrings.get(StringResId.PASSWORD_LABEL))
+                    AppStrings.get(StringResId.COPY_ACTION).toast()
                 }
             } else {
                 isShowPassword = true
@@ -121,8 +121,8 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
         mBind.ivAccount.clickNoRepeat {
             val uid = mBind.tvAccount.text?.toString().orEmpty()
             if (uid.isNotBlank()) {
-                copyToClipboard(uid, FlowCopyStore.get(FlowCopyKey.ACCOUNT_LABEL))
-                FlowCopyStore.get(FlowCopyKey.COPY_ACTION).toast()
+                copyToClipboard(uid, AppStrings.get(StringResId.ACCOUNT_LABEL))
+                AppStrings.get(StringResId.COPY_ACTION).toast()
             }
         }
 
@@ -167,34 +167,34 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
     }
 
     private fun setText() {
-        mToolbar.title = FlowCopyStore.get(FlowCopyKey.SETTINGS_ENTRY)
-        mBind.tvShare.text = FlowCopyStore.get(FlowCopyKey.SHARE_ACTION)
-        mBind.tvFeedback.text = FlowCopyStore.get(FlowCopyKey.FEEDBACK_ENTRY)
-        mBind.tvNotify.text = FlowCopyStore.get(FlowCopyKey.SYSTEM_NOTICE)
-        mBind.tvPrivacy.text = FlowCopyStore.get(FlowCopyKey.PRIVACY_LINK)
-        mBind.tvTerms.text = FlowCopyStore.get(FlowCopyKey.TERMS_LINK)
-        mBind.tvLanguage.text = FlowCopyStore.get(FlowCopyKey.LANGUAGE_SETTING)
-        mBind.tvVersion.text = FlowCopyStore.get(FlowCopyKey.VERSION_LABEL)
+        mToolbar.title = AppStrings.get(StringResId.SETTINGS_ENTRY)
+        mBind.tvShare.text = AppStrings.get(StringResId.SHARE_ACTION)
+        mBind.tvFeedback.text = AppStrings.get(StringResId.FEEDBACK_ENTRY)
+        mBind.tvNotify.text = AppStrings.get(StringResId.SYSTEM_NOTICE)
+        mBind.tvPrivacy.text = AppStrings.get(StringResId.PRIVACY_LINK)
+        mBind.tvTerms.text = AppStrings.get(StringResId.TERMS_LINK)
+        mBind.tvLanguage.text = AppStrings.get(StringResId.LANGUAGE_SETTING)
+        mBind.tvVersion.text = AppStrings.get(StringResId.VERSION_LABEL)
         mBind.tvAccountLabel.text =
-            String.format("%s：", FlowCopyStore.get(FlowCopyKey.ACCOUNT_LABEL))
+            String.format("%s：", AppStrings.get(StringResId.ACCOUNT_LABEL))
         mBind.tvPasswordLabel.text =
-            String.format("%s：", FlowCopyStore.get(FlowCopyKey.PASSWORD_LABEL))
-        mBind.btnChange.text = FlowCopyStore.get(FlowCopyKey.ACCOUNT_SWITCH)
+            String.format("%s：", AppStrings.get(StringResId.PASSWORD_LABEL))
+        mBind.btnChange.text = AppStrings.get(StringResId.ACCOUNT_SWITCH)
     }
 
     private fun openPolicyPage(requestType: Int) {
         mViewModel.openPolicyPage(requestType).obs(this) {
             onSuccess { data ->
                 if (data.cuspcrow.isEmpty()) {
-                    FlowCopyStore.get(FlowCopyKey.WEB_EMPTY_HINT).toast()
+                    AppStrings.get(StringResId.WEB_EMPTY_HINT).toast()
                 } else {
                     val title = when (requestType) {
                         PolicyRoute.PRIVACY.requestType -> {
-                            FlowCopyStore.get(FlowCopyKey.PRIVACY_LINK)
+                            AppStrings.get(StringResId.PRIVACY_LINK)
                         }
 
                         PolicyRoute.TERMS.requestType -> {
-                            FlowCopyStore.get(FlowCopyKey.TERMS_LINK)
+                            AppStrings.get(StringResId.TERMS_LINK)
                         }
 
                         else -> {

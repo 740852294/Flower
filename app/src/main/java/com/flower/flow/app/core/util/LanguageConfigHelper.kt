@@ -24,7 +24,7 @@ object LanguageConfigHelper {
         val config = CommonRepository.getAppLanguageConfigLivedata().await()
         val remoteTexts = config.toRemoteTextMap()
         val localTexts = FlowCopyMapper.toLocalTexts(remoteTexts)
-        FlowCopyStore.save(localTexts)
+        AppStrings.save(localTexts)
     }
 
     private fun resolveLanguageTarget(languageList: List<LanguageItem>): LanguageItem {

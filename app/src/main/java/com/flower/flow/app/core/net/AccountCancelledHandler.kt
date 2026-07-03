@@ -4,10 +4,10 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import androidx.fragment.app.FragmentActivity
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.data.model.CacheConfig
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.ui.activity.StartActivity
 import com.flower.flow.ui.dialog.CommonMessageDialog
 import kotlinx.coroutines.CancellationException
@@ -47,9 +47,9 @@ object AccountCancelledHandler {
         }
         isShowing = true
         CommonMessageDialog.Builder(activity)
-            .setTitle(FlowCopyStore.get(FlowCopyKey.USER_CANCELLED_HEAD))
+            .setTitle(AppStrings.get(StringResId.USER_CANCELLED_HEAD))
             .setContent(message.ifBlank { " " })
-            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.ROGER_ACTION)) {
+            .setConfirmButton(AppStrings.get(StringResId.ROGER_ACTION)) {
                 restartApp()
             }
             .show()

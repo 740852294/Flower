@@ -12,10 +12,10 @@ import androidx.media3.exoplayer.ExoPlayer
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.applyCornerRadius
 import com.flower.flow.app.core.ext.loadImageFitWidth
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.VideoPreviewCache
 import com.flower.flow.app.event.EventViewModel
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.WorkItem
 import com.flower.flow.databinding.ActivityWorkPreviewBinding
 import com.flower.flow.ui.dialog.CommonMessageDialog
@@ -64,12 +64,12 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
     override fun onBindViewClick() {
         mBind.btnDownload.clickNoRepeat {
             CommonMessageDialog.Builder(this)
-                .setTitle(FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION))
+                .setTitle(AppStrings.get(StringResId.DOWNLOAD_ACTION))
                 .setContent(workItem.demand.orEmpty())
-                .setConfirmButton(FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION)) {
+                .setConfirmButton(AppStrings.get(StringResId.DOWNLOAD_ACTION)) {
                     requestWorkDownload()
                 }
-                .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION)) {}
+                .setCancelButton(AppStrings.get(StringResId.CANCEL_ACTION)) {}
                 .show()
         }
     }
@@ -205,13 +205,13 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
 
     private fun showStoragePermanentDenyDialog() {
         CommonMessageDialog.Builder(this)
-            .setTitle(FlowCopyStore.get(FlowCopyKey.PERM_STORE_HEAD))
-            .setContent(FlowCopyStore.get(FlowCopyKey.STORAGE_DESC))
-            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
+            .setTitle(AppStrings.get(StringResId.PERM_STORE_HEAD))
+            .setContent(AppStrings.get(StringResId.STORAGE_DESC))
+            .setConfirmButton(AppStrings.get(StringResId.CONFIRM_ACTION)) {
                 pendingDownloadFromSettings = true
                 XXPermissions.startPermissionActivity(this)
             }
-            .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+            .setCancelButton(AppStrings.get(StringResId.CANCEL_ACTION))
             .show()
     }
 
@@ -238,7 +238,7 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
     }
 
     private fun setText() {
-        mBind.btnDownload.text = FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION)
+        mBind.btnDownload.text = AppStrings.get(StringResId.DOWNLOAD_ACTION)
     }
 
     companion object {

@@ -6,7 +6,7 @@ import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.fresco.vito.init.FrescoVito
 import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.flower.flow.app.core.net.AppExceptionMessageProvider
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.data.model.entity.GlobalConfig
 import com.flower.flow.app.init.NetTask
 import com.flower.flow.app.init.WidgetTask
@@ -26,7 +26,7 @@ class App : Application(){
         if (isMainProcess()){
             // 只在主进程初始化 SDK
             JetpackMvvm.init(this)
-            FlowCopyStore.loadCache()
+            AppStrings.loadCache()
             AppExceptionMessageProvider.install()
             initFrescoCache()
             //启动初始化任务

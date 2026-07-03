@@ -7,8 +7,8 @@ import com.drake.brv.utils.models
 import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.util.FlowCopyStore
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.app.core.util.AppStrings
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.vm.ReportViewModel
 import com.flower.flow.databinding.ActivityReportBinding
@@ -58,7 +58,7 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
         mBind.btnSubmit.clickNoRepeat {
             val selectedType = getSelectedReportType()
             if (selectedType == null) {
-                FlowCopyStore.get(FlowCopyKey.REPORT_TYPE_PICK).toast()
+                AppStrings.get(StringResId.REPORT_TYPE_PICK).toast()
                 return@clickNoRepeat
             }
 
@@ -101,13 +101,13 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
     }
 
     private fun setText() {
-        mBind.tvTitle.text = FlowCopyStore.get(FlowCopyKey.REPORT_ACTION)
-        mBind.tvReportTypeLabel.text = FlowCopyStore.get(FlowCopyKey.REPORT_TYPE)
-        mBind.tvReportTypeRequired.text = FlowCopyStore.get(FlowCopyKey.REQUIRED_MARK)
-        mBind.tvReportContentLabel.text = FlowCopyStore.get(FlowCopyKey.REPORT_DESC)
-        mBind.tvReportContentOptional.text = FlowCopyStore.get(FlowCopyKey.OPTIONAL_MARK)
-        mBind.etReportContent.hint = FlowCopyStore.get(FlowCopyKey.REPORT_HINT)
-        mBind.btnSubmit.text = FlowCopyStore.get(FlowCopyKey.SEND_ACTION)
+        mBind.tvTitle.text = AppStrings.get(StringResId.REPORT_ACTION)
+        mBind.tvReportTypeLabel.text = AppStrings.get(StringResId.REPORT_TYPE)
+        mBind.tvReportTypeRequired.text = AppStrings.get(StringResId.REQUIRED_MARK)
+        mBind.tvReportContentLabel.text = AppStrings.get(StringResId.REPORT_DESC)
+        mBind.tvReportContentOptional.text = AppStrings.get(StringResId.OPTIONAL_MARK)
+        mBind.etReportContent.hint = AppStrings.get(StringResId.REPORT_HINT)
+        mBind.btnSubmit.text = AppStrings.get(StringResId.SEND_ACTION)
     }
 
     private companion object {

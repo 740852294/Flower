@@ -5,7 +5,7 @@ import com.google.gson.reflect.TypeToken
 import me.hgj.jetpackmvvm.ext.util.gson
 import me.hgj.jetpackmvvm.ext.util.toJsonStr
 
-object FlowCopyStore {
+object AppStrings {
 
     private var texts: Map<String, String> = emptyMap()
 

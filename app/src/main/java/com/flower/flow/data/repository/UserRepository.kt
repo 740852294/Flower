@@ -1,11 +1,10 @@
 package com.flower.flow.data.repository
 
+import com.flower.flow.app.core.net.FlowHttp
 import com.flower.flow.app.core.net.NetUrl
-import com.flower.flow.app.core.util.RandomDataUtil
 import com.flower.flow.data.model.entity.RegisterResponse
 import com.flower.flow.data.model.entity.UserInfo
 import rxhttp.wrapper.coroutines.Await
-import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toAwaitResponse
 import java.io.File
 
@@ -20,12 +19,11 @@ object UserRepository {
         sourceFlag: String = "",
         step: String = ""
     ): Await<RegisterResponse> {
-        return RxHttp.postForm(NetUrl.User.REGISTER)
+        return FlowHttp.postForm(NetUrl.User.REGISTER)
             .add("ninesection", code)
             .add("ownathwart", source)
             .add("basilica", sourceFlag)
             .add("corestorm", step)
-            .add("backachesmile", RandomDataUtil.getRandomData(1))
             .toAwaitResponse()
     }
 
@@ -33,8 +31,7 @@ object UserRepository {
      * 获取用户信息
      */
     fun getUserInfoLivedata(): Await<UserInfo> {
-        return RxHttp.get(NetUrl.User.USER_INFO)
-            .add("deceitboulevard", RandomDataUtil.getRandomData(4))
+        return FlowHttp.get(NetUrl.User.USER_INFO)
             .toAwaitResponse()
     }
 
@@ -48,10 +45,9 @@ object UserRepository {
         name: String,
         avatarFile: File? = null
     ): Await<Any> {
-        return RxHttp.postForm(NetUrl.User.UPDATE_USER_INFO)
+        return FlowHttp.postForm(NetUrl.User.UPDATE_USER_INFO)
             .add("dazzledeacon", name)
             .addFile("file", avatarFile)
-            .add("anachronismbutton", RandomDataUtil.getRandomData(5))
             .toAwaitResponse()
     }
 
@@ -65,10 +61,9 @@ object UserRepository {
         uid: String,
         password: String
     ): Await<RegisterResponse> {
-        return RxHttp.postForm(NetUrl.User.SWITCH_USER)
+        return FlowHttp.postForm(NetUrl.User.SWITCH_USER)
             .add("elephantfloat", uid)
             .add("colonybay", password)
-            .add("dresscraze", RandomDataUtil.getRandomData(4))
             .toAwaitResponse()
     }
 
@@ -78,9 +73,8 @@ object UserRepository {
      * @param password 新密码，5-15 位数字或字母
      */
     fun updatePasswordLivedata(password: String): Await<String> {
-        return RxHttp.postForm(NetUrl.User.UPDATE_PASSWORD)
+        return FlowHttp.postForm(NetUrl.User.UPDATE_PASSWORD)
             .add("colonybay", password)
-            .add("cashanthem", RandomDataUtil.getRandomData(3))
             .toAwaitResponse()
     }
 }

@@ -7,10 +7,10 @@ import com.drake.brv.utils.models
 import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.event.EventViewModel
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.SysNotifyItem
 import com.flower.flow.data.vm.SystemNotifyViewModel
 import com.flower.flow.databinding.ActivitySystemNotifyBinding
@@ -26,7 +26,7 @@ class SystemNotifyActivity :
     BaseActivity<SystemNotifyViewModel, ActivitySystemNotifyBinding>() {
 
     override val title: String
-        get() = FlowCopyStore.get(FlowCopyKey.SYSTEM_NOTICE)
+        get() = AppStrings.get(StringResId.SYSTEM_NOTICE)
 
     @SuppressLint("NotifyDataSetChanged")
     override fun initView(savedInstanceState: Bundle?) {
@@ -45,7 +45,7 @@ class SystemNotifyActivity :
                     getBindingOrNull<LayoutItemSystemNotifyBinding>()?.run {
                         val model = getModel<SysNotifyItem>()
                         tvContent.text = model.imitaterise
-                        btnReply.text = FlowCopyStore.get(FlowCopyKey.REPLY_ACTION)
+                        btnReply.text = AppStrings.get(StringResId.REPLY_ACTION)
                     }
                 }
 

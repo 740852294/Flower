@@ -16,12 +16,12 @@ import androidx.lifecycle.lifecycleScope
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.loadAvatarFile
 import com.flower.flow.app.core.util.AesTextCodec
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.PhotoCompressUtil
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.data.model.CacheConfig
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.vm.EditUserInfoViewModel
 import com.flower.flow.databinding.ActivityEditUserInfoBinding
 import com.flower.flow.ui.dialog.CommonMessageDialog
@@ -37,7 +37,7 @@ import java.io.File
 class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUserInfoBinding>() {
 
     override val title: String
-        get() = FlowCopyStore.get(FlowCopyKey.PROFILE_EDIT)
+        get() = AppStrings.get(StringResId.PROFILE_EDIT)
 
     private lateinit var saveButton: ActionButton
     private var originalNickname: String = ""
@@ -73,7 +73,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
         }
 
         saveButton = ActionButton(this).apply {
-            text = FlowCopyStore.get(FlowCopyKey.SAVE_ACTION)
+            text = AppStrings.get(StringResId.SAVE_ACTION)
             isEnabled = false
             clickNoRepeat {
                 saveUserInfo()
@@ -95,8 +95,8 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
     }
 
     private fun setText() {
-        mBind.nameLabel.text = FlowCopyStore.get(FlowCopyKey.NICKNAME_LABEL)
-        mBind.accountLabel.text = FlowCopyStore.get(FlowCopyKey.ACCOUNT_LABEL)
+        mBind.nameLabel.text = AppStrings.get(StringResId.NICKNAME_LABEL)
+        mBind.accountLabel.text = AppStrings.get(StringResId.ACCOUNT_LABEL)
     }
 
     override fun createObserver() {
@@ -127,7 +127,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
     private fun saveUserInfo() {
         val nickname = mBind.etName.text?.toString()?.trim().orEmpty()
         if (nickname.isBlank()) {
-            FlowCopyStore.get(FlowCopyKey.PLEASE_ENTER_TEXT).toast()
+            AppStrings.get(StringResId.PLEASE_ENTER_TEXT).toast()
             return
         }
 
@@ -147,8 +147,8 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
         mBind.copyButton.clickNoRepeat {
             val uid = mBind.tvAccount.text?.toString().orEmpty()
             if (uid.isNotBlank()) {
-                copyToClipboard(uid, FlowCopyStore.get(FlowCopyKey.ACCOUNT_LABEL))
-                FlowCopyStore.get(FlowCopyKey.COPY_ACTION).toast()
+                copyToClipboard(uid, AppStrings.get(StringResId.ACCOUNT_LABEL))
+                AppStrings.get(StringResId.COPY_ACTION).toast()
             }
         }
 
@@ -193,12 +193,12 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
 
     private fun showStoragePermanentDenyDialog() {
         CommonMessageDialog.Builder(this)
-            .setTitle(FlowCopyStore.get(FlowCopyKey.PERM_STORE_HEAD))
-            .setContent(FlowCopyStore.get(FlowCopyKey.STORAGE_DESC))
-            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
+            .setTitle(AppStrings.get(StringResId.PERM_STORE_HEAD))
+            .setContent(AppStrings.get(StringResId.STORAGE_DESC))
+            .setConfirmButton(AppStrings.get(StringResId.CONFIRM_ACTION)) {
                 XXPermissions.startPermissionActivity(this)
             }
-            .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+            .setCancelButton(AppStrings.get(StringResId.CANCEL_ACTION))
             .show()
     }
 
@@ -230,7 +230,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
                 cacheDir,
             )
             val compressedFile = compressedFiles.firstOrNull() ?: run {
-                FlowCopyStore.get(FlowCopyKey.PHOTO_UPLOAD_FAIL).toast()
+                AppStrings.get(StringResId.PHOTO_UPLOAD_FAIL).toast()
                 return@launch
             }
 

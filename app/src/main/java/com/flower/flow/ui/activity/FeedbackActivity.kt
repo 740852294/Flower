@@ -10,10 +10,10 @@ import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.core.widget.ActionButton
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.vm.FeedbackViewModel
 import com.flower.flow.databinding.ActivityFeedbackBinding
@@ -73,13 +73,13 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         mBind.btnSubmit.clickNoRepeat {
             val selectedType = getSelectedFeedbackType()
             if (selectedType == null) {
-                FlowCopyStore.get(FlowCopyKey.FEEDBACK_TYPE_PICK).toast()
+                AppStrings.get(StringResId.FEEDBACK_TYPE_PICK).toast()
                 return@clickNoRepeat
             }
 
             val email = mBind.etEmail.text.toString().trim()
             if (email.isEmpty()) {
-                FlowCopyStore.get(FlowCopyKey.CONTACT_INPUT_HINT).toast()
+                AppStrings.get(StringResId.CONTACT_INPUT_HINT).toast()
                 return@clickNoRepeat
             }
 
@@ -110,7 +110,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
         }
 
         val reportButton = ActionButton(this).apply {
-            text = FlowCopyStore.get(FlowCopyKey.REPORT_ACTION)
+            text = AppStrings.get(StringResId.REPORT_ACTION)
             clickNoRepeat {
                 openActivity<ReportActivity>()
             }
@@ -131,15 +131,15 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
     }
 
     private fun setText() {
-        mBind.tvTitle.text = FlowCopyStore.get(FlowCopyKey.FEEDBACK_ENTRY)
-        mBind.tvFeedbackTypeLabel.text = FlowCopyStore.get(FlowCopyKey.FEEDBACK_TYPE)
-        mBind.tvFeedbackTypeRequired.text = FlowCopyStore.get(FlowCopyKey.REQUIRED_MARK)
-        mBind.tvFeedbackContentLabel.text = FlowCopyStore.get(FlowCopyKey.FEEDBACK_DESC)
-        mBind.etFeedbackContent.hint = FlowCopyStore.get(FlowCopyKey.FEEDBACK_HINT)
-        mBind.tvEmailLabel.text = FlowCopyStore.get(FlowCopyKey.CONTACT_FIELD)
-        mBind.tvEmailRequired.text = FlowCopyStore.get(FlowCopyKey.REQUIRED_MARK)
-        mBind.etEmail.hint = FlowCopyStore.get(FlowCopyKey.CONTACT_INPUT_HINT)
-        mBind.btnSubmit.text = FlowCopyStore.get(FlowCopyKey.SEND_ACTION)
+        mBind.tvTitle.text = AppStrings.get(StringResId.FEEDBACK_ENTRY)
+        mBind.tvFeedbackTypeLabel.text = AppStrings.get(StringResId.FEEDBACK_TYPE)
+        mBind.tvFeedbackTypeRequired.text = AppStrings.get(StringResId.REQUIRED_MARK)
+        mBind.tvFeedbackContentLabel.text = AppStrings.get(StringResId.FEEDBACK_DESC)
+        mBind.etFeedbackContent.hint = AppStrings.get(StringResId.FEEDBACK_HINT)
+        mBind.tvEmailLabel.text = AppStrings.get(StringResId.CONTACT_FIELD)
+        mBind.tvEmailRequired.text = AppStrings.get(StringResId.REQUIRED_MARK)
+        mBind.etEmail.hint = AppStrings.get(StringResId.CONTACT_INPUT_HINT)
+        mBind.btnSubmit.text = AppStrings.get(StringResId.SEND_ACTION)
     }
 
     override fun createObserver() {

@@ -8,21 +8,21 @@ import android.text.TextPaint
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.view.View
-import androidx.activity.enableEdgeToEdge
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.loadImage
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.data.model.CacheConfig
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.vm.PrivacyViewModel
 import com.flower.flow.databinding.ActivityPrivacyBinding
+import com.flower.flow.domain.startup.StartUserGate
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
+import me.hgj.jetpackmvvm.ext.util.finishActivityByClass
 import me.hgj.jetpackmvvm.ext.util.finishAllActivity
 import me.hgj.jetpackmvvm.ext.util.getColorExt
-import me.hgj.jetpackmvvm.ext.util.intent.finish
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
 
@@ -41,8 +41,22 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
 
         mBind.btnAgree.clickNoRepeat {
             CacheConfig.isAgree = true
-            finish()
+            checkUser()
         }
+    }
+
+    private fun checkUser() {
+        StartUserGate.checkUser(
+            lifecycleOwner = this,
+            context = applicationContext,
+            registerUser = mViewModel::registerUserByAttribution,
+            onGoMain = ::goMain,
+        )
+    }
+
+    private fun goMain() {
+        openActivity<MainActivity>()
+        finish()
     }
 
     override fun createObserver() {
@@ -68,25 +82,25 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
     }
 
     private fun setLanguage() {
-        mBind.title.text = FlowCopyStore.get(FlowCopyKey.AGREEMENT_HEAD)
+        mBind.title.text = AppStrings.get(StringResId.AGREEMENT_HEAD)
         mBind.content.apply {
             text = composeAgreementCopy()
             movementMethod = LinkMovementMethod.getInstance()
             highlightColor = Color.TRANSPARENT
         }
-        mBind.btnAgree.text = FlowCopyStore.get(FlowCopyKey.ACCEPT_ACTION)
-        mBind.btnDisagree.text = FlowCopyStore.get(FlowCopyKey.REJECT_HINT)
+        mBind.btnAgree.text = AppStrings.get(StringResId.ACCEPT_ACTION)
+        mBind.btnDisagree.text = AppStrings.get(StringResId.REJECT_HINT)
     }
 
     private fun composeAgreementCopy(): CharSequence {
-        val termsLabel = FlowCopyStore.get(FlowCopyKey.TERMS_LINK)
-        val privacyLabel = FlowCopyStore.get(FlowCopyKey.PRIVACY_LINK)
+        val termsLabel = AppStrings.get(StringResId.TERMS_LINK)
+        val privacyLabel = AppStrings.get(StringResId.PRIVACY_LINK)
         val fullText = buildString {
-            append(FlowCopyStore.get(FlowCopyKey.PRIVACY_DESC))
+            append(AppStrings.get(StringResId.PRIVACY_DESC))
             append(' ')
             append(termsLabel)
             append(' ')
-            append(FlowCopyStore.get(FlowCopyKey.AND_WORD))
+            append(AppStrings.get(StringResId.AND_WORD))
             append(' ')
             append(privacyLabel)
         }
@@ -133,15 +147,15 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
         mViewModel.openPolicyPage(requestType).obs(this) {
             onSuccess { data ->
                 if (data.cuspcrow.isEmpty()) {
-                    FlowCopyStore.get(FlowCopyKey.WEB_EMPTY_HINT).toast()
+                    AppStrings.get(StringResId.WEB_EMPTY_HINT).toast()
                 } else {
                     val title = when (requestType) {
                         PolicyRoute.PRIVACY.requestType -> {
-                            FlowCopyStore.get(FlowCopyKey.PRIVACY_LINK)
+                            AppStrings.get(StringResId.PRIVACY_LINK)
                         }
 
                         PolicyRoute.TERMS.requestType -> {
-                            FlowCopyStore.get(FlowCopyKey.TERMS_LINK)
+                            AppStrings.get(StringResId.TERMS_LINK)
                         }
 
                         else -> {

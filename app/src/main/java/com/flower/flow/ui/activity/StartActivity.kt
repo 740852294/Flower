@@ -6,10 +6,10 @@ import com.flower.flow.app.core.util.LanguageConfigHelper
 import com.flower.flow.data.model.CacheConfig
 import com.flower.flow.data.vm.StartViewModel
 import com.flower.flow.databinding.ActivityStartBinding
+import com.flower.flow.domain.startup.StartUserGate
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.finishAllActivity
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
-import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
 import me.hgj.jetpackmvvm.ext.util.toast
 
 class StartActivity : BaseActivity<StartViewModel, ActivityStartBinding>() {
@@ -22,11 +22,8 @@ class StartActivity : BaseActivity<StartViewModel, ActivityStartBinding>() {
 
     private fun routeNext() {
         if (!CacheConfig.isAgree) {
-            openActivityForResult<PrivacyActivity> { _ ->
-                if (CacheConfig.isAgree) {
-                    checkUser()
-                }
-            }
+            openActivity<PrivacyActivity>()
+            finish()
             return
         }
         if (CacheConfig.hasLanguageConfigCache()) {
@@ -44,19 +41,12 @@ class StartActivity : BaseActivity<StartViewModel, ActivityStartBinding>() {
     }
 
     private fun checkUser() {
-        if (CacheConfig.userId.isEmpty()) {
-            mViewModel.registerUserByAttribution(applicationContext).obs(this) {
-                onSuccess { response ->
-                    CacheConfig.userId = response.elephantfloat
-                    goMain()
-                }
-                onError {
-                    finishAllActivity()
-                }
-            }
-        } else {
-            goMain()
-        }
+        StartUserGate.checkUser(
+            lifecycleOwner = this,
+            context = applicationContext,
+            registerUser = mViewModel::registerUserByAttribution,
+            onGoMain = ::goMain,
+        )
     }
 
     private fun goMain() {

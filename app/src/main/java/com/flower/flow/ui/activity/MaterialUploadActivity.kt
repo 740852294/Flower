@@ -18,10 +18,10 @@ import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.loadImageFile
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.GenerateSubmitCache
 import com.flower.flow.app.core.util.MainNavigator
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.SubmitPageInfo
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.model.entity.WorkGenerateResult
@@ -29,9 +29,10 @@ import com.flower.flow.data.vm.MaterialUploadViewModel
 import com.flower.flow.databinding.ActivityMaterialUploadBinding
 import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.dialog.CommonMessageDialog
+import com.flower.flow.ui.dialog.GeneratePreCheckPresenter
 import com.flower.flow.ui.dialog.GenerateResultDialog
-import com.hjq.permissions.XXPermissions
-import com.hjq.permissions.permission.PermissionLists
+import com.flower.flow.ui.upload.ImagePickDelegate
+import com.flower.flow.ui.upload.StorageAccessPolicy
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,6 +60,7 @@ class MaterialUploadActivity :
     private var submitPageInfo: SubmitPageInfo? = null
     private var pickSlot = UploadSlot.SINGLE
     private var generateSimulationJob: Job? = null
+    private lateinit var imagePickDelegate: ImagePickDelegate
 
     private val generateBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = Unit
@@ -83,6 +85,7 @@ class MaterialUploadActivity :
 
     override fun initView(savedInstanceState: Bundle?) {
         onBackPressedDispatcher.addCallback(this, generateBackPressedCallback)
+        imagePickDelegate = ImagePickDelegate(this, photoPickerLauncher, legacyPickerLauncher)
         mBind.llContent.statusPadding()
         mBind.toolbar.initClose(templateItem?.dazzledeacon ?: "") {
             finish()
@@ -101,22 +104,22 @@ class MaterialUploadActivity :
 
         mBind.root.post {
             pickSlot = getFirstUploadSlot()
-            autoOpenSystemGallery()
+            imagePickDelegate.autoOpenIfPossible()
         }
     }
 
     override fun onBindViewClick() {
         mBind.llSingleUpload.clickNoRepeat {
             pickSlot = UploadSlot.SINGLE
-            openSystemGallery()
+            imagePickDelegate.openGallery()
         }
         mBind.llUploadSlotLeft.clickNoRepeat {
             pickSlot = UploadSlot.LEFT
-            openSystemGallery()
+            imagePickDelegate.openGallery()
         }
         mBind.llUploadSlotRight.clickNoRepeat {
             pickSlot = UploadSlot.RIGHT
-            openSystemGallery()
+            imagePickDelegate.openGallery()
         }
         mBind.btnCreate.clickNoRepeat {
             startCreateFlow()
@@ -128,80 +131,10 @@ class MaterialUploadActivity :
 
     override fun createObserver() {
         val id = templateItem?.acetoneactuate ?: return
-        mViewModel.getCreateSubmitPage(id).obs(this) {
+        mViewModel.loadCreateSubmitPage(id).obs(this) {
             onSuccess { info ->
                 submitPageInfo = info
             }
-        }
-    }
-
-    private fun autoOpenSystemGallery() {
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                openSystemGallery()
-            }
-
-            hasStoragePermission() -> {
-                openLegacyPicker()
-            }
-        }
-    }
-
-    private fun openSystemGallery() {
-        when {
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-                photoPickerLauncher.launch(
-                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly),
-                )
-            }
-
-            Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q -> {
-                openLegacyPicker()
-            }
-
-            else -> {
-                requestStoragePermissionAndOpen()
-            }
-        }
-    }
-
-    private fun requestStoragePermissionAndOpen() {
-        XXPermissions.with(this)
-            .permission(PermissionLists.getReadExternalStoragePermission())
-            .request { _, deniedList ->
-                if (deniedList.isEmpty()) {
-                    openLegacyPicker()
-                } else if (XXPermissions.isDoNotAskAgainPermissions(this, deniedList)) {
-                    showStoragePermanentDenyDialog()
-                }
-            }
-    }
-
-    private fun showStoragePermanentDenyDialog() {
-        CommonMessageDialog.Builder(this)
-            .setTitle(FlowCopyStore.get(FlowCopyKey.PERM_STORE_HEAD))
-            .setContent(FlowCopyStore.get(FlowCopyKey.STORAGE_DESC))
-            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
-                XXPermissions.startPermissionActivity(this)
-            }
-            .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
-            .show()
-    }
-
-    private fun openLegacyPicker() {
-        var intent = Intent(Intent.ACTION_PICK).apply {
-            setDataAndType(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, "image/*")
-            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
-        if (intent.resolveActivity(packageManager) == null) {
-            intent = Intent(Intent.ACTION_GET_CONTENT).apply {
-                type = "image/*"
-                addCategory(Intent.CATEGORY_OPENABLE)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            }
-        }
-        if (intent.resolveActivity(packageManager) != null) {
-            legacyPickerLauncher.launch(intent)
         }
     }
 
@@ -213,101 +146,33 @@ class MaterialUploadActivity :
     }
 
     private fun startCreateFlow() {
-        if (!hasUploadedPhoto()) {
-            FlowCopyStore.get(FlowCopyKey.PHOTO_LIMIT_WARN).toast()
+        if (!mViewModel.hasUploadedPhoto(isMultiUpload())) {
+            AppStrings.get(StringResId.PHOTO_LIMIT_WARN).toast()
             return
         }
 
         val pageInfo = submitPageInfo ?: SubmitPageInfo()
         val templateId = templateItem?.acetoneactuate ?: return
-        val sourcePaths = collectSourcePaths()
+        val sourcePaths = mViewModel.collectSourcePaths(isMultiUpload())
 
-        if (
-            GenerateSubmitCache.isRepeatCheckEnabled(pageInfo) &&
-            GenerateSubmitCache.isDuplicateUpload(templateId, sourcePaths)
-        ) {
-            val dialogTexts = buildRepeatDialogTexts(pageInfo)
-            if (dialogTexts != null) {
-                showRepeatUploadDialog(pageInfo, dialogTexts)
-                return
-            }
-        }
-        proceedAfterRepeatCheck(pageInfo)
-    }
-
-    private fun showRepeatUploadDialog(
-        pageInfo: SubmitPageInfo,
-        dialogTexts: Pair<String, String>,
-    ) {
-        CommonMessageDialog.Builder(this)
-            .setTitle(dialogTexts.first)
-            .setContent(dialogTexts.second)
-            .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
-            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
-                proceedAfterRepeatCheck(pageInfo)
-            }
-            .show()
-    }
-
-    private fun proceedAfterRepeatCheck(pageInfo: SubmitPageInfo) {
-        if (pageInfo.valuefunny) {
-            showGenerateFreeEverydayDialog(pageInfo)
-            return
-        }
-        proceedAfterFreeEverydayCheck(pageInfo)
-    }
-
-    private fun showGenerateFreeEverydayDialog(pageInfo: SubmitPageInfo) {
-        val title = pageInfo.foolcyst
-            .ifBlank { pageInfo.apieceasteroid }
-        val content = pageInfo.apieceasteroid
-            .ifBlank { pageInfo.foolcyst }
-        if (title.isBlank()) return
-
-        CommonMessageDialog.Builder(this)
-            .setTitle(title)
-            .setContent(content)
-            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.ROGER_ACTION))
-            .show()
-    }
-
-    private fun proceedAfterFreeEverydayCheck(pageInfo: SubmitPageInfo) {
-        if (pageInfo.consider) {
-            showConsumeIntegralDialog(pageInfo)
-            return
-        }
-        submitGenerateWork()
-    }
-
-    private fun showConsumeIntegralDialog(pageInfo: SubmitPageInfo) {
-        val title = pageInfo.ecologybestial
-            .ifBlank { pageInfo.hirenoun }
-        val content = pageInfo.hirenoun
-            .ifBlank { pageInfo.ecologybestial }
-        if (title.isBlank()) {
-            submitGenerateWork()
-            return
-        }
-
-        CommonMessageDialog.Builder(this)
-            .setTitle(title)
-            .setContent(content)
-            .setCancelButton(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
-            .setConfirmButton(FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)) {
-                submitGenerateWork()
-            }
-            .show()
+        GeneratePreCheckPresenter(this).runUploadPipeline(
+            pageInfo = pageInfo,
+            templateId = templateId,
+            sourcePaths = sourcePaths,
+            onProceed = { submitGenerateWork() },
+        )
     }
 
     private fun submitGenerateWork() {
         val templateId = templateItem?.acetoneactuate ?: return
-        val sourceFiles = collectSourceFiles()
+        val multi = isMultiUpload()
+        val sourceFiles = mViewModel.collectSourceFiles(multi)
         if (sourceFiles.isEmpty()) {
-            FlowCopyStore.get(FlowCopyKey.PHOTO_LIMIT_WARN).toast()
+            AppStrings.get(StringResId.PHOTO_LIMIT_WARN).toast()
             return
         }
 
-        val sourcePaths = collectSourcePaths()
+        val sourcePaths = mViewModel.collectSourcePaths(multi)
         mViewModel.generateWork(templateId, sourceFiles, cacheDir).obs(this) {
             onSuccess { result ->
                 GenerateSubmitCache.saveLastSuccess(templateId, sourcePaths)
@@ -423,7 +288,7 @@ class MaterialUploadActivity :
                             MainNavigator.openMainTab(this, MainAdapter.PAGE_USER)
                         }
                     }
-                    .setCancelButtonText(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+                    .setCancelButtonText(AppStrings.get(StringResId.CANCEL_ACTION))
                     .setOnCancel {
                         MainNavigator.openMainTab(this, MainAdapter.PAGE_TOPIC)
                     }
@@ -436,7 +301,7 @@ class MaterialUploadActivity :
                             MainNavigator.openMainTab(this, MainAdapter.PAGE_USER)
                         }
                     }
-                    .setCancelButtonText(FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION))
+                    .setCancelButtonText(AppStrings.get(StringResId.CANCEL_ACTION))
                     .setOnCancel {
                         MainNavigator.openMainTab(this, MainAdapter.PAGE_TOPIC)
                     }
@@ -446,47 +311,8 @@ class MaterialUploadActivity :
         builder.show() ?: finish()
     }
 
-    private fun hasUploadedPhoto(): Boolean {
-        return if (isMultiUpload()) {
-            !mViewModel.leftUploadPath.isNullOrBlank() ||
-                    !mViewModel.rightUploadPath.isNullOrBlank()
-        } else {
-            !mViewModel.singleUploadPath.isNullOrBlank()
-        }
-    }
-
     private fun isMultiUpload(): Boolean {
         return (templateItem?.alimentary ?: 1) >= 2
-    }
-
-    private fun collectSourcePaths(): List<String> {
-        return if (isMultiUpload()) {
-            listOfNotNull(mViewModel.leftUploadPath, mViewModel.rightUploadPath)
-        } else {
-            listOfNotNull(mViewModel.singleUploadPath)
-        }
-    }
-
-    private fun collectSourceFiles(): List<File> {
-        return if (isMultiUpload()) {
-            listOfNotNull(
-                mViewModel.leftUploadPath?.let(::File),
-                mViewModel.rightUploadPath?.let(::File),
-            )
-        } else {
-            listOfNotNull(mViewModel.singleUploadPath?.let(::File))
-        }
-    }
-
-    private fun buildRepeatDialogTexts(pageInfo: SubmitPageInfo): Pair<String, String>? {
-        val title = pageInfo.hatchampion
-        val content = pageInfo.tryamount
-        if (title.isBlank() && content.isBlank()) return null
-        return when {
-            title.isNotBlank() && content.isNotBlank() -> title to content
-            title.isNotBlank() -> title to title
-            else -> content to content
-        }
     }
 
     private fun showUploadPreview(file: File, slot: UploadSlot) {
@@ -545,13 +371,6 @@ class MaterialUploadActivity :
         }
     }
 
-    private fun hasStoragePermission(): Boolean {
-        return XXPermissions.isGrantedPermissions(
-            this,
-            listOf(PermissionLists.getReadExternalStoragePermission()),
-        )
-    }
-
     private fun getFirstUploadSlot(): UploadSlot {
         return if ((templateItem?.alimentary ?: 1) >= 2) {
             UploadSlot.LEFT
@@ -575,11 +394,11 @@ class MaterialUploadActivity :
     }
 
     private fun setText() {
-        val uploadLabel = FlowCopyStore.get(FlowCopyKey.PHOTO_UPLOAD_ACTION)
+        val uploadLabel = AppStrings.get(StringResId.PHOTO_UPLOAD_ACTION)
         mBind.tvUploadLabel.text = uploadLabel
         mBind.tvUploadLabelLeft.text = uploadLabel
         mBind.tvUploadLabelRight.text = uploadLabel
-        mBind.tvCreate.text = FlowCopyStore.get(FlowCopyKey.CREATE_HINT)
+        mBind.tvCreate.text = AppStrings.get(StringResId.CREATE_HINT)
     }
 
     private enum class UploadSlot {

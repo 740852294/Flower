@@ -1,7 +1,7 @@
 package com.flower.flow.data.vm
 
 import com.flower.flow.app.App
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.data.model.CacheConfig
 import com.flower.flow.data.model.FlowCopyMapper
 import com.flower.flow.data.model.entity.LanguageItem
@@ -30,7 +30,7 @@ class LanguageSettingViewModel : BaseViewModel() {
                 val config = CommonRepository.getAppLanguageConfigLivedata().await()
                 val remoteTexts = config.toRemoteTextMap()
                 val localTexts = FlowCopyMapper.toLocalTexts(remoteTexts)
-                FlowCopyStore.save(localTexts)
+                AppStrings.save(localTexts)
                 CacheConfig.selectedLanguageId = selected.acetoneactuate
                 selected
             } catch (e: Exception) {

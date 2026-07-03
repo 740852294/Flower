@@ -8,9 +8,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import com.flower.flow.R
-import com.flower.flow.app.core.util.FlowCopyStore
+import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.databinding.DialogSwitchAccountBinding
-import com.flower.flow.data.model.FlowCopyKey
+import com.flower.flow.data.model.StringResId
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.toast
 
@@ -63,22 +63,22 @@ class SwitchAccountDialog private constructor(
     }
 
     private fun bindContent() = with(binding) {
-        title.text = FlowCopyStore.get(FlowCopyKey.ACCOUNT_SWITCH)
-        accountEditText.hint = FlowCopyStore.get(FlowCopyKey.ACCOUNT_INPUT_HINT)
-        passwordEditText.hint = FlowCopyStore.get(FlowCopyKey.PASSWORD_INPUT_HINT)
-        confirmButton.text = FlowCopyStore.get(FlowCopyKey.CONFIRM_ACTION)
-        cancelButton.text = FlowCopyStore.get(FlowCopyKey.CANCEL_ACTION)
+        title.text = AppStrings.get(StringResId.ACCOUNT_SWITCH)
+        accountEditText.hint = AppStrings.get(StringResId.ACCOUNT_INPUT_HINT)
+        passwordEditText.hint = AppStrings.get(StringResId.PASSWORD_INPUT_HINT)
+        confirmButton.text = AppStrings.get(StringResId.CONFIRM_ACTION)
+        cancelButton.text = AppStrings.get(StringResId.CANCEL_ACTION)
 
         cancelButton.clickNoRepeat { dismiss() }
         confirmButton.clickNoRepeat {
             val account = accountEditText.text?.toString()?.trim().orEmpty()
             val password = passwordEditText.text?.toString()?.trim().orEmpty()
             if (account.isEmpty()) {
-                FlowCopyStore.get(FlowCopyKey.ACCOUNT_INPUT_HINT).toast()
+                AppStrings.get(StringResId.ACCOUNT_INPUT_HINT).toast()
                 return@clickNoRepeat
             }
             if (password.isEmpty()) {
-                FlowCopyStore.get(FlowCopyKey.PASSWORD_INPUT_HINT).toast()
+                AppStrings.get(StringResId.PASSWORD_INPUT_HINT).toast()
                 return@clickNoRepeat
             }
             dismiss()

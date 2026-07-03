@@ -1,6 +1,6 @@
 package com.flower.flow.data.model
 
-object FlowCopyKey {
+object StringResId {
     const val PERM_STORE_HEAD = "copy_perm_store_head"
     const val HELLO_ENTRY = "copy_hello_entry"
     const val LIST_END_NOTE = "copy_list_end_note"
