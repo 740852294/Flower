@@ -278,7 +278,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         if (avatar.isNotEmpty()) {
             mBind.ivAvatar.loadAvatarFile(
                 source = avatar,
-                isAutoPlay = false,
+                isAutoPlay = true,
                 onFinalImageSet = workListCallbacks::syncAnimationPlayback,
             )
         }

@@ -11,6 +11,7 @@ import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.model.entity.VersionCheckInfo
 import com.flower.flow.data.model.entity.WebUrl
 import rxhttp.wrapper.coroutines.Await
+import rxhttp.wrapper.param.toAwaitMsgResponse
 import rxhttp.wrapper.param.toAwaitResponse
 
 object CommonRepository {
@@ -109,6 +110,6 @@ object CommonRepository {
         return FlowHttp.postForm(NetUrl.Common.REPORT_ADD)
             .add("imitaterise", content)
             .add("aboundchivalry", sysTypeId)
-            .toAwaitResponse()
+            .toAwaitMsgResponse(String::class.java)
     }
 }

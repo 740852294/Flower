@@ -11,7 +11,6 @@
 -dontpreverify
 
 -verbose
--printmapping priguardMapping.txt
 
 -optimizations !code/simplification/artithmetic,!field/*,!class/merging/*
 
@@ -85,3 +84,7 @@
 
 #实体类
 -keep class com.flower.flow.data.model.entity.**{ *; }
+
+# Fresco 3.7 通过反射创建 GIF/WebP 动图解码器，必须保留完整类和构造方法。
+-keep class com.facebook.animated.webp.WebPImageDecoder { *; }
+-keep class com.facebook.animated.gif.GifImageDecoder { *; }

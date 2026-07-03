@@ -28,7 +28,7 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
     private lateinit var pagerAdapter: TagPagerAdapter
     private var tagList: List<TagItem> = emptyList()
     private var isFirstTagLoad = true
-    private var isPagerIdle = true
+    private var isPagerTransitioning = false
 
     private val pageChangeCallback = object : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
@@ -47,11 +47,11 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
         }
 
         override fun onPageScrollStateChanged(state: Int) {
-            isPagerIdle = state == ViewPager2.SCROLL_STATE_IDLE
+            isPagerTransitioning = state != ViewPager2.SCROLL_STATE_IDLE
             childFragmentManager.fragments
                 .filterIsInstance<TagListFragment>()
                 .forEach { fragment ->
-                    fragment.setPagerIdle(isPagerIdle)
+                    fragment.setPagerTransitioning(isPagerTransitioning)
                 }
         }
     }
@@ -101,6 +101,16 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        setTagListContainerVisible(true)
+    }
+
+    override fun onPause() {
+        setTagListContainerVisible(false)
+        super.onPause()
+    }
+
     override fun onDestroyView() {
         mBind.viewPager.unregisterOnPageChangeCallback(pageChangeCallback)
         super.onDestroyView()
@@ -137,7 +147,9 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
         }
     }
 
-    internal fun isTagPagerIdle(): Boolean = isPagerIdle
+    internal fun isTagPagerTransitioning(): Boolean = isPagerTransitioning
+
+    internal fun isTagContainerVisible(): Boolean = isResumed && !isHidden
 
     internal fun getTemplateCacheGeneration(): Int {
         return mViewModel.getTemplateCacheGeneration()
@@ -157,6 +169,14 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
         generation: Int,
     ) {
         mViewModel.cacheTemplates(tagId, page, refresh, generation)
+    }
+
+    private fun setTagListContainerVisible(visible: Boolean) {
+        childFragmentManager.fragments
+            .filterIsInstance<TagListFragment>()
+            .forEach { fragment ->
+                fragment.setContainerVisible(visible)
+            }
     }
 
     companion object {

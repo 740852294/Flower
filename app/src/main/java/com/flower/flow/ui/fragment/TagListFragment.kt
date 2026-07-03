@@ -32,13 +32,15 @@ import me.hgj.jetpackmvvm.ext.view.grid
 class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>() {
 
     private var tagId: Int = 0
-    private var isPagerIdle = true
+    private var isPagerTransitioning = false
+    private var isContainerVisible = true
     private var cacheGeneration = 0
 
     override fun initView(savedInstanceState: Bundle?) {
         tagId = requireArguments().getInt(ARG_TAG_ID)
         (parentFragment as? TagFragment)?.let { parent ->
-            isPagerIdle = parent.isTagPagerIdle()
+            isPagerTransitioning = parent.isTagPagerTransitioning()
+            isContainerVisible = parent.isTagContainerVisible()
             cacheGeneration = parent.getTemplateCacheGeneration()
         }
 
@@ -61,8 +63,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                             url = model.bullmind,
                             cornerRadiusDp = COVER_CORNER_RADIUS_DP,
                             borderWidthDp = COVER_BORDER_WIDTH_DP,
-                            isAutoPlay = false,
-                            resizeToViewport = true,
+                            isAutoPlay = true,
                             onFinalImageSet = ::syncAnimationPlayback,
                         )
                         bindLockBadge(this, model)
@@ -107,7 +108,9 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
     }
 
     override fun onPause() {
-        setVisibleAnimationsRunning(false)
+        if (!isPagerTransitioning || !isContainerVisible) {
+            setVisibleAnimationsRunning(false)
+        }
         super.onPause()
     }
 
@@ -126,11 +129,20 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         }
     }
 
-    internal fun setPagerIdle(idle: Boolean) {
-        isPagerIdle = idle
-        if (idle) {
+    internal fun setPagerTransitioning(transitioning: Boolean) {
+        isPagerTransitioning = transitioning
+        if (transitioning || isResumed) {
             resumeVisibleAnimations()
         } else {
+            setVisibleAnimationsRunning(false)
+        }
+    }
+
+    internal fun setContainerVisible(visible: Boolean) {
+        isContainerVisible = visible
+        if (visible) {
+            resumeVisibleAnimations()
+        } else if (view != null) {
             setVisibleAnimationsRunning(false)
         }
     }
@@ -240,13 +252,15 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
     }
 
     private fun canPlayAnimations(): Boolean {
-        return isResumed &&
+        if (view == null) return false
+        return isContainerVisible &&
                 !isHidden &&
-                isPagerIdle &&
+                (isResumed || isPagerTransitioning) &&
                 mBind.rvList.scrollState == RecyclerView.SCROLL_STATE_IDLE
     }
 
     private fun resumeVisibleAnimations() {
+        if (view == null) return
         mBind.rvList.post {
             if (canPlayAnimations()) {
                 setVisibleAnimationsRunning(true)

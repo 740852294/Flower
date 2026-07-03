@@ -40,9 +40,9 @@ object AiArtRepository {
     }
 
     fun deleteWorkTasks(taskIds: List<String>): Await<Any> {
-        return FlowHttp.postForm(NetUrl.AiArt.WORK_DELETE)
-            .add("laughbeef", taskIds)
-            .toAwaitResponse()
+        val request = FlowHttp.postForm(NetUrl.AiArt.WORK_DELETE)
+        taskIds.forEach { taskId -> request.add("laughbeef", taskId) }
+        return request.toAwaitResponse()
     }
 
     fun recordWorkDownloaded(taskId: String): Await<Any> {

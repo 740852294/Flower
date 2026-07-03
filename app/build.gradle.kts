@@ -71,6 +71,7 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = true
+            proguardFiles("src/main/keepRules/rules.keep")
             buildConfigField("String", "BASE_HTTP_API", "\"http://8.148.151.104:7068/\"")
             buildConfigField("String", "CIPHER_KEY", "\"Flow5f6sdedv63er\"")
         }
@@ -78,6 +79,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            proguardFiles("src/main/keepRules/rules.keep")
             buildConfigField("String", "BASE_HTTP_API", "\"http://8.148.151.104:7068/\"")
             buildConfigField("String", "CIPHER_KEY", "\"Flow5f6sdedv63er\"")
         }

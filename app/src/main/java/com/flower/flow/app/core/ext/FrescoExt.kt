@@ -66,27 +66,39 @@ fun ImageView.loadImage(
 
     val imageOptionsBuilder = ImageOptions.create()
         .scale(scaleType)
-        .resizeToViewport(resizeToViewport)
+    if (resizeToViewport) {
+        imageOptionsBuilder.resizeToViewport(true)
+    }
     placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
     imageOptionsBuilder.autoPlay(isAutoPlay)
-    imageOptionsBuilder.autoStop(true)
+    imageOptionsBuilder.autoStop(isAutoPlay)
+
+    val imageSource = ImageSourceProvider.forUri(url)
+    if (onFinalImageSet == null) {
+        VitoView.show(
+            imageSource,
+            imageOptionsBuilder.build(),
+            this,
+        )
+        return
+    }
 
     val target = this
-    val imageListener = onFinalImageSet?.let { callback ->
-        object : BaseImageListener() {
-            override fun onFinalImageSet(
-                id: Long,
-                imageOrigin: Int,
-                imageInfo: ImageInfo?,
-                drawable: Drawable?,
-            ) {
-                callback(target)
+    val imageListener = object : BaseImageListener() {
+        override fun onFinalImageSet(
+            id: Long,
+            imageOrigin: Int,
+            imageInfo: ImageInfo?,
+            drawable: Drawable?,
+        ) {
+            target.post {
+                onFinalImageSet(target)
             }
         }
     }
 
     VitoView.show(
-        ImageSourceProvider.forUri(url),
+        imageSource,
         imageOptionsBuilder.build(),
         null,
         imageListener,
@@ -314,24 +326,34 @@ fun ImageView.loadAvatarFile(
         .scale(scaleType)
     placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
     imageOptionsBuilder.autoPlay(isAutoPlay)
-    imageOptionsBuilder.autoStop(true)
+    imageOptionsBuilder.autoStop(isAutoPlay)
+
+    val imageSource = ImageSourceProvider.forUri(uri)
+    if (onFinalImageSet == null) {
+        VitoView.show(
+            imageSource,
+            imageOptionsBuilder.build(),
+            this,
+        )
+        return
+    }
 
     val target = this
-    val imageListener = onFinalImageSet?.let { callback ->
-        object : BaseImageListener() {
-            override fun onFinalImageSet(
-                id: Long,
-                imageOrigin: Int,
-                imageInfo: ImageInfo?,
-                drawable: Drawable?,
-            ) {
-                callback(target)
+    val imageListener = object : BaseImageListener() {
+        override fun onFinalImageSet(
+            id: Long,
+            imageOrigin: Int,
+            imageInfo: ImageInfo?,
+            drawable: Drawable?,
+        ) {
+            target.post {
+                onFinalImageSet(target)
             }
         }
     }
 
     VitoView.show(
-        ImageSourceProvider.forUri(uri),
+        imageSource,
         imageOptionsBuilder.build(),
         null,
         imageListener,

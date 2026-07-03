@@ -107,7 +107,7 @@ internal fun bindTopicItem(
             url = model1.bullmind,
             cornerRadiusDp = 10f,
             borderWidthDp = 1f,
-            isAutoPlay = false,
+            isAutoPlay = true,
             onFinalImageSet = onFinalImageSet,
         )
         val showCost = model1.peacearrow > 0
@@ -136,21 +136,21 @@ internal fun bindTopicItem(
         modelList?.getOrNull(3),
         cornerRadiusDp = 16f,
         borderColor = Color.BLACK,
-        onFinalImageSet = onFinalImageSet,
+        isAutoPlay = false,
     )
     bindOptionalCover(
         refs.ivCover5,
         modelList?.getOrNull(4),
         cornerRadiusDp = 16f,
         borderColor = Color.BLACK,
-        onFinalImageSet = onFinalImageSet,
+        isAutoPlay = false,
     )
     bindOptionalCover(
         refs.ivCover6,
         modelList?.getOrNull(5),
         cornerRadiusDp = 16f,
         borderColor = Color.BLACK,
-        onFinalImageSet = onFinalImageSet,
+        isAutoPlay = false,
     )
 }
 
@@ -159,7 +159,8 @@ private fun bindOptionalCover(
     template: TemplateItem?,
     cornerRadiusDp: Float,
     borderColor: Int = Color.WHITE,
-    onFinalImageSet: (ImageView) -> Unit,
+    onFinalImageSet: ((ImageView) -> Unit)? = null,
+    isAutoPlay: Boolean = true,
 ) {
     if (template != null) {
         imageView.isVisible = true
@@ -168,7 +169,7 @@ private fun bindOptionalCover(
             cornerRadiusDp = cornerRadiusDp,
             borderWidthDp = 1f,
             borderColor = borderColor,
-            isAutoPlay = false,
+            isAutoPlay = isAutoPlay,
             onFinalImageSet = onFinalImageSet,
         )
     } else {
@@ -190,7 +191,7 @@ private fun bindSampleImages(
             refs.ivSampleSingle.loadImage(
                 url = samples.first(),
                 cornerRadiusDp = 4f,
-                isAutoPlay = false,
+                isAutoPlay = true,
                 onFinalImageSet = onFinalImageSet,
             )
         }
@@ -200,13 +201,13 @@ private fun bindSampleImages(
             refs.ivSampleLeft.loadImage(
                 url = samples[0],
                 cornerRadiiDp = floatArrayOf(4f, 0f, 0f, 4f),
-                isAutoPlay = false,
+                isAutoPlay = true,
                 onFinalImageSet = onFinalImageSet,
             )
             refs.ivSampleRight.loadImage(
                 url = samples.getOrNull(1),
                 cornerRadiiDp = floatArrayOf(0f, 4f, 4f, 0f),
-                isAutoPlay = false,
+                isAutoPlay = true,
                 onFinalImageSet = onFinalImageSet,
             )
         }
@@ -217,10 +218,12 @@ private fun TopicItemViewRefs.setAnimationsRunning(running: Boolean) {
     ivCover1.setImageAnimationRunning(running)
     ivCover2.setImageAnimationRunning(running)
     ivCover3.setImageAnimationRunning(running)
-    ivCover4.setImageAnimationRunning(running)
-    ivCover5.setImageAnimationRunning(running)
-    ivCover6.setImageAnimationRunning(running)
-    ivSampleSingle.setImageAnimationRunning(running)
-    ivSampleLeft.setImageAnimationRunning(running)
-    ivSampleRight.setImageAnimationRunning(running)
+    if (!running) {
+        ivCover4.setImageAnimationRunning(false)
+        ivCover5.setImageAnimationRunning(false)
+        ivCover6.setImageAnimationRunning(false)
+        ivSampleSingle.setImageAnimationRunning(false)
+        ivSampleLeft.setImageAnimationRunning(false)
+        ivSampleRight.setImageAnimationRunning(false)
+    }
 }

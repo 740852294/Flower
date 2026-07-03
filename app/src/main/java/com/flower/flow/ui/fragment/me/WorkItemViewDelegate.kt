@@ -96,7 +96,7 @@ object WorkItemViewDelegate {
         binding.ivCover.loadImage(
             url = model.clogcadre,
             cornerRadiusDp = 15f,
-            isAutoPlay = false,
+            isAutoPlay = true,
             onFinalImageSet = onAnimationSync,
         )
         binding.ivCover.applyBlurEffect(true, cornerRadiusPx.toFloat())
@@ -126,7 +126,7 @@ object WorkItemViewDelegate {
             binding.ivCover.loadImage(
                 url = url,
                 cornerRadiusDp = 15f,
-                isAutoPlay = false,
+                isAutoPlay = true,
                 onFinalImageSet = onAnimationSync,
             )
         }
@@ -161,7 +161,7 @@ object WorkItemViewDelegate {
             binding.ivCover.loadImage(
                 url = url,
                 cornerRadiusDp = 15f,
-                isAutoPlay = false,
+                isAutoPlay = true,
                 onFinalImageSet = onAnimationSync,
             )
         }
@@ -186,7 +186,7 @@ object WorkItemViewDelegate {
             binding.ivCover.loadImage(
                 url = url,
                 cornerRadiusDp = 15f,
-                isAutoPlay = false,
+                isAutoPlay = true,
                 onFinalImageSet = onAnimationSync,
             )
         }
@@ -216,7 +216,7 @@ object WorkItemViewDelegate {
                 binding.ivSampleSingle.loadImage(
                     url = samples.first(),
                     cornerRadiusDp = 10f,
-                    isAutoPlay = false,
+                    isAutoPlay = true,
                     onFinalImageSet = onAnimationSync,
                 )
             }
@@ -226,13 +226,13 @@ object WorkItemViewDelegate {
                 binding.ivSampleLeft.loadImage(
                     url = samples[0],
                     cornerRadiiDp = floatArrayOf(10f, 0f, 0f, 10f),
-                    isAutoPlay = false,
+                    isAutoPlay = true,
                     onFinalImageSet = onAnimationSync,
                 )
                 binding.ivSampleRight.loadImage(
                     url = samples.getOrNull(1),
                     cornerRadiiDp = floatArrayOf(0f, 10f, 10f, 0f),
-                    isAutoPlay = false,
+                    isAutoPlay = true,
                     onFinalImageSet = onAnimationSync,
                 )
             }
