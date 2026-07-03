@@ -68,6 +68,9 @@ class CommonMessageDialog private constructor(
         title.text = titleText
         content.text = contentText
 
+        title.isVisible = titleText.isNotBlank()
+        content.isVisible = contentText.isNotBlank()
+        viewSpace.isVisible = !titleText.isNotBlank()
         cancelButton.isVisible = cancelAction != null
         confirmButton.isVisible = confirmAction != null
         buttonSpace.isVisible = cancelAction != null && confirmAction != null

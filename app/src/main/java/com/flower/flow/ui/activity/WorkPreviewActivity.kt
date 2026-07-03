@@ -1,5 +1,6 @@
 package com.flower.flow.ui.activity
 
+import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.view.ViewTreeObserver
@@ -64,7 +65,6 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
     override fun onBindViewClick() {
         mBind.btnDownload.clickNoRepeat {
             CommonMessageDialog.Builder(this)
-                .setTitle(AppStrings.get(StringResId.DOWNLOAD_ACTION))
                 .setContent(workItem.demand.orEmpty())
                 .setConfirmButton(AppStrings.get(StringResId.DOWNLOAD_ACTION)) {
                     requestWorkDownload()
@@ -111,6 +111,7 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         )
     }
 
+    @SuppressLint("UnsafeOptInUsageError")
     @OptIn(UnstableApi::class)
     private fun setupVideoPreview(url: String) {
         mBind.previewImage.isVisible = false

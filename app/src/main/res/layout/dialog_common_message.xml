@@ -23,7 +23,8 @@
         android:paddingStart="12dp"
         android:paddingTop="26dp"
         android:paddingEnd="12dp"
-        android:paddingBottom="26dp">
+        android:paddingBottom="26dp"
+        tools:ignore="MissingConstraints">
 
         <TextView
             android:id="@+id/title"
@@ -47,6 +48,12 @@
             android:textColor="@color/white"
             android:textSize="16sp"
             tools:text="Using this template will deduct 150 points" />
+
+        <Space
+            android:id="@+id/viewSpace"
+            android:layout_width="match_parent"
+            android:layout_height="15dp"
+            android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"

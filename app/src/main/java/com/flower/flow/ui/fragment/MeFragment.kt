@@ -90,10 +90,6 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
             onReload = ::loadData,
         )
 
-        App.globalConfig?.apply {
-            mBind.llMoney.isVisible = (exaltabrade == 1)
-        }
-
         setText()
         UserManager.user?.apply { setUserInfo(this) }
 
@@ -270,6 +266,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun setUserInfo(user: UserInfo) {
+        App.globalConfig?.apply {
+            mBind.llMoney.isVisible = (exaltabrade == 1)
+        }
+
         val isVip = user.shareengage
         mBind.clVip.isVisible = (!isVip) && ((App.globalConfig?.exaltabrade ?: 0) == 1)
         mBind.ivVipLabel.isVisible = isVip
@@ -346,7 +346,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private fun setVisibleAnimationsRunning(running: Boolean) {
         mBind.ivAvatar.setImageAnimationRunning(running)
         mBind.rvList.children.forEach { itemView ->
-            com.flower.flow.ui.fragment.me.WorkItemViewDelegate.setItemAnimationsRunning(itemView, running)
+            com.flower.flow.ui.fragment.me.WorkItemViewDelegate.setItemAnimationsRunning(
+                itemView,
+                running
+            )
         }
     }
 }
