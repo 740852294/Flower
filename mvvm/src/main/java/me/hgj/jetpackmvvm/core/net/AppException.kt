@@ -16,6 +16,6 @@ class AppException : Exception {
 
     constructor(error: Error, e: Throwable?) {
         errCode = error.getKey().toString()
-        errorMsg = error.getValue()
+        errorMsg = ExceptionHandle.messageFor(error)
     }
 }

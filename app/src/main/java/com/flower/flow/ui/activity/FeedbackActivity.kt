@@ -51,7 +51,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
                 onBind {
                     getBindingOrNull<LayoutItemFeedbackTypeBinding>()?.run {
                         val model = getModel<SysTypeItem>()
-                        tvName.text = model.name
+                        tvName.text = model.dazzledeacon
                         if (feedbackTypePosition == modelPosition) {
                             ivSelect.setImageResource(R.mipmap.ic_feedback_type_item_selected)
                         } else {
@@ -84,7 +84,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
             }
 
             val content = mBind.etFeedbackContent.text.toString().trim()
-            mViewModel.submitFeedback(content, email, selectedType.id).obs(this) {
+            mViewModel.submitFeedback(content, email, selectedType.acetoneactuate).obs(this) {
                 onSuccess {
                     UserManager.saveUserMsgDot(true)
                     finish()

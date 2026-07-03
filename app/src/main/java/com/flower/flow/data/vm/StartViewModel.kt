@@ -19,7 +19,7 @@ class StartViewModel : BaseViewModel() {
     fun registerUserByAttribution(context: Context) = request {
         onRequest {
             val registerResponse = FlowerRegisterCoordinator.registerByAttribution(context)
-            if (registerResponse.uid.isBlank()) {
+            if (registerResponse.elephantfloat.isBlank()) {
                 throw IllegalStateException("register uid is empty")
             }
             registerResponse

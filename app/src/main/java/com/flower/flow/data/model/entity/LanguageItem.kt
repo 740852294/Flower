@@ -3,12 +3,12 @@ package com.flower.flow.data.model.entity
 import com.google.gson.annotations.SerializedName
 
 data class LanguageItem(
-    @SerializedName("id")
-    val id: Int = 0,
-    @SerializedName("language")
-    val language: String = "",
-    @SerializedName("tag")
-    val tag: String = "",
-    @SerializedName("isDefault")
-    val isDefault: Int = 0,
+    //id
+    @SerializedName("acetoneactuate") val acetoneactuate: Int = 0,
+    //language
+    @SerializedName("descendcoffer") val descendcoffer: String = "",
+    //tag
+    @SerializedName("malereach") val malereach: String = "",
+    //isDefault
+    @SerializedName("dineanodyne") val dineanodyne: Int = 0,
 )

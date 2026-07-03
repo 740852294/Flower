@@ -6,6 +6,10 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class RegisterResponse(
-    @SerializedName("uid")
-    var uid: String = "",
+    //id
+    @SerializedName("acetoneactuate") val acetoneactuate: Int = 0,
+    //uid
+    @SerializedName("elephantfloat") var elephantfloat: String = "",
+    //type
+    @SerializedName("crotchamass") val crotchamass: Int = 0,
 ) : Parcelable

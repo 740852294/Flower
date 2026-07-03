@@ -3,5 +3,6 @@ package com.flower.flow.data.model.entity
 import com.google.gson.annotations.SerializedName
 
 data class WebUrl(
-    @SerializedName("url") val url: String = "",
+    //url
+    @SerializedName("cuspcrow") val cuspcrow: String = "",
 )

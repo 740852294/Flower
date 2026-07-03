@@ -15,7 +15,7 @@ object LanguageConfigHelper {
         val languageList = CommonRepository.getLanguageListLivedata().await()
         CacheConfig.languageListJson = languageList.toJsonStr()
         val target = resolveLanguageTarget(languageList)
-        App.currentLanguageId = target.id
+        App.currentLanguageId = target.acetoneactuate
         cacheLanguageConfig()
         return target
     }
@@ -29,7 +29,7 @@ object LanguageConfigHelper {
 
     private fun resolveLanguageTarget(languageList: List<LanguageItem>): LanguageItem {
         if (CacheConfig.selectedLanguageId > 0) {
-            languageList.find { it.id == CacheConfig.selectedLanguageId }?.let { return it }
+            languageList.find { it.acetoneactuate == CacheConfig.selectedLanguageId }?.let { return it }
         }
         return LanguageUtil.resolveTargetLanguage(languageList)
     }
@@ -41,7 +41,7 @@ object LanguageConfigHelper {
             App.currentLanguageId = CacheConfig.selectedLanguageId
         } else {
             val target = LanguageUtil.resolveTargetLanguage(languageList)
-            App.currentLanguageId = target.id
+            App.currentLanguageId = target.acetoneactuate
         }
     }
 }

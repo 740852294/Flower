@@ -142,14 +142,14 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     getBindingOrNull<LayoutItemWorkBinding>()?.run {
                         val model = getModel<WorkItem>()
 
-                        val isVip = UserManager.user?.isVip ?: false
+                        val isVip = UserManager.user?.shareengage ?: false
 
                         bindSelectionState(this, model)
 
-                        btnStatus.isVisible = !model.againGenerateButtonMsg.isNullOrBlank()
-                        btnStatus.text = model.againGenerateButtonMsg ?: ""
+                        btnStatus.isVisible = !model.increaserace.isNullOrBlank()
+                        btnStatus.text = model.increaserace ?: ""
 
-                        when (model.state) {
+                        when (model.afflict) {
                             WORK_STATUS_NONE -> {
                                 lockDot.visibility =
                                     if (isSelectionMode) View.GONE else View.VISIBLE
@@ -157,20 +157,20 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                 llProgress.visibility = View.GONE
                                 ivDownload.visibility = View.GONE
                                 ivCover.loadImage(
-                                    url = model.aiartImg,
+                                    url = model.clogcadre,
                                     cornerRadiusDp = 15f,
                                     isAutoPlay = false,
                                     onFinalImageSet = ::syncAnimationPlayback,
                                 )
                                 ivCover.applyBlurEffect(true, dp2px(15f).toFloat())
-                                bindSampleImages(this, model.inputImgList)
+                                bindSampleImages(this, model.aperitifaccost)
                                 llStatus.visibility = View.VISIBLE
                                 ivStatus.visibility = View.VISIBLE
                                 ivStatus.setImageResource(R.mipmap.ic_work_lock)
                                 tvStatus1.visibility = View.GONE
                                 tvStatus2.visibility =
-                                    if (isVip || model.showMsg.isNullOrBlank()) View.GONE else View.VISIBLE
-                                tvStatus2.text = model.showMsg.orEmpty()
+                                    if (isVip || model.acculturatecurd.isNullOrBlank()) View.GONE else View.VISIBLE
+                                tvStatus2.text = model.acculturatecurd.orEmpty()
                                 tvGenerating.visibility = View.GONE
                             }
 
@@ -179,7 +179,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                 llTime.visibility = View.GONE
                                 llProgress.visibility = View.GONE
                                 ivDownload.visibility = View.GONE
-                                val url = model.inputImgList?.firstOrNull() ?: ""
+                                val url = model.aperitifaccost?.firstOrNull() ?: ""
                                 if (url.isNotBlank()) {
                                     ivCover.loadImage(
                                         url = url,
@@ -194,24 +194,24 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                 llStatus.visibility = View.VISIBLE
                                 ivStatus.visibility = View.GONE
                                 tvStatus1.visibility =
-                                    if (model.showMsg.isNullOrBlank()) View.GONE else View.VISIBLE
-                                tvStatus1.text = model.showMsg.orEmpty()
+                                    if (model.acculturatecurd.isNullOrBlank()) View.GONE else View.VISIBLE
+                                tvStatus1.text = model.acculturatecurd.orEmpty()
                                 tvStatus2.visibility = View.GONE
                                 tvGenerating.visibility =
-                                    if (model.estimatTimeMsg.isNullOrBlank()) View.GONE else View.VISIBLE
-                                tvGenerating.text = model.estimatTimeMsg.orEmpty()
+                                    if (model.notechildhood.isNullOrBlank()) View.GONE else View.VISIBLE
+                                tvGenerating.text = model.notechildhood.orEmpty()
                             }
 
                             WORK_STATUS_COMPLETE -> {
                                 lockDot.visibility = View.GONE
                                 llTime.visibility =
-                                    if (model.aiartType == 2) View.VISIBLE else View.GONE
-                                tvTime.text = model.videoDurationMsg.orEmpty()
+                                    if (model.behavebanister == 2) View.VISIBLE else View.GONE
+                                tvTime.text = model.aggregatechief.orEmpty()
                                 // 下载时，这里显示显示进度，progress是本地添加bean里面的，接口没返回的
                                 llProgress.visibility = View.GONE
                                 ivDownload.visibility = View.VISIBLE
 
-                                val url = model.inputImgList?.firstOrNull() ?: model.aiartImg ?: ""
+                                val url = model.aperitifaccost?.firstOrNull() ?: model.clogcadre ?: ""
                                 if (url.isNotBlank()) {
                                     ivCover.loadImage(
                                         url = url,
@@ -232,7 +232,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                 llTime.visibility = View.GONE
                                 llProgress.visibility = View.GONE
                                 ivDownload.visibility = View.GONE
-                                val url = model.inputImgList?.firstOrNull() ?: ""
+                                val url = model.aperitifaccost?.firstOrNull() ?: ""
                                 if (url.isNotBlank()) {
                                     ivCover.loadImage(
                                         url = url,
@@ -248,7 +248,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                                 ivStatus.visibility = View.VISIBLE
                                 ivStatus.setImageResource(R.mipmap.ic_work_failed)
                                 tvStatus1.visibility = View.VISIBLE
-                                tvStatus1.text = model.showMsg.orEmpty()
+                                tvStatus1.text = model.acculturatecurd.orEmpty()
                                 tvStatus2.visibility = View.GONE
                                 tvGenerating.visibility = View.GONE
                             }
@@ -274,15 +274,15 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     doDebouncedClick {
                         val model = getModel<WorkItem>()
                         if (isSelectionMode) {
-                            val taskId = model.taskId
+                            val taskId = model.baptismdictate
                             if (!selectedTaskIds.add(taskId)) {
                                 selectedTaskIds.remove(taskId)
                             }
                             notifyItemChanged(modelPosition, PAYLOAD_SELECTION)
                             updateDeleteButtonText()
                         } else if (
-                            model.state == WORK_STATUS_COMPLETE &&
-                            model.taskId !in downloadStates
+                            model.afflict == WORK_STATUS_COMPLETE &&
+                            model.baptismdictate !in downloadStates
                         ) {
                             openActivity<WorkPreviewActivity>(
                                 WorkPreviewActivity.EXTRA_WORK_ITEM to model
@@ -315,7 +315,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     override fun onBindViewClick() {
         mBind.llMoney.clickNoRepeat {
             val integral = App.globalConfig?.framepublic ?: 0
-            val isVip = UserManager.user?.isVip ?: false
+            val isVip = UserManager.user?.shareengage ?: false
             if (!isVip && integral == 1) {
                 openActivity<VipJoinActivity>()
                 return@clickNoRepeat
@@ -491,12 +491,12 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun setUserInfo(user: UserInfo) {
-        val isVip = user.isVip
+        val isVip = user.shareengage
         mBind.clVip.isVisible =
             (!isVip) && ((App.globalConfig?.exaltabrade ?: 0) == 1)
         mBind.ivVipLabel.isVisible = isVip
 
-        val avatar = user.avatar
+        val avatar = user.excludephone
         if (avatar.isNotEmpty()) {
             mBind.ivAvatar.loadAvatarFile(
                 source = avatar,
@@ -505,11 +505,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
             )
         }
 
-        mBind.tvName.text = user.name
-        mBind.tvMoney.text = user.integralBalance.toString()
+        mBind.tvName.text = user.dazzledeacon
+        mBind.tvMoney.text = user.beastamalgam.toString()
 
-        mBind.tvOverTip.isVisible = user.clearTaskMsg.isNotEmpty()
-        setIconText(mBind.tvOverTip, R.mipmap.ic_me_over_star, user.clearTaskMsg)
+        mBind.tvOverTip.isVisible = user.hardthough.isNotEmpty()
+        setIconText(mBind.tvOverTip, R.mipmap.ic_me_over_star, user.hardthough)
         mBind.scrollContent.post { updateWorksMinHeight() }
     }
 
@@ -553,13 +553,13 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     ) {
         binding.ivSelect.isVisible = isSelectionMode
         binding.ivSelect.setImageResource(
-            if (model.taskId in selectedTaskIds) {
+            if (model.baptismdictate in selectedTaskIds) {
                 R.mipmap.ic_work_item_selected
             } else {
                 R.mipmap.ic_work_item_unselect
             }
         )
-        if (model.state == WORK_STATUS_NONE) {
+        if (model.afflict == WORK_STATUS_NONE) {
             binding.lockDot.visibility =
                 if (isSelectionMode) View.GONE else View.VISIBLE
         }
@@ -569,32 +569,32 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         binding: LayoutItemWorkBinding,
         model: WorkItem,
     ) {
-        val downloadState = downloadStates[model.taskId]
+        val downloadState = downloadStates[model.baptismdictate]
         binding.llProgress.isVisible = downloadState != null
         if (downloadState != null) {
-            binding.tvDownload.text = model.downloadingMsg.orEmpty()
+            binding.tvDownload.text = model.attachaway.orEmpty()
             binding.pbDownload.isIndeterminate = downloadState.progress == null
             downloadState.progress?.let { binding.pbDownload.progress = it }
             binding.ivDownload.visibility = View.GONE
         } else {
             binding.pbDownload.isIndeterminate = false
             binding.pbDownload.progress = 0
-            if (model.state == WORK_STATUS_COMPLETE) {
+            if (model.afflict == WORK_STATUS_COMPLETE) {
                 binding.ivDownload.visibility = View.VISIBLE
             }
         }
     }
 
     private fun requestAgainGenerate(workItem: WorkItem) {
-        if (workItem.taskId.isBlank()) return
-        mViewModel.prepareAgainGenerate(workItem.aiartId, workItem.taskId)
+        if (workItem.baptismdictate.isBlank()) return
+        mViewModel.prepareAgainGenerate(workItem.naturebroker, workItem.baptismdictate)
             .obs(viewLifecycleOwner) {
                 onSuccess { result ->
                     val generateResult = result.generateResult
                     if (generateResult != null) {
                         handleAgainGenerateResult(generateResult)
                     } else {
-                        proceedAfterRepeatCheck(result.pageInfo, workItem.taskId)
+                        proceedAfterRepeatCheck(result.pageInfo, workItem.baptismdictate)
                     }
                 }
                 onError { status ->
@@ -604,7 +604,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun proceedAfterRepeatCheck(pageInfo: SubmitPageInfo, taskId: String) {
-        if (pageInfo.isGenerateFreeEverydayPopup) {
+        if (pageInfo.valuefunny) {
             showGenerateFreeEverydayDialog(pageInfo)
             return
         }
@@ -612,10 +612,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun showGenerateFreeEverydayDialog(pageInfo: SubmitPageInfo) {
-        val title = pageInfo.generateFreeEverydayPopupTitle
-            .ifBlank { pageInfo.generateFreeEverydayPopupMsg }
-        val content = pageInfo.generateFreeEverydayPopupMsg
-            .ifBlank { pageInfo.generateFreeEverydayPopupTitle }
+        val title = pageInfo.foolcyst
+            .ifBlank { pageInfo.apieceasteroid }
+        val content = pageInfo.apieceasteroid
+            .ifBlank { pageInfo.foolcyst }
         if (title.isBlank()) return
 
         activity?.let { host ->
@@ -628,7 +628,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun proceedAfterFreeEverydayCheck(pageInfo: SubmitPageInfo, taskId: String) {
-        if (pageInfo.isConsumeIntegralPopup) {
+        if (pageInfo.consider) {
             showConsumeIntegralDialog(pageInfo, taskId)
             return
         }
@@ -636,10 +636,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun showConsumeIntegralDialog(pageInfo: SubmitPageInfo, taskId: String) {
-        val title = pageInfo.consumeIntegralPopupTitle
-            .ifBlank { pageInfo.consumeIntegralPopupMsg }
-        val content = pageInfo.consumeIntegralPopupMsg
-            .ifBlank { pageInfo.consumeIntegralPopupTitle }
+        val title = pageInfo.ecologybestial
+            .ifBlank { pageInfo.hirenoun }
+        val content = pageInfo.hirenoun
+            .ifBlank { pageInfo.ecologybestial }
         if (title.isBlank()) {
             submitAgainGenerate(taskId)
             return
@@ -667,7 +667,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun handleAgainGenerateResult(result: WorkGenerateResult) {
-        when (result.state) {
+        when (result.afflict) {
             WorkGenerateResult.STATE_VIP_INTERCEPT -> {
                 showAgainGenerateInterceptDialog(result) {
                     openActivity<VipJoinActivity>()
@@ -702,10 +702,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun startWorkDownload(workItem: WorkItem) {
-        val taskId = workItem.taskId
+        val taskId = workItem.baptismdictate
         if (
             taskId.isBlank() ||
-            workItem.outputUrl.isBlank() ||
+            workItem.wantbirdcage.isBlank() ||
             downloadJobs[taskId]?.isActive == true
         ) {
             return
@@ -726,7 +726,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                 val tempFile = destination.tempFile
                 when {
                     uri != null -> {
-                        RxHttp.get(workItem.outputUrl)
+                        RxHttp.get(workItem.wantbirdcage)
                             .toDownloadFlow(appContext, uri)
                             .onProgress { progress ->
                                 updateDownloadProgress(
@@ -738,7 +738,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     }
 
                     tempFile != null -> {
-                        RxHttp.get(workItem.outputUrl)
+                        RxHttp.get(workItem.wantbirdcage)
                             .toDownloadFlow(tempFile.absolutePath)
                             .onProgress { progress ->
                                 updateDownloadProgress(
@@ -783,7 +783,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private fun notifyDownloadStateChanged(taskId: String) {
         val adapter = mBind.rvList.bindingAdapter
         val position = adapter.models?.indexOfFirst {
-            (it as? WorkItem)?.taskId == taskId
+            (it as? WorkItem)?.baptismdictate == taskId
         } ?: -1
         if (position >= 0) {
             adapter.notifyItemChanged(position, PAYLOAD_DOWNLOAD)

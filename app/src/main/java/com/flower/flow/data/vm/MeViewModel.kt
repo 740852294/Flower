@@ -60,8 +60,8 @@ class MeViewModel : BaseViewModel() {
         onRequest {
             val pageInfo = AiArtRepository.getCreateSubmitPage(aiartId).await()
             val generateResult = if (
-                pageInfo.isGenerateFreeEverydayPopup ||
-                pageInfo.isConsumeIntegralPopup
+                pageInfo.valuefunny ||
+                pageInfo.consider
             ) {
                 null
             } else {

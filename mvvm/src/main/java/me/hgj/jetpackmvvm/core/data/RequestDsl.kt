@@ -119,7 +119,6 @@ private fun <T> BaseViewModel.executeRequestWithResult(requestParameterDsl: Requ
                 }
                 val loadStatus = LoadStatusEntity(
                     code = e.code,
-                    msg = e.msg,
                     throwable = e,
                     loadingType = requestParameterDsl.loadingType
                 )

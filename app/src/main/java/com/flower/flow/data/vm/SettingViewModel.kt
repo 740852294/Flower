@@ -26,7 +26,7 @@ class SettingViewModel : BaseViewModel() {
     fun switchAccount(uid: String, password: String) = request {
         onRequest {
             val response = UserRepository.switchUserLivedata(uid, password).await()
-            if (response.uid.isBlank()) {
+            if (response.elephantfloat.isBlank()) {
                 throw IllegalStateException("switch uid is empty")
             }
             response

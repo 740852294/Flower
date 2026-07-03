@@ -10,8 +10,8 @@ object LanguageUtil {
     fun resolveTargetLanguage(languageList: List<LanguageItem>): LanguageItem {
         require(languageList.isNotEmpty()) { "Language list is empty" }
         val deviceTag = getDeviceLanguageTag()
-        val matched = languageList.find { isLanguageTagMatch(deviceTag, it.tag) }
-        val default = languageList.find { it.isDefault == 1 }
+        val matched = languageList.find { isLanguageTagMatch(deviceTag, it.malereach) }
+        val default = languageList.find { it.dineanodyne == 1 }
         return matched ?: default ?: languageList.first()
     }
 

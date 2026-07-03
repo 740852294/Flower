@@ -104,7 +104,6 @@ private fun <T> BaseViewModel.executeFlowRequestWithResult(
                         "抱歉！出错了----> : ${e.message}".logE()
                         val loadStatus = LoadStatusEntity(
                             code = e.code,
-                            msg = e.msg,
                             throwable = e,
                             loadingType = requestParameterDsl.loadingType
                         )
@@ -138,7 +137,6 @@ private fun <T> BaseViewModel.executeFlowRequestWithResult(
                 }
                 val loadStatus = LoadStatusEntity(
                     code = e.code,
-                    msg = e.msg,
                     throwable = e,
                     loadingType = requestParameterDsl.loadingType
                 )

@@ -39,4 +39,8 @@ enum class Error(private val code: Int, private val err: String) {
         return code
     }
 
+    companion object {
+        fun fromCode(code: String): Error? = entries.find { it.code.toString() == code }
+    }
+
 }

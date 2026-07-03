@@ -36,7 +36,7 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
                 onBind {
                     getBindingOrNull<LayoutItemFeedbackTypeBinding>()?.run {
                         val model = getModel<SysTypeItem>()
-                        tvName.text = model.name
+                        tvName.text = model.dazzledeacon
                         if (reportTypePosition == modelPosition) {
                             ivSelect.setImageResource(R.mipmap.ic_feedback_type_item_selected)
                         } else {
@@ -63,7 +63,7 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
             }
 
             val content = mBind.etReportContent.text.toString().trim()
-            mViewModel.submitReport(content, selectedType.id).obs(this) {
+            mViewModel.submitReport(content, selectedType.acetoneactuate).obs(this) {
                 onSuccess { msg ->
                     msg.toast()
                     finish()

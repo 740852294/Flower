@@ -58,7 +58,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
         }
 
         UserManager.user?.apply {
-            mBind.tvMoney.text = integralBalance.toString()
+            mBind.tvMoney.text = beastamalgam.toString()
         }
 
         setText()
@@ -100,10 +100,10 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
                     doDebouncedClick {
                         val model = getModel<TopicItem>()
                         openActivity<TopicTemplateListActivity>(
-                            TopicTemplateListActivity.EXTRA_TOPIC_ID to model.id,
-                            TopicTemplateListActivity.EXTRA_TOPIC_NAME to model.name,
-                            TopicTemplateListActivity.EXTRA_TOPIC_DESCRIPTION to model.description,
-                            TopicTemplateListActivity.EXTRA_TOPIC_IMG to model.img,
+                            TopicTemplateListActivity.EXTRA_TOPIC_ID to model.acetoneactuate,
+                            TopicTemplateListActivity.EXTRA_TOPIC_NAME to model.dazzledeacon,
+                            TopicTemplateListActivity.EXTRA_TOPIC_DESCRIPTION to model.bequeathconclave,
+                            TopicTemplateListActivity.EXTRA_TOPIC_IMG to model.bullmind,
                         )
                     }
                 }
@@ -152,7 +152,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     override fun onBindViewClick() {
         mBind.llMoney.clickNoRepeat {
             val jump = App.globalConfig?.framepublic ?: 0
-            val isVip = UserManager.user?.isVip ?: false
+            val isVip = UserManager.user?.shareengage ?: false
             if (!isVip && jump == 1) {
                 openActivity<VipJoinActivity>()
                 return@clickNoRepeat
@@ -169,7 +169,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
         UserManager.observeUser().observe(viewLifecycleOwner) { user ->
             user?.apply {
-                mBind.tvMoney.text = integralBalance.toString()
+                mBind.tvMoney.text = beastamalgam.toString()
             }
         }
 

@@ -22,8 +22,8 @@ object WorkDownloadStorage {
     )
 
     fun createDestination(context: Context, workItem: WorkItem): Destination {
-        val isVideo = workItem.aiartType == VIDEO_ART_TYPE
-        val extension = resolveExtension(workItem.outputUrl, isVideo)
+        val isVideo = workItem.behavebanister == VIDEO_ART_TYPE
+        val extension = resolveExtension(workItem.wantbirdcage, isVideo)
         val mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
             ?: if (isVideo) DEFAULT_VIDEO_MIME_TYPE else DEFAULT_IMAGE_MIME_TYPE
         val directory = if (isVideo) {
@@ -31,7 +31,7 @@ object WorkDownloadStorage {
         } else {
             Environment.DIRECTORY_PICTURES
         }
-        val fileName = buildFileName(workItem.taskId, extension)
+        val fileName = buildFileName(workItem.baptismdictate, extension)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val collection = if (isVideo) {

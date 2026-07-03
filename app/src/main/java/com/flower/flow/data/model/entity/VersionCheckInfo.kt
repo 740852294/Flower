@@ -3,10 +3,16 @@ package com.flower.flow.data.model.entity
 import com.google.gson.annotations.SerializedName
 
 data class VersionCheckInfo(
-    @SerializedName("upgradeState") val upgradeState: Int = 0,
-    @SerializedName("title") val title: String = "",
-    @SerializedName("content") val content: String = "",
-    @SerializedName("buttonMsg") val buttonMsg: String = "",
-    @SerializedName("isSignInPopup") val isSignInPopup: Boolean = false,
-    @SerializedName("package") val updatePackage: String = "",
+    //upgradeState
+    @SerializedName("aliencello") val aliencello: Int = 0,
+    //title
+    @SerializedName("sevenasset") val sevenasset: String = "",
+    //content
+    @SerializedName("imitaterise") val imitaterise: String = "",
+    //buttonMsg
+    @SerializedName("suggestburden") val suggestburden: String = "",
+    //isSignInPopup
+    @SerializedName("eightabnormal") val eightabnormal: Boolean = false,
+    //package
+    @SerializedName("anthracite") val anthracite: String = "",
 )

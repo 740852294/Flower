@@ -3,22 +3,22 @@ package com.flower.flow.data.model.entity
 import com.google.gson.annotations.SerializedName
 
 data class WorkGenerateResult(
-    @SerializedName("taskId")
-    val taskId: String = "",
-    @SerializedName("showMsgOne")
-    val showMsgOne: String = "",
-    @SerializedName("showMsgTwo")
-    val showMsgTwo: String = "",
-    @SerializedName("popupTitle")
-    val popupTitle: String = "",
-    @SerializedName("popupTimeMsg")
-    val popupTimeMsg: String? = "",
-    @SerializedName("popupDescMsg")
-    val popupDescMsg: String = "",
-    @SerializedName("popupButtonMsg")
-    val popupButtonMsg: String = "",
-    @SerializedName("state")
-    val state: Int = STATE_WAITING,
+    //taskId
+    @SerializedName("baptismdictate") val baptismdictate: String = "",
+    //showMsgOne
+    @SerializedName("concedearbiter") val concedearbiter: String = "",
+    //showMsgTwo
+    @SerializedName("fillblitz") val fillblitz: String = "",
+    //popupTitle
+    @SerializedName("seekgrass") val seekgrass: String = "",
+    //popupTimeMsg
+    @SerializedName("bookcasedoe") val bookcasedoe: String? = "",
+    //popupDescMsg
+    @SerializedName("wallbow") val wallbow: String = "",
+    //popupButtonMsg
+    @SerializedName("entirebomb") val entirebomb: String = "",
+    //state
+    @SerializedName("afflict") val afflict: Int = STATE_WAITING,
 ) {
     companion object {
         /** 生产等待提醒弹窗 */

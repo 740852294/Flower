@@ -44,7 +44,7 @@ class SystemNotifyActivity :
                 onBind {
                     getBindingOrNull<LayoutItemSystemNotifyBinding>()?.run {
                         val model = getModel<SysNotifyItem>()
-                        tvContent.text = model.content
+                        tvContent.text = model.imitaterise
                         btnReply.text = FlowCopyStore.get(FlowCopyKey.REPLY_ACTION)
                     }
                 }

@@ -38,12 +38,12 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         get() = ""
 
     override fun initView(savedInstanceState: Bundle?) {
-        if (workItem.taskId.isBlank()) {
+        if (workItem.baptismdictate.isBlank()) {
             finish()
             return
         }
 
-        val outputUrl = workItem.outputUrl
+        val outputUrl = workItem.wantbirdcage
         if (outputUrl.isBlank()) {
             finish()
             return
@@ -65,7 +65,7 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         mBind.btnDownload.clickNoRepeat {
             CommonMessageDialog.Builder(this)
                 .setTitle(FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION))
-                .setContent(workItem.saveLocalPopupMsg.orEmpty())
+                .setContent(workItem.demand.orEmpty())
                 .setConfirmButton(FlowCopyStore.get(FlowCopyKey.DOWNLOAD_ACTION)) {
                     requestWorkDownload()
                 }
@@ -123,7 +123,7 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         exoPlayer.setMediaItem(
             MediaItem.Builder()
                 .setUri(url)
-                .setCustomCacheKey(workItem.taskId.ifBlank { url })
+                .setCustomCacheKey(workItem.baptismdictate.ifBlank { url })
                 .build()
         )
         exoPlayer.addListener(object : Player.Listener {
@@ -226,13 +226,13 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
     private fun dispatchWorkDownload() {
         if (downloadDispatched) return
         downloadDispatched = true
-        workItem.saveLocalDownloadingMsg?.toast()
+        workItem.expelhotel?.toast()
         EventViewModel.workDownloadEvent.postValue(workItem)
         finish()
     }
 
     private fun isVideoOutput(url: String): Boolean {
-        if (workItem.aiartType == VIDEO_ART_TYPE) return true
+        if (workItem.behavebanister == VIDEO_ART_TYPE) return true
         val lowerUrl = url.substringBefore('#').substringBefore('?').lowercase()
         return lowerUrl.endsWith(".mp4")
     }

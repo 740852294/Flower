@@ -72,7 +72,7 @@ class TagFragment : BaseFragment<TagViewModel, FragmentTagBinding>() {
                 onBind {
                     getBindingOrNull<LayoutItemTagTabBinding>()?.run {
                         val model = getModel<TagItem>()
-                        tvName.text = model.name
+                        tvName.text = model.dazzledeacon
                         val isSelected = modelPosition == selectedTabPosition
                         ivIndicator.isVisible = isSelected
                         tvName.alpha = if (isSelected) 1f else 0.6f

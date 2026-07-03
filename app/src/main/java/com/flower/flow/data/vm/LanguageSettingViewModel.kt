@@ -25,13 +25,13 @@ class LanguageSettingViewModel : BaseViewModel() {
 
     fun applyLanguage(selected: LanguageItem, previousLanguageId: Int) = request {
         onRequest {
-            App.currentLanguageId = selected.id
+            App.currentLanguageId = selected.acetoneactuate
             try {
                 val config = CommonRepository.getAppLanguageConfigLivedata().await()
                 val remoteTexts = config.toRemoteTextMap()
                 val localTexts = FlowCopyMapper.toLocalTexts(remoteTexts)
                 FlowCopyStore.save(localTexts)
-                CacheConfig.selectedLanguageId = selected.id
+                CacheConfig.selectedLanguageId = selected.acetoneactuate
                 selected
             } catch (e: Exception) {
                 App.currentLanguageId = previousLanguageId

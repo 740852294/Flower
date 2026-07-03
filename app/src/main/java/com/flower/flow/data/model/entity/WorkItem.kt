@@ -6,34 +6,33 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class WorkItem(
-    @SerializedName("taskId")
-    val taskId: String = "",
-    @SerializedName("aiartType")
-    val aiartType: Int = 0,
+    //taskId
+    @SerializedName("baptismdictate") val baptismdictate: String = "",
+    //aiartType
+    @SerializedName("behavebanister") val behavebanister: Int = 0,
     // 状态，0=待解锁，1=待处理，2=处理中，3=已完成，4=处理失败
-    @SerializedName("state")
-    val state: Int = 0,
-    @SerializedName("outputUrl")
-    val outputUrl: String = "",
-    @SerializedName("showMsg")
-    val showMsg: String? = "",
-    @SerializedName("againGenerateButtonMsg")
-    val againGenerateButtonMsg: String? = "",
-    @SerializedName("inputImgList")
-    val inputImgList: List<String>? = emptyList(),
-    @SerializedName("saveLocalPopupMsg")
-    val saveLocalPopupMsg: String? = "",
-    @SerializedName("saveLocalDownloadingMsg")
-    val saveLocalDownloadingMsg: String? = "",
-    @SerializedName("downloadingMsg")
-    val downloadingMsg: String? = "",
-    @SerializedName("estimatTimeMsg")
-    val estimatTimeMsg: String? = "",
-    @SerializedName("videoDurationMsg")
-    val videoDurationMsg: String? = "",
-    //模板图片地址
-    @SerializedName("aiartImg")
-    val aiartImg: String? = "",
-    @SerializedName("aiartId")
-    val aiartId: Int = 0,
+    //state
+    @SerializedName("afflict") val afflict: Int = 0,
+    //outputUrl
+    @SerializedName("wantbirdcage") val wantbirdcage: String = "",
+    //showMsg
+    @SerializedName("acculturatecurd") val acculturatecurd: String? = "",
+    //againGenerateButtonMsg
+    @SerializedName("increaserace") val increaserace: String? = "",
+    //inputImgList
+    @SerializedName("aperitifaccost") val aperitifaccost: List<String>? = emptyList(),
+    //saveLocalPopupMsg
+    @SerializedName("demand") val demand: String? = "",
+    //saveLocalDownloadingMsg
+    @SerializedName("expelhotel") val expelhotel: String? = "",
+    //downloadingMsg
+    @SerializedName("attachaway") val attachaway: String? = "",
+    //estimatTimeMsg
+    @SerializedName("notechildhood") val notechildhood: String? = "",
+    //videoDurationMsg
+    @SerializedName("aggregatechief") val aggregatechief: String? = "",
+    //模板图片地址 aiartImg
+    @SerializedName("clogcadre") val clogcadre: String? = "",
+    //aiartId
+    @SerializedName("naturebroker") val naturebroker: Int = 0,
 ) : Parcelable

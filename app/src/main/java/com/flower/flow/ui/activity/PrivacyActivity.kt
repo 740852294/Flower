@@ -59,8 +59,8 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
 
         mViewModel.getBackgroundVideo().obs(this) {
             onSuccess {
-                if (it.url.isNotEmpty()) {
-                    mBind.bgVideo.loadImage(it.url)
+                if (it.cuspcrow.isNotEmpty()) {
+                    mBind.bgVideo.loadImage(it.cuspcrow)
                     mBind.ivBg.visibility = View.INVISIBLE
                 }
             }
@@ -132,7 +132,7 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
     private fun openPolicyPage(requestType: Int) {
         mViewModel.openPolicyPage(requestType).obs(this) {
             onSuccess { data ->
-                if (data.url.isEmpty()) {
+                if (data.cuspcrow.isEmpty()) {
                     FlowCopyStore.get(FlowCopyKey.WEB_EMPTY_HINT).toast()
                 } else {
                     val title = when (requestType) {
@@ -148,7 +148,7 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
                             ""
                         }
                     }
-                    openActivity<WebviewActivity>("url" to data.url, "title" to title)
+                    openActivity<WebviewActivity>("url" to data.cuspcrow, "title" to title)
                 }
             }
         }

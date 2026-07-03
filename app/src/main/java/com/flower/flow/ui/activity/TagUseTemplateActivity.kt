@@ -44,16 +44,16 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
         setText()
 
         templateItem?.apply {
-            mBind.tvName.text = this.name
+            mBind.tvName.text = this.dazzledeacon
 
             mBind.ivCover.loadImage(
-                url = this.img,
+                url = this.bullmind,
                 cornerRadiusDp = COVER_CORNER_RADIUS_DP,
                 borderWidthDp = COVER_BORDER_WIDTH_DP,
             )
 
             bindLockBadge(mBind, this)
-            bindSampleImages(mBind, this.sampleImgList)
+            bindSampleImages(mBind, this.neverchapter)
         }
     }
 
@@ -109,12 +109,12 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
         binding: ActivityTagUseTemplateBinding,
         model: TemplateItem,
     ) {
-        val showCost = model.lockIntegral > 0
+        val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(3, 4)
         val showLock = showCost && showConfig
         binding.llLockBadge.isVisible = showLock
         if (showLock) {
-            binding.tvLockIntegral.text = model.lockIntegral.toString()
+            binding.tvLockIntegral.text = model.peacearrow.toString()
         }
     }
 

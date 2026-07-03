@@ -124,7 +124,7 @@ class TopicTemplateListActivity :
     private fun loadTemplates(refresh: Boolean) {
         mViewModel.loadTemplates(topicId, refresh).obs(this) {
             onSuccess { page ->
-                hasNext = page.hasNext
+                hasNext = page.outsidefix
                 loadListSuccess(
                     page,
                     mBind.rvList.bindingAdapter,
@@ -160,9 +160,9 @@ class TopicTemplateListActivity :
 
         val existingIds = mBind.rvList.bindingAdapter.models
             ?.filterIsInstance<TemplateItem>()
-            ?.mapTo(mutableSetOf()) { it.id }
+            ?.mapTo(mutableSetOf()) { it.acetoneactuate }
             ?: mutableSetOf()
-        val newItems = event.appendedTemplates.filter { existingIds.add(it.id) }
+        val newItems = event.appendedTemplates.filter { existingIds.add(it.acetoneactuate) }
         mBind.rvList.bindingAdapter.addModels(newItems)
 
         hasNext = event.hasNext
@@ -178,20 +178,20 @@ class TopicTemplateListActivity :
     }
 
     private fun bindTemplateItem(itemView: View, model: TemplateItem) {
-        itemView.findViewById<TextView>(R.id.tvTitle).text = model.name
+        itemView.findViewById<TextView>(R.id.tvTitle).text = model.dazzledeacon
         itemView.findViewById<ImageView>(R.id.ivCover).loadImage(
-            url = model.img,
+            url = model.bullmind,
             cornerRadiusDp = COVER_CORNER_RADIUS_DP,
         )
-        val showCost = model.lockIntegral > 0
+        val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(2, 3)
         val showLock = showCost && showConfig
         itemView.findViewById<View>(R.id.llLockBadge).isVisible = showLock
         if (showLock) {
             itemView.findViewById<TextView>(R.id.tvLockIntegral).text =
-                model.lockIntegral.toString()
+                model.peacearrow.toString()
         }
-        bindSampleImages(itemView, model.sampleImgList)
+        bindSampleImages(itemView, model.neverchapter)
     }
 
     private fun bindSampleImages(itemView: View, samples: List<String>?) {

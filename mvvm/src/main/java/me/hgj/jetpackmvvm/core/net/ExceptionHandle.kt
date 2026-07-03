@@ -18,6 +18,12 @@ import javax.net.ssl.SSLException
  */
 object ExceptionHandle {
 
+    var errorMessageProvider: ((Error) -> String)? = null
+
+    fun messageFor(error: Error): String {
+        return errorMessageProvider?.invoke(error).orEmpty()
+    }
+
     fun handleException(e: Throwable?): AppException {
         val ex: AppException
         e?.let {

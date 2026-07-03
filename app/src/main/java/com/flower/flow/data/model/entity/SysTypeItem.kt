@@ -3,8 +3,8 @@ package com.flower.flow.data.model.entity
 import com.google.gson.annotations.SerializedName
 
 data class SysTypeItem(
-    @SerializedName("id")
-    val id: Int = 0,
-    @SerializedName("name")
-    val name: String = "",
+    //id
+    @SerializedName("acetoneactuate") val acetoneactuate: Int = 0,
+    //name
+    @SerializedName("dazzledeacon") val dazzledeacon: String = "",
 )

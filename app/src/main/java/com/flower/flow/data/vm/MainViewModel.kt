@@ -14,11 +14,11 @@ class MainViewModel : BaseViewModel() {
     fun initMain() = request {
         onRequest {
             val versionInfo = CommonRepository.checkVersion().await()
-            if (versionInfo.upgradeState == FORCE_UPDATE) {
+            if (versionInfo.aliencello == FORCE_UPDATE) {
                 return@onRequest MainInitResult.ForceUpdate(
-                    title = versionInfo.title,
-                    content = versionInfo.content,
-                    buttonMsg = versionInfo.buttonMsg,
+                    title = versionInfo.sevenasset,
+                    content = versionInfo.imitaterise,
+                    buttonMsg = versionInfo.suggestburden,
                 )
             }
             val globalConfig = CommonRepository.getGlobalConfig().await()

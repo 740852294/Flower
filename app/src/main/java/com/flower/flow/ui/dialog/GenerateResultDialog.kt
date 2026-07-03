@@ -69,8 +69,8 @@ class GenerateResultDialog private constructor(
     }
 
     private fun bindContent() = with(binding) {
-        title.text = result.popupTitle
-        title.isVisible = result.popupTitle.isNotBlank()
+        title.text = result.seekgrass
+        title.isVisible = result.seekgrass.isNotBlank()
 
         icon.setImageResource(config.iconRes)
         icon.updateLayoutParams {
@@ -78,7 +78,7 @@ class GenerateResultDialog private constructor(
             height = activity.dpToPx(config.iconHeightDp)
         }
 
-        val timeStr = result.popupTimeMsg
+        val timeStr = result.bookcasedoe
         timeContainer.isVisible = config.showTimeMsg && !timeStr.isNullOrBlank()
         //预计时间：1分钟
         if (!timeStr.isNullOrBlank()) {
@@ -93,11 +93,11 @@ class GenerateResultDialog private constructor(
             }
         }
 
-        desc.text = result.popupDescMsg
-        desc.isVisible = result.popupDescMsg.isNotBlank()
+        desc.text = result.wallbow
+        desc.isVisible = result.wallbow.isNotBlank()
 
-        confirmButton.text = result.popupButtonMsg
-        confirmButton.isVisible = result.popupButtonMsg.isNotBlank()
+        confirmButton.text = result.entirebomb
+        confirmButton.isVisible = result.entirebomb.isNotBlank()
         confirmButton.clickNoRepeat {
             dismiss()
             onConfirm()
@@ -149,7 +149,7 @@ class GenerateResultDialog private constructor(
 
         fun show(): GenerateResultDialog? {
             val data = result ?: return null
-            val config = configForState(data.state) ?: return null
+            val config = configForState(data.afflict) ?: return null
             val confirm = onConfirm ?: return null
             return GenerateResultDialog(
                 activity = activity,

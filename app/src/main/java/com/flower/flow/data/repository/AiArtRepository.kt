@@ -1,6 +1,7 @@
 package com.flower.flow.data.repository
 
 import com.flower.flow.app.core.net.NetUrl
+import com.flower.flow.app.core.util.RandomDataUtil
 import com.flower.flow.data.model.entity.ApiPagerResponse
 import com.flower.flow.data.model.entity.SubmitPageInfo
 import com.flower.flow.data.model.entity.WorkGenerateResult
@@ -14,13 +15,15 @@ object AiArtRepository {
 
     fun getCreateSubmitPage(id: Int): Await<SubmitPageInfo> {
         return RxHttp.get(NetUrl.AiArt.UPLOAD_PAGE_INFO)
-            .add("aiartId", id)
+            .add("naturebroker", id)
             .toAwaitResponse()
     }
 
     fun generateWork(aiartId: Int, files: List<File>): Await<WorkGenerateResult> {
         var request = RxHttp.postForm(NetUrl.AiArt.GENERATE_WORK)
-            .add("aiartId", aiartId)
+            .add("naturebroker", aiartId)
+            .add("acknowledgedevote", RandomDataUtil.getRandomData(2))
+            .add("crinkleaquarium", RandomDataUtil.getRandomData(3))
         files.forEachIndexed { index, file ->
             request = request.addFile("file${index + 1}", file)
         }
@@ -28,26 +31,31 @@ object AiArtRepository {
     }
 
     fun generateWorkAgain(taskId: String): Await<WorkGenerateResult> {
-        val request = RxHttp.postForm(NetUrl.AiArt.GENERATE_WORK_AGAIN)
-            .add("taskId", taskId)
-        return request.toAwaitResponse()
+        return RxHttp.postForm(NetUrl.AiArt.GENERATE_WORK_AGAIN)
+            .add("baptismdictate", taskId)
+            .add("fightbackstage", RandomDataUtil.getRandomData(5))
+            .toAwaitResponse()
     }
 
     fun getWorkTaskList(pageNum: Int): Await<ApiPagerResponse<WorkItem>> {
         return RxHttp.get(NetUrl.AiArt.WORK_LIST)
-            .add("pageNum", pageNum)
+            .add("blimpcaravan", pageNum)
+            .add("cartel", RandomDataUtil.getRandomData(5))
             .toAwaitResponse()
     }
 
     fun deleteWorkTasks(taskIds: List<String>): Await<Any> {
         return RxHttp.postForm(NetUrl.AiArt.WORK_DELETE)
-            .add("taskIdArr", taskIds)
+            .add("laughbeef", taskIds)
+            .add("dazeamiable", RandomDataUtil.getRandomData(1))
+            .add("abstractought", RandomDataUtil.getRandomData(1))
             .toAwaitResponse()
     }
 
     fun recordWorkDownloaded(taskId: String): Await<Any> {
         return RxHttp.postForm(NetUrl.AiArt.WORK_DOWNLOAD)
-            .add("taskId", taskId)
+            .add("baptismdictate", taskId)
+            .add("drivebride", RandomDataUtil.getRandomData(3))
             .toAwaitResponse()
     }
 }

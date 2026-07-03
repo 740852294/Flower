@@ -8,7 +8,7 @@ import me.hgj.jetpackmvvm.ext.util.toJsonStr
 object GenerateSubmitCache {
 
     fun isRepeatCheckEnabled(pageInfo: SubmitPageInfo): Boolean {
-        return pageInfo.repeatPopupTitle.isNotBlank() || pageInfo.repeatPopupMsg.isNotBlank()
+        return pageInfo.hatchampion.isNotBlank() || pageInfo.tryamount.isNotBlank()
     }
 
     fun isDuplicateUpload(templateId: Int, sourcePaths: List<String>): Boolean {

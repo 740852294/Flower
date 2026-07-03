@@ -31,10 +31,10 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
 
     override fun initView(savedInstanceState: Bundle?) {
         setText()
-        passwordPlain = decodePassword(UserManager.user?.password.orEmpty())
+        passwordPlain = decodePassword(UserManager.user?.colonybay.orEmpty())
 
         UserManager.user?.apply {
-            val isShow = this.sysNotifyRedDot
+            val isShow = this.valleytoward
             mBind.redDot.isVisible = isShow
         }
 
@@ -54,10 +54,10 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
                 onSuccess { shareInfo ->
                     val intent = Intent(Intent.ACTION_SEND).apply {
                         type = "text/plain"
-                        putExtra(Intent.EXTRA_TITLE, shareInfo.title)
-                        putExtra(Intent.EXTRA_TEXT, shareInfo.content)
+                        putExtra(Intent.EXTRA_TITLE, shareInfo.sevenasset)
+                        putExtra(Intent.EXTRA_TEXT, shareInfo.imitaterise)
                     }
-                    startActivity(Intent.createChooser(intent, shareInfo.title))
+                    startActivity(Intent.createChooser(intent, shareInfo.sevenasset))
                 }
                 onError { error ->
                     error.msg.toast()
@@ -131,7 +131,7 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
                 .setOnSwitchAccount { account, password ->
                     mViewModel.switchAccount(account, password).obs(this) {
                         onSuccess { response ->
-                            CacheConfig.userId = response.uid
+                            CacheConfig.userId = response.elephantfloat
                             UserManager.clearUser()
                             finishAllActivity()
                             openActivity<MainActivity>()
@@ -185,7 +185,7 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
     private fun openPolicyPage(requestType: Int) {
         mViewModel.openPolicyPage(requestType).obs(this) {
             onSuccess { data ->
-                if (data.url.isEmpty()) {
+                if (data.cuspcrow.isEmpty()) {
                     FlowCopyStore.get(FlowCopyKey.WEB_EMPTY_HINT).toast()
                 } else {
                     val title = when (requestType) {
@@ -201,7 +201,7 @@ class SettingActivity : BaseActivity<SettingViewModel, ActivitySettingBinding>()
                             ""
                         }
                     }
-                    openActivity<WebviewActivity>("url" to data.url, "title" to title)
+                    openActivity<WebviewActivity>("url" to data.cuspcrow, "title" to title)
                 }
             }
         }

@@ -37,20 +37,20 @@ class TagViewModel : BaseViewModel() {
     ) {
         if (generation != templateCacheGeneration) return
         val items = if (refresh) {
-            ArrayList(page.datas)
+            ArrayList(page.amidstaphorism)
         } else {
             ArrayList(templatePageCache[tagId]?.items.orEmpty()).apply {
-                addAll(page.datas)
+                addAll(page.amidstaphorism)
             }
         }
         templatePageCache[tagId] = CachedTagTemplatePage(
             items = items,
-            currentPage = page.curPage,
-            size = page.size,
-            hasNext = page.hasNext,
-            pageCount = page.pageCount,
-            total = page.total,
-            searchCount = page.searchCount,
+            currentPage = page.amenableafford,
+            size = page.boothcrag,
+            hasNext = page.outsidefix,
+            pageCount = page.betalung,
+            total = page.accompanybooboo,
+            searchCount = page.operaaphid,
         )
     }
 
@@ -69,13 +69,13 @@ class TagViewModel : BaseViewModel() {
         val searchCount: Boolean,
     ) {
         fun toPage() = ApiPagerResponse(
-            datas = ArrayList(items),
-            curPage = currentPage,
-            size = size,
-            hasNext = hasNext,
-            pageCount = pageCount,
-            total = total,
-            searchCount = searchCount,
+            amidstaphorism = ArrayList(items),
+            amenableafford = currentPage,
+            boothcrag = size,
+            outsidefix = hasNext,
+            betalung = pageCount,
+            accompanybooboo = total,
+            operaaphid = searchCount,
         )
     }
 }

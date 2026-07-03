@@ -3,120 +3,236 @@ package com.flower.flow.data.model.entity
 import com.google.gson.annotations.SerializedName
 
 data class AppLanguageConfig(
-    @SerializedName("useStorageTitle") val useStorageTitle: String = "",
-    @SerializedName("welcomeUse") val welcomeUse: String = "",
-    @SerializedName("noMoreData") val noMoreData: String = "",
-    @SerializedName("webUrlEmpty") val webUrlEmpty: String = "",
-    @SerializedName("languageSet") val languageSet: String = "",
-    @SerializedName("uploadImgNumMsg") val uploadImgNumMsg: String = "",
-    @SerializedName("parseError") val parseError: String = "",
-    @SerializedName("systemError") val systemError: String = "",
-    @SerializedName("tipMsg") val tipMsg: String = "",
-    @SerializedName("useCameraConfirmDesc") val useCameraConfirmDesc: String = "",
-    @SerializedName("submitMsg") val submitMsg: String = "",
-    @SerializedName("logout") val logout: String = "",
-    @SerializedName("generateMsg") val generateMsg: String = "",
-    @SerializedName("delPhotoConfirm") val delPhotoConfirm: String = "",
-    @SerializedName("adviceBack") val adviceBack: String = "",
-    @SerializedName("generateHandle") val generateHandle: String = "",
-    @SerializedName("settingsMsg") val settingsMsg: String = "",
-    @SerializedName("aiVideoPro") val aiVideoPro: String = "",
-    @SerializedName("networkError") val networkError: String = "",
-    @SerializedName("editInfo") val editInfo: String = "",
-    @SerializedName("mineAiart") val mineAiart: String = "",
-    @SerializedName("sureMsg") val sureMsg: String = "",
-    @SerializedName("vipOpenMsg") val vipOpenMsg: String = "",
-    @SerializedName("uploadImgFailed") val uploadImgFailed: String = "",
-    @SerializedName("optional") val optional: String = "",
-    @SerializedName("loading") val loading: String = "",
-    @SerializedName("version") val version: String = "",
-    @SerializedName("agreeAndContinue") val agreeAndContinue: String = "",
-    @SerializedName("viewAll") val viewAll: String = "",
-    @SerializedName("disagreeMsg") val disagreeMsg: String = "",
-    @SerializedName("aiVideoMsg") val aiVideoMsg: String = "",
-    @SerializedName("notFoundShareApp") val notFoundShareApp: String = "",
-    @SerializedName("signVerifyException") val signVerifyException: String = "",
-    @SerializedName("signVerifyFailed") val signVerifyFailed: String = "",
-    @SerializedName("termsOfUse") val termsOfUse: String = "",
-    @SerializedName("useTemplate") val useTemplate: String = "",
-    @SerializedName("privacyPolicyDesc") val privacyPolicyDesc: String = "",
-    @SerializedName("goSettings") val goSettings: String = "",
-    @SerializedName("cancelMsg") val cancelMsg: String = "",
-    @SerializedName("netErrorToast") val netErrorToast: String = "",
-    @SerializedName("requestFailed") val requestFailed: String = "",
-    @SerializedName("useAndPrivacyTitle") val useAndPrivacyTitle: String = "",
-    @SerializedName("settingLanguage") val settingLanguage: String = "",
-    @SerializedName("connTimeout") val connTimeout: String = "",
-    @SerializedName("finishMsg") val finishMsg: String = "",
-    @SerializedName("goOpen") val goOpen: String = "",
-    @SerializedName("givePraise") val givePraise: String = "",
-    @SerializedName("uploadImg") val uploadImg: String = "",
-    @SerializedName("shareFriend") val shareFriend: String = "",
-    @SerializedName("mine") val mine: String = "",
-    @SerializedName("viewNow") val viewNow: String = "",
-    @SerializedName("explore") val explore: String = "",
-    @SerializedName("privacyPolicy") val privacyPolicy: String = "",
-    @SerializedName("andMsg") val andMsg: String = "",
-    @SerializedName("uploadImgSuccess") val uploadImgSuccess: String = "",
-    @SerializedName("home") val home: String = "",
-    @SerializedName("useCameraConfirm") val useCameraConfirm: String = "",
-    @SerializedName("contactWayTip") val contactWayTip: String = "",
-    @SerializedName("useCameraDesc") val useCameraDesc: String = "",
-    @SerializedName("useStorageDesc") val useStorageDesc: String = "",
-    @SerializedName("contactWay") val contactWay: String = "",
-    @SerializedName("useCameraTitle") val useCameraTitle: String = "",
-    @SerializedName("noData") val noData: String = "",
-    @SerializedName("adviceBackTip") val adviceBackTip: String = "",
-    @SerializedName("vipUnlockMsg") val vipUnlockMsg: String = "",
-    @SerializedName("noneWorkTaskMsg") val noneWorkTaskMsg: String = "",
-    @SerializedName("selectIntegralProduct") val selectIntegralProduct: String = "",
-    @SerializedName("getIntegral") val getIntegral: String = "",
-    @SerializedName("integralProductBut") val integralProductBut: String = "",
-    @SerializedName("vipProductBut") val vipProductBut: String = "",
-    @SerializedName("vipOpenPageAgreementMsg") val vipOpenPageAgreementMsg: String = "",
-    @SerializedName("integralBalance") val integralBalance: String = "",
-    @SerializedName("restorePurchase") val restorePurchase: String = "",
-    @SerializedName("deleteMsg") val deleteMsg: String = "",
-    @SerializedName("deleteTaskMsg") val deleteTaskMsg: String = "",
-    @SerializedName("downloadMsg") val downloadMsg: String = "",
-    @SerializedName("production") val production: String = "",
-    @SerializedName("roger") val roger: String = "",
-    @SerializedName("nicknameMsg") val nicknameMsg: String = "",
-    @SerializedName("saveMsg") val saveMsg: String = "",
-    @SerializedName("copyMsg") val copyMsg: String = "",
-    @SerializedName("accountMsg") val accountMsg: String = "",
-    @SerializedName("inputAccountHint") val inputAccountHint: String = "",
-    @SerializedName("changeAccountMsg") val changeAccountMsg: String = "",
-    @SerializedName("passwordEditMsg") val passwordEditMsg: String = "",
-    @SerializedName("passwordEditLimitMsg") val passwordEditLimitMsg: String = "",
-    @SerializedName("passwordEditSuccMsg") val passwordEditSuccMsg: String = "",
-    @SerializedName("pleaseSelect") val pleaseSelect: String = "",
-    @SerializedName("adviceType") val adviceType: String = "",
-    @SerializedName("selectAdviceType") val selectAdviceType: String = "",
-    @SerializedName("pleaseInputContactWay") val pleaseInputContactWay: String = "",
-    @SerializedName("required") val required: String = "",
-    @SerializedName("reportType") val reportType: String = "",
-    @SerializedName("selectReportType") val selectReportType: String = "",
-    @SerializedName("reportBackTip") val reportBackTip: String = "",
-    @SerializedName("reportMsg") val reportMsg: String = "",
-    @SerializedName("reportDescription") val reportDescription: String = "",
-    @SerializedName("adviceDescription") val adviceDescription: String = "",
-    @SerializedName("passwordMsg") val passwordMsg: String = "",
-    @SerializedName("inputPasswordHint") val inputPasswordHint: String = "",
-    @SerializedName("systemNotify") val systemNotify: String = "",
-    @SerializedName("replyBut") val replyBut: String = "",
-    @SerializedName("awardMsg") val awardMsg: String = "",
-    @SerializedName("creationMsg") val creationMsg: String = "",
-    @SerializedName("creativeStudio") val creativeStudio: String = "",
-    @SerializedName("textToVideoTitle") val textToVideoTitle: String = "",
-    @SerializedName("textToVideoDesc") val textToVideoDesc: String = "",
-    @SerializedName("textToImgTitle") val textToImgTitle: String = "",
-    @SerializedName("textToImgDesc") val textToImgDesc: String = "",
-    @SerializedName("useMsg") val useMsg: String = "",
-    @SerializedName("accountSettingMsg") val accountSettingMsg: String = "",
-    @SerializedName("preferencesMsg") val preferencesMsg: String = "",
-    @SerializedName("supportAndAbount") val supportAndAbount: String = "",
-    @SerializedName("userCancelledPopupTitle") val userCancelledPopupTitle: String = "",
-    @SerializedName("pleaseEnterText") val pleaseEnterText: String = "",
-    @SerializedName("myCollection") val myCollection: String = "",
+    //useStorageTitle
+    @SerializedName("celloabjectly") val celloabjectly: String = "",
+    //welcomeUse
+    @SerializedName("spellpractice") val spellpractice: String = "",
+    //noMoreData
+    @SerializedName("backspaceremember") val backspaceremember: String = "",
+    //webUrlEmpty
+    @SerializedName("kitecanoe") val kitecanoe: String = "",
+    //languageSet
+    @SerializedName("anapestchief") val anapestchief: String = "",
+    //uploadImgNumMsg
+    @SerializedName("bumblebeesleep") val bumblebeesleep: String = "",
+    //parseError
+    @SerializedName("apertureinto") val apertureinto: String = "",
+    //systemError
+    @SerializedName("aviaryfolk") val aviaryfolk: String = "",
+    //tipMsg
+    @SerializedName("beastberm") val beastberm: String = "",
+    //useCameraConfirmDesc
+    @SerializedName("beteljungle") val beteljungle: String = "",
+    //submitMsg
+    @SerializedName("cressdevour") val cressdevour: String = "",
+    //logout
+    @SerializedName("habitallure") val habitallure: String = "",
+    //generateMsg
+    @SerializedName("beanculminate") val beanculminate: String = "",
+    //delPhotoConfirm
+    @SerializedName("bolecastle") val bolecastle: String = "",
+    //adviceBack
+    @SerializedName("clapcocoa") val clapcocoa: String = "",
+    //generateHandle
+    @SerializedName("chafecabbage") val chafecabbage: String = "",
+    //settingsMsg
+    @SerializedName("collideaghast") val collideaghast: String = "",
+    //aiVideoPro
+    @SerializedName("avenueoutside") val avenueoutside: String = "",
+    //networkError
+    @SerializedName("laughecho") val laughecho: String = "",
+    //editInfo
+    @SerializedName("amicablebaffle") val amicablebaffle: String = "",
+    //mineAiart
+    @SerializedName("neitherbefore") val neitherbefore: String = "",
+    //sureMsg
+    @SerializedName("brutalbelt") val brutalbelt: String = "",
+    //vipOpenMsg
+    @SerializedName("cactusbeacon") val cactusbeacon: String = "",
+    //uploadImgFailed
+    @SerializedName("crudeabstruse") val crudeabstruse: String = "",
+    //optional
+    @SerializedName("adventbran") val adventbran: String = "",
+    //loading
+    @SerializedName("bankereminent") val bankereminent: String = "",
+    //version
+    @SerializedName("denimconcept") val denimconcept: String = "",
+    //agreeAndContinue
+    @SerializedName("blossomconsign") val blossomconsign: String = "",
+    //viewAll
+    @SerializedName("onevaluate") val onevaluate: String = "",
+    //disagreeMsg
+    @SerializedName("obtainamphibian") val obtainamphibian: String = "",
+    //aiVideoMsg
+    @SerializedName("themcity") val themcity: String = "",
+    //notFoundShareApp
+    @SerializedName("calciumpleasure") val calciumpleasure: String = "",
+    //signVerifyException
+    @SerializedName("downelegant") val downelegant: String = "",
+    //signVerifyFailed
+    @SerializedName("germalliance") val germalliance: String = "",
+    //termsOfUse
+    @SerializedName("lipapplaud") val lipapplaud: String = "",
+    //useTemplate
+    @SerializedName("inferasteroid") val inferasteroid: String = "",
+    //privacyPolicyDesc
+    @SerializedName("cantaloupepain") val cantaloupepain: String = "",
+    //goSettings
+    @SerializedName("lunggenius") val lunggenius: String = "",
+    //cancelMsg
+    @SerializedName("cotecardigan") val cotecardigan: String = "",
+    //netErrorToast
+    @SerializedName("dankhuman") val dankhuman: String = "",
+    //requestFailed
+    @SerializedName("austral") val austral: String = "",
+    //useAndPrivacyTitle
+    @SerializedName("codcider") val codcider: String = "",
+    //settingLanguage
+    @SerializedName("importbaritone") val importbaritone: String = "",
+    //connTimeout
+    @SerializedName("cottondab") val cottondab: String = "",
+    //finishMsg
+    @SerializedName("findarroyo") val findarroyo: String = "",
+    //goOpen
+    @SerializedName("pathbilge") val pathbilge: String = "",
+    //givePraise
+    @SerializedName("arseniccertify") val arseniccertify: String = "",
+    //uploadImg
+    @SerializedName("afoulaudio") val afoulaudio: String = "",
+    //shareFriend
+    @SerializedName("amusefault") val amusefault: String = "",
+    //mine
+    @SerializedName("cognatereflect") val cognatereflect: String = "",
+    //viewNow
+    @SerializedName("argumentfilter") val argumentfilter: String = "",
+    //explore
+    @SerializedName("putsit") val putsit: String = "",
+    //privacyPolicy
+    @SerializedName("earnmodest") val earnmodest: String = "",
+    //andMsg
+    @SerializedName("attaincorpse") val attaincorpse: String = "",
+    //uploadImgSuccess
+    @SerializedName("minorfierce") val minorfierce: String = "",
+    //home
+    @SerializedName("northangular") val northangular: String = "",
+    //useCameraConfirm
+    @SerializedName("aureole") val aureole: String = "",
+    //contactWayTip
+    @SerializedName("apostropheavalanche") val apostropheavalanche: String = "",
+    //useCameraDesc
+    @SerializedName("bilabialairport") val bilabialairport: String = "",
+    //useStorageDesc
+    @SerializedName("cotillionorder") val cotillionorder: String = "",
+    //contactWay
+    @SerializedName("sisterabysmal") val sisterabysmal: String = "",
+    //useCameraTitle
+    @SerializedName("banedesert") val banedesert: String = "",
+    //noData
+    @SerializedName("anesthetic") val anesthetic: String = "",
+    //adviceBackTip
+    @SerializedName("beingawful") val beingawful: String = "",
+    //vipUnlockMsg
+    @SerializedName("riverdub") val riverdub: String = "",
+    //noneWorkTaskMsg
+    @SerializedName("daybludgeon") val daybludgeon: String = "",
+    //selectIntegralProduct
+    @SerializedName("amputatealimentary") val amputatealimentary: String = "",
+    //getIntegral
+    @SerializedName("carotene") val carotene: String = "",
+    //integralProductBut
+    @SerializedName("partcygnet") val partcygnet: String = "",
+    //vipProductBut
+    @SerializedName("momentgive") val momentgive: String = "",
+    //vipOpenPageAgreementMsg
+    @SerializedName("jumpbarren") val jumpbarren: String = "",
+    //integralBalance
+    @SerializedName("beastamalgam") val beastamalgam: String = "",
+    //restorePurchase
+    @SerializedName("notealchemy") val notealchemy: String = "",
+    //deleteMsg
+    @SerializedName("tobulb") val tobulb: String = "",
+    //deleteTaskMsg
+    @SerializedName("altofloat") val altofloat: String = "",
+    //downloadMsg
+    @SerializedName("emailcrush") val emailcrush: String = "",
+    //production
+    @SerializedName("geniuscogent") val geniuscogent: String = "",
+    //roger
+    @SerializedName("tookbratwurst") val tookbratwurst: String = "",
+    //nicknameMsg
+    @SerializedName("minorfive") val minorfive: String = "",
+    //saveMsg
+    @SerializedName("cataractcabana") val cataractcabana: String = "",
+    //copyMsg
+    @SerializedName("cigaretteroad") val cigaretteroad: String = "",
+    //accountMsg
+    @SerializedName("bifocalarchangel") val bifocalarchangel: String = "",
+    //inputAccountHint
+    @SerializedName("manpound") val manpound: String = "",
+    //changeAccountMsg
+    @SerializedName("abodecavity") val abodecavity: String = "",
+    //passwordEditMsg
+    @SerializedName("exultarmory") val exultarmory: String = "",
+    //passwordEditLimitMsg
+    @SerializedName("coopercope") val coopercope: String = "",
+    //passwordEditSuccMsg
+    @SerializedName("backupate") val backupate: String = "",
+    //pleaseSelect
+    @SerializedName("adjectivehear") val adjectivehear: String = "",
+    //adviceType
+    @SerializedName("bongobacktrack") val bongobacktrack: String = "",
+    //selectAdviceType
+    @SerializedName("applaudacrid") val applaudacrid: String = "",
+    //pleaseInputContactWay
+    @SerializedName("axeakin") val axeakin: String = "",
+    //required
+    @SerializedName("cureguitar") val cureguitar: String = "",
+    //reportType
+    @SerializedName("keyawl") val keyawl: String = "",
+    //selectReportType
+    @SerializedName("disgustcruel") val disgustcruel: String = "",
+    //reportBackTip
+    @SerializedName("argonstate") val argonstate: String = "",
+    //reportMsg
+    @SerializedName("excess") val excess: String = "",
+    //reportDescription
+    @SerializedName("intrudedistinct") val intrudedistinct: String = "",
+    //adviceDescription
+    @SerializedName("cogent") val cogent: String = "",
+    //passwordMsg
+    @SerializedName("carrierdeed") val carrierdeed: String = "",
+    //inputPasswordHint
+    @SerializedName("alignbanner") val alignbanner: String = "",
+    //systemNotify
+    @SerializedName("blotch") val blotch: String = "",
+    //replyBut
+    @SerializedName("general") val general: String = "",
+    //awardMsg
+    @SerializedName("enlargecongest") val enlargecongest: String = "",
+    //creationMsg
+    @SerializedName("accusation") val accusation: String = "",
+    //creativeStudio
+    @SerializedName("belatedharvest") val belatedharvest: String = "",
+    //textToVideoTitle
+    @SerializedName("honestcombine") val honestcombine: String = "",
+    //textToVideoDesc
+    @SerializedName("meritelder") val meritelder: String = "",
+    //textToImgTitle
+    @SerializedName("evictbelie") val evictbelie: String = "",
+    //textToImgDesc
+    @SerializedName("gloomcremate") val gloomcremate: String = "",
+    //useMsg
+    @SerializedName("boxwoodchoose") val boxwoodchoose: String = "",
+    //accountSettingMsg
+    @SerializedName("boulevardalbino") val boulevardalbino: String = "",
+    //preferencesMsg
+    @SerializedName("nervecrave") val nervecrave: String = "",
+    //supportAndAbount
+    @SerializedName("caneautopsy") val caneautopsy: String = "",
+    //userCancelledPopupTitle
+    @SerializedName("acetylene") val acetylene: String = "",
+    //pleaseEnterText
+    @SerializedName("clodclover") val clodclover: String = "",
+    //myCollection
+    @SerializedName("soundburlesque") val soundburlesque: String = "",
 )

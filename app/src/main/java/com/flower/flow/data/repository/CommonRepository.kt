@@ -1,9 +1,6 @@
 package com.flower.flow.data.repository
 
 import com.flower.flow.app.core.net.NetUrl
-import com.flower.flow.app.core.net.parses.MsgResponseParser
-import com.flower.flow.app.core.net.parses.ObfuscatedResponseConfig
-import com.flower.flow.app.core.net.parses.toAwaitObfuscatedResponse
 import com.flower.flow.app.core.util.RandomDataUtil
 import com.flower.flow.data.model.entity.AppLanguageConfig
 import com.flower.flow.data.model.entity.GlobalConfig
@@ -14,25 +11,18 @@ import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.model.entity.VersionCheckInfo
 import com.flower.flow.data.model.entity.WebUrl
 import rxhttp.wrapper.coroutines.Await
-import rxhttp.wrapper.coroutines.CallAwait
-import rxhttp.wrapper.coroutines.CallFlow
 import rxhttp.wrapper.param.RxHttp
 import rxhttp.wrapper.param.toAwaitResponse
-import rxhttp.wrapper.param.toFlowResponse
 
 object CommonRepository {
-
-    private val globalConfigResponseConfig = ObfuscatedResponseConfig(
-        codeField = "ninesection",
-        messageField = "standardrecent",
-        dataRoute = "dentblanch.avarice.doe.attain.ceramic.empty",
-    )
 
     /**
      * 获取APP语言文案配置 livedata版本
      */
     fun getAppLanguageConfigLivedata(): Await<AppLanguageConfig> {
         return RxHttp.get(NetUrl.Common.LANGUAGE_CONFIG)
+            .add("annoycoin", RandomDataUtil.getRandomData(4))
+            .add("alienbollard", RandomDataUtil.getRandomData(3))
             .toAwaitResponse()
     }
 
@@ -41,6 +31,8 @@ object CommonRepository {
      */
     fun getLanguageListLivedata(): Await<List<LanguageItem>> {
         return RxHttp.get(NetUrl.Common.LANGUAGE_LIST)
+            .add("benchbank", RandomDataUtil.getRandomData(5))
+            .add("differdeceive", RandomDataUtil.getRandomData(4))
             .toAwaitResponse()
     }
 
@@ -49,7 +41,9 @@ object CommonRepository {
      */
     fun getWebUrl(type: Int): Await<WebUrl> {
         return RxHttp.get(NetUrl.Common.WEB_URL)
-            .add("type", type)
+            .add("crotchamass", type)
+            .add("shapedial", RandomDataUtil.getRandomData(1))
+            .add("abscissadelta", RandomDataUtil.getRandomData(3))
             .toAwaitResponse()
     }
 
@@ -58,7 +52,8 @@ object CommonRepository {
      */
     fun getBackgroundVideo(type: String): Await<WebUrl> {
         return RxHttp.get(NetUrl.Common.BACKGROUND_VIDEO)
-            .add("type", type)
+            .add("crotchamass", type)
+            .add("beetarbiter", RandomDataUtil.getRandomData(2))
             .toAwaitResponse()
     }
 
@@ -71,7 +66,7 @@ object CommonRepository {
         return RxHttp.get(NetUrl.Common.SYSTEM_CONFIG)
             .add("creepfood", RandomDataUtil.getRandomData(2))
             .add("wetdump", RandomDataUtil.getRandomData(3))
-            .toAwaitObfuscatedResponse(globalConfigResponseConfig)
+            .toAwaitResponse()
     }
 
     /**
@@ -79,7 +74,8 @@ object CommonRepository {
      */
     fun getSysTypeList(type: Int): Await<List<SysTypeItem>> {
         return RxHttp.get(NetUrl.Common.ENUM_LIST)
-            .add("type", type)
+            .add("crotchamass", type)
+            .add("accesscustody", RandomDataUtil.getRandomData(2))
             .toAwaitResponse()
     }
 
@@ -96,6 +92,8 @@ object CommonRepository {
      */
     fun getShareInfo(): Await<ShareInfo> {
         return RxHttp.get(NetUrl.Common.SHARE_INFO)
+            .add("cadenceamethyst", RandomDataUtil.getRandomData(4))
+            .add("combbarbecue", RandomDataUtil.getRandomData(3))
             .toAwaitResponse()
     }
 
@@ -108,9 +106,11 @@ object CommonRepository {
         sysTypeId: Int,
     ): Await<Any> {
         return RxHttp.postForm(NetUrl.Common.ADVICE_ADD)
-            .add("content", content)
-            .add("contact", contact)
-            .add("sysTypeId", sysTypeId)
+            .add("imitaterise", content)
+            .add("bribelack", contact)
+            .add("aboundchivalry", sysTypeId)
+            .add("baldaconite", RandomDataUtil.getRandomData(3))
+            .add("cringefortune", RandomDataUtil.getRandomData(1))
             .toAwaitResponse()
     }
 
@@ -121,11 +121,10 @@ object CommonRepository {
         content: String,
         sysTypeId: Int,
     ): Await<String> {
-        return CallAwait(
-            RxHttp.postForm(NetUrl.Common.REPORT_ADD)
-                .add("content", content)
-                .add("sysTypeId", sysTypeId),
-            MsgResponseParser(String::class.java),
-        )
+        return RxHttp.postForm(NetUrl.Common.REPORT_ADD)
+            .add("imitaterise", content)
+            .add("aboundchivalry", sysTypeId)
+            .add("gangaccept", RandomDataUtil.getRandomData(1))
+            .toAwaitResponse()
     }
 }

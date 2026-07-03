@@ -6,20 +6,20 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class TemplateItem(
-    @SerializedName("id")
-    val id: Int = 0,
-    @SerializedName("name")
-    val name: String = "",
-    @SerializedName("img")
-    val img: String = "",
-    @SerializedName("uploadNum")
-    val uploadNum: Int = 0,
-    @SerializedName("lockType")
-    val lockType: Int = 0,
-    @SerializedName("lockIntegral")
-    val lockIntegral: Int = 0,
-    @SerializedName("useNumMsg")
-    val useNumMsg: String = "",
-    @SerializedName("sampleImgList")
-    val sampleImgList: List<String>? = emptyList(),
+    //id
+    @SerializedName("acetoneactuate") val acetoneactuate: Int = 0,
+    //name
+    @SerializedName("dazzledeacon") val dazzledeacon: String = "",
+    //img
+    @SerializedName("bullmind") val bullmind: String = "",
+    //uploadNum
+    @SerializedName("alimentary") val alimentary: Int = 0,
+    //lockType
+    @SerializedName("colonknee") val colonknee: Int = 0,
+    //lockIntegral
+    @SerializedName("peacearrow") val peacearrow: Int = 0,
+    //useNumMsg
+    @SerializedName("ablaze") val ablaze: String = "",
+    //sampleImgList
+    @SerializedName("neverchapter") val neverchapter: List<String>? = emptyList(),
 ) : Parcelable

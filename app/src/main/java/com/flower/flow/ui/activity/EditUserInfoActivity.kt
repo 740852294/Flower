@@ -101,12 +101,12 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
 
     override fun createObserver() {
         UserManager.user?.apply {
-            val avatar = this.avatar
+            val avatar = this.excludephone
             if (avatar.isNotEmpty()) {
                 mBind.ivAvatar.loadAvatarFile(avatar)
             }
 
-            val name = this.name
+            val name = this.dazzledeacon
             if (name.isNotEmpty()) {
                 mBind.etName.setText(name)
             }

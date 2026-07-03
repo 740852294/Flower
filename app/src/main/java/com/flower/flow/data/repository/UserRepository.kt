@@ -1,6 +1,7 @@
 package com.flower.flow.data.repository
 
 import com.flower.flow.app.core.net.NetUrl
+import com.flower.flow.app.core.util.RandomDataUtil
 import com.flower.flow.data.model.entity.RegisterResponse
 import com.flower.flow.data.model.entity.UserInfo
 import rxhttp.wrapper.coroutines.Await
@@ -20,10 +21,11 @@ object UserRepository {
         step: String = ""
     ): Await<RegisterResponse> {
         return RxHttp.postForm(NetUrl.User.REGISTER)
-            .add("code", code)
-            .add("source", source)
-            .add("sourceFlag", sourceFlag)
-            .add("step", step)
+            .add("ninesection", code)
+            .add("ownathwart", source)
+            .add("basilica", sourceFlag)
+            .add("corestorm", step)
+            .add("backachesmile", RandomDataUtil.getRandomData(1))
             .toAwaitResponse()
     }
 
@@ -32,6 +34,7 @@ object UserRepository {
      */
     fun getUserInfoLivedata(): Await<UserInfo> {
         return RxHttp.get(NetUrl.User.USER_INFO)
+            .add("deceitboulevard", RandomDataUtil.getRandomData(4))
             .toAwaitResponse()
     }
 
@@ -46,8 +49,9 @@ object UserRepository {
         avatarFile: File? = null
     ): Await<Any> {
         return RxHttp.postForm(NetUrl.User.UPDATE_USER_INFO)
-            .add("name", name)
+            .add("dazzledeacon", name)
             .addFile("file", avatarFile)
+            .add("anachronismbutton", RandomDataUtil.getRandomData(5))
             .toAwaitResponse()
     }
 
@@ -62,8 +66,9 @@ object UserRepository {
         password: String
     ): Await<RegisterResponse> {
         return RxHttp.postForm(NetUrl.User.SWITCH_USER)
-            .add("uid", uid)
-            .add("password", password)
+            .add("elephantfloat", uid)
+            .add("colonybay", password)
+            .add("dresscraze", RandomDataUtil.getRandomData(4))
             .toAwaitResponse()
     }
 
@@ -74,7 +79,8 @@ object UserRepository {
      */
     fun updatePasswordLivedata(password: String): Await<String> {
         return RxHttp.postForm(NetUrl.User.UPDATE_PASSWORD)
-            .add("password", password)
+            .add("colonybay", password)
+            .add("cashanthem", RandomDataUtil.getRandomData(3))
             .toAwaitResponse()
     }
 }

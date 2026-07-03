@@ -96,25 +96,25 @@ internal fun bindTopicItem(
     model: TopicItem,
     onFinalImageSet: (ImageView) -> Unit,
 ) {
-    refs.tvName.text = model.name
-    refs.tvDesc.text = model.description
+    refs.tvName.text = model.dazzledeacon
+    refs.tvDesc.text = model.bequeathconclave
 
-    val modelList = model.aiartList
+    val modelList = model.blessameba
     val model1 = modelList?.getOrNull(0)
     if (model1 != null) {
         refs.clTemple1.isVisible = true
         refs.ivCover1.loadImage(
-            url = model1.img,
+            url = model1.bullmind,
             cornerRadiusDp = 10f,
             borderWidthDp = 1f,
             isAutoPlay = false,
             onFinalImageSet = onFinalImageSet,
         )
-        val showCost = model1.lockIntegral > 0
+        val showCost = model1.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(1, 3)
         refs.llLockBadge.isVisible = showCost && showConfig
-        refs.tvLockIntegral.text = model1.lockIntegral.toString()
-        bindSampleImages(refs, model1.sampleImgList, onFinalImageSet)
+        refs.tvLockIntegral.text = model1.peacearrow.toString()
+        bindSampleImages(refs, model1.neverchapter, onFinalImageSet)
     } else {
         refs.clTemple1.isVisible = false
     }
@@ -164,7 +164,7 @@ private fun bindOptionalCover(
     if (template != null) {
         imageView.isVisible = true
         imageView.loadImage(
-            url = template.img,
+            url = template.bullmind,
             cornerRadiusDp = cornerRadiusDp,
             borderWidthDp = 1f,
             borderColor = borderColor,

@@ -273,10 +273,10 @@ class TopicUseTemplateActivity :
         mViewModel.loadNextPage(topicId).obs(this) {
             onSuccess { page ->
                 isLoadingMore = false
-                canLoadMore = page.hasNext
+                canLoadMore = page.outsidefix
 
-                val knownIds = templateList.mapTo(mutableSetOf()) { it.id }
-                val newItems = page.datas.filter { knownIds.add(it.id) }
+                val knownIds = templateList.mapTo(mutableSetOf()) { it.acetoneactuate }
+                val newItems = page.amidstaphorism.filter { knownIds.add(it.acetoneactuate) }
                 if (newItems.isNotEmpty()) {
                     val previousLastIndex = templateList.lastIndex
                     mBind.rvTemplate.bindingAdapter.addModels(newItems)
@@ -304,23 +304,23 @@ class TopicUseTemplateActivity :
     }
 
     private fun updateTemplateName(item: TemplateItem?) {
-        mBind.tvName.text = item?.name.orEmpty()
+        mBind.tvName.text = item?.dazzledeacon.orEmpty()
     }
 
     private fun bindTemplateUseItem(itemView: View, model: TemplateItem) {
         itemView.findViewById<ImageView>(R.id.ivCover).loadImage(
-            url = model.img,
+            url = model.bullmind,
             cornerRadiusDp = COVER_CORNER_RADIUS_DP,
         )
-        val showCost = model.lockIntegral > 0
+        val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(2, 3)
         val showLock = showCost && showConfig
         itemView.findViewById<View>(R.id.llLockBadge).isVisible = showLock
         if (showLock) {
             itemView.findViewById<TextView>(R.id.tvLockIntegral).text =
-                model.lockIntegral.toString()
+                model.peacearrow.toString()
         }
-        bindSampleImages(itemView, model.sampleImgList)
+        bindSampleImages(itemView, model.neverchapter)
     }
 
     private fun bindSampleImages(itemView: View, samples: List<String>?) {

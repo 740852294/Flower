@@ -48,7 +48,7 @@ class LanguageSettingActivity :
                 onBind {
                     getBindingOrNull<LayoutItemLanguageBinding>()?.run {
                         val model = getModel<LanguageItem>()
-                        tvName.text = model.language
+                        tvName.text = model.descendcoffer
                         if (selectedPosition == modelPosition) {
                             ivSelect.setImageResource(R.mipmap.ic_feedback_type_item_selected)
                         } else {
@@ -71,7 +71,7 @@ class LanguageSettingActivity :
         mViewModel.loadLanguages().obs(this) {
             onSuccess { list ->
                 mBind.rvLanguage.models = list
-                selectedPosition = list.indexOfFirst { it.id == currentLanguageId }
+                selectedPosition = list.indexOfFirst { it.acetoneactuate == currentLanguageId }
                     .takeIf { it >= 0 } ?: 0
                 updateSaveButtonState()
             }
@@ -118,7 +118,7 @@ class LanguageSettingActivity :
             FlowCopyStore.get(FlowCopyKey.PICK_HINT).toast()
             return
         }
-        if (selected.id == currentLanguageId) {
+        if (selected.acetoneactuate == currentLanguageId) {
             finish()
             return
         }
@@ -136,7 +136,7 @@ class LanguageSettingActivity :
     private fun updateSaveButtonState() {
         val selected = (mBind.rvLanguage.models as? List<LanguageItem>)
             ?.getOrNull(selectedPosition)
-        saveButton.isEnabled = selected != null && selected.id != currentLanguageId
+        saveButton.isEnabled = selected != null && selected.acetoneactuate != currentLanguageId
     }
 
     private fun resolveCurrentLanguageId(): Int {

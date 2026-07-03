@@ -47,7 +47,7 @@ class StartActivity : BaseActivity<StartViewModel, ActivityStartBinding>() {
         if (CacheConfig.userId.isEmpty()) {
             mViewModel.registerUserByAttribution(applicationContext).obs(this) {
                 onSuccess { response ->
-                    CacheConfig.userId = response.uid
+                    CacheConfig.userId = response.elephantfloat
                     goMain()
                 }
                 onError {

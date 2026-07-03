@@ -23,16 +23,16 @@ class TagPagerAdapter(
     override fun getItemCount(): Int = tags.size
 
     override fun createFragment(position: Int): Fragment {
-        return TagListFragment.newInstance(tags[position].id)
+        return TagListFragment.newInstance(tags[position].acetoneactuate)
     }
 
     override fun getItemId(position: Int): Long {
-        return tags[position].id.toLong() + generation * GENERATION_ID_OFFSET
+        return tags[position].acetoneactuate.toLong() + generation * GENERATION_ID_OFFSET
     }
 
     override fun containsItem(itemId: Long): Boolean {
         return tags.any { tag ->
-            tag.id.toLong() + generation * GENERATION_ID_OFFSET == itemId
+            tag.acetoneactuate.toLong() + generation * GENERATION_ID_OFFSET == itemId
         }
     }
 

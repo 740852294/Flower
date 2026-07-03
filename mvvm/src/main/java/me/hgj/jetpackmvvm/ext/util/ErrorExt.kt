@@ -1,6 +1,7 @@
 package me.hgj.jetpackmvvm.ext.util
 
 import me.hgj.jetpackmvvm.core.net.AppException
+import me.hgj.jetpackmvvm.core.net.Error
 import me.hgj.jetpackmvvm.core.net.ExceptionHandle
 
 /**
@@ -20,7 +21,7 @@ val Throwable.code: String
 
 val Throwable.msg: String
     get() {
-        return ExceptionHandle.handleException(this).errorMsg
+        val ex = if (this is AppException) this else ExceptionHandle.handleException(this)
+        Error.fromCode(ex.errCode)?.let { return ExceptionHandle.messageFor(it) }
+        return ex.errorMsg
     }
-
-

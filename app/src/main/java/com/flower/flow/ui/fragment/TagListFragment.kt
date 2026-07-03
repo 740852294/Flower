@@ -56,9 +56,9 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                 onBind {
                     getBindingOrNull<LayoutItemTagTemplateBinding>()?.run {
                         val model = getModel<TemplateItem>()
-                        tvTitle.text = model.name
+                        tvTitle.text = model.dazzledeacon
                         ivCover.loadImage(
-                            url = model.img,
+                            url = model.bullmind,
                             cornerRadiusDp = COVER_CORNER_RADIUS_DP,
                             borderWidthDp = COVER_BORDER_WIDTH_DP,
                             isAutoPlay = false,
@@ -66,7 +66,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                             onFinalImageSet = ::syncAnimationPlayback,
                         )
                         bindLockBadge(this, model)
-                        bindSampleImages(this, model.sampleImgList)
+                        bindSampleImages(this, model.neverchapter)
                     }
                 }
 
@@ -139,7 +139,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         val page = (parentFragment as? TagFragment)
             ?.getCachedTemplates(tagId, cacheGeneration)
             ?: return false
-        mViewModel.restoreCurrentPage(page.curPage)
+        mViewModel.restoreCurrentPage(page.amenableafford)
         loadListSuccess(
             page,
             mBind.rvList.bindingAdapter,
@@ -178,12 +178,12 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         binding: LayoutItemTagTemplateBinding,
         model: TemplateItem,
     ) {
-        val showCost = model.lockIntegral > 0
+        val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(3, 4)
         val showLock = showCost && showConfig
         binding.llLockBadge.isVisible = showLock
         if (showLock) {
-            binding.tvLockIntegral.text = model.lockIntegral.toString()
+            binding.tvLockIntegral.text = model.peacearrow.toString()
         }
     }
 

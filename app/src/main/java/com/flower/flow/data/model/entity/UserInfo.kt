@@ -6,22 +6,26 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class UserInfo(
-    @SerializedName("id")
-    val id: Int = 0,
-    @SerializedName("integralBalance")
-    val integralBalance: Int = 0,
-    @SerializedName("isVip")
-    val isVip: Boolean = false,
-    @SerializedName("mineRedDot")
-    val mineRedDot: Boolean = false,
-    @SerializedName("name")
-    val name: String = "",
-    @SerializedName("avatar")
-    val avatar: String = "",
-    @SerializedName("password")
-    var password: String = "",
-    @SerializedName("sysNotifyRedDot")
-    var sysNotifyRedDot: Boolean = false,
-    @SerializedName("clearTaskMsg")
-    val clearTaskMsg: String = "",
+    //id
+    @SerializedName("acetoneactuate") val acetoneactuate: Int = 0,
+    //uid
+    @SerializedName("elephantfloat") val elephantfloat: String = "",
+    //integralBalance
+    @SerializedName("beastamalgam") val beastamalgam: Int = 0,
+    //isVip
+    @SerializedName("shareengage") val shareengage: Boolean = false,
+    //mineRedDot
+    @SerializedName("exposedaub") val exposedaub: Boolean = false,
+    //name
+    @SerializedName("dazzledeacon") val dazzledeacon: String = "",
+    //avatar
+    @SerializedName("excludephone") val excludephone: String = "",
+    //password
+    @SerializedName("colonybay") var colonybay: String = "",
+    //languageId
+    @SerializedName("southgroup") val southgroup: Int = 0,
+    //sysNotifyRedDot
+    @SerializedName("valleytoward") var valleytoward: Boolean = false,
+    //clearTaskMsg
+    @SerializedName("hardthough") val hardthough: String = "",
 ) : Parcelable

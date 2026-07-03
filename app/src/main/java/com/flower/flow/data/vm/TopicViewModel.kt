@@ -9,7 +9,7 @@ class TopicViewModel : BaseViewModel() {
 
     fun loadTopicList(showPageLoading: Boolean = true) = request {
         onRequest {
-            TemplateRepository.getTopicList().await().aiartTopicList
+            TemplateRepository.getTopicList().await().camaraderiestation
         }
         loadingType = if (showPageLoading) LoadingType.LOADING_XML else LoadingType.LOADING_NULL
     }

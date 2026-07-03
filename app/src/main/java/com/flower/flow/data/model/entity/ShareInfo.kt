@@ -3,6 +3,8 @@ package com.flower.flow.data.model.entity
 import com.google.gson.annotations.SerializedName
 
 data class ShareInfo(
-    @SerializedName("title") val title: String = "",
-    @SerializedName("content") val content: String = "",
+    //title
+    @SerializedName("sevenasset") val sevenasset: String = "",
+    //content
+    @SerializedName("imitaterise") val imitaterise: String = "",
 )

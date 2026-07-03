@@ -84,15 +84,15 @@ class MaterialUploadActivity :
     override fun initView(savedInstanceState: Bundle?) {
         onBackPressedDispatcher.addCallback(this, generateBackPressedCallback)
         mBind.llContent.statusPadding()
-        mBind.toolbar.initClose(templateItem?.name ?: "") {
+        mBind.toolbar.initClose(templateItem?.dazzledeacon ?: "") {
             finish()
         }
         setText()
 
         templateItem?.apply {
-            mBind.toolbar.title = name
+            mBind.toolbar.title = dazzledeacon
             mBind.ivCover.loadImage(
-                url = img,
+                url = bullmind,
                 cornerRadiusDp = COVER_CORNER_RADIUS_DP,
             )
             bindPhotoUpload(this)
@@ -127,7 +127,7 @@ class MaterialUploadActivity :
     }
 
     override fun createObserver() {
-        val id = templateItem?.id ?: return
+        val id = templateItem?.acetoneactuate ?: return
         mViewModel.getCreateSubmitPage(id).obs(this) {
             onSuccess { info ->
                 submitPageInfo = info
@@ -219,7 +219,7 @@ class MaterialUploadActivity :
         }
 
         val pageInfo = submitPageInfo ?: SubmitPageInfo()
-        val templateId = templateItem?.id ?: return
+        val templateId = templateItem?.acetoneactuate ?: return
         val sourcePaths = collectSourcePaths()
 
         if (
@@ -250,7 +250,7 @@ class MaterialUploadActivity :
     }
 
     private fun proceedAfterRepeatCheck(pageInfo: SubmitPageInfo) {
-        if (pageInfo.isGenerateFreeEverydayPopup) {
+        if (pageInfo.valuefunny) {
             showGenerateFreeEverydayDialog(pageInfo)
             return
         }
@@ -258,10 +258,10 @@ class MaterialUploadActivity :
     }
 
     private fun showGenerateFreeEverydayDialog(pageInfo: SubmitPageInfo) {
-        val title = pageInfo.generateFreeEverydayPopupTitle
-            .ifBlank { pageInfo.generateFreeEverydayPopupMsg }
-        val content = pageInfo.generateFreeEverydayPopupMsg
-            .ifBlank { pageInfo.generateFreeEverydayPopupTitle }
+        val title = pageInfo.foolcyst
+            .ifBlank { pageInfo.apieceasteroid }
+        val content = pageInfo.apieceasteroid
+            .ifBlank { pageInfo.foolcyst }
         if (title.isBlank()) return
 
         CommonMessageDialog.Builder(this)
@@ -272,7 +272,7 @@ class MaterialUploadActivity :
     }
 
     private fun proceedAfterFreeEverydayCheck(pageInfo: SubmitPageInfo) {
-        if (pageInfo.isConsumeIntegralPopup) {
+        if (pageInfo.consider) {
             showConsumeIntegralDialog(pageInfo)
             return
         }
@@ -280,10 +280,10 @@ class MaterialUploadActivity :
     }
 
     private fun showConsumeIntegralDialog(pageInfo: SubmitPageInfo) {
-        val title = pageInfo.consumeIntegralPopupTitle
-            .ifBlank { pageInfo.consumeIntegralPopupMsg }
-        val content = pageInfo.consumeIntegralPopupMsg
-            .ifBlank { pageInfo.consumeIntegralPopupTitle }
+        val title = pageInfo.ecologybestial
+            .ifBlank { pageInfo.hirenoun }
+        val content = pageInfo.hirenoun
+            .ifBlank { pageInfo.ecologybestial }
         if (title.isBlank()) {
             submitGenerateWork()
             return
@@ -300,7 +300,7 @@ class MaterialUploadActivity :
     }
 
     private fun submitGenerateWork() {
-        val templateId = templateItem?.id ?: return
+        val templateId = templateItem?.acetoneactuate ?: return
         val sourceFiles = collectSourceFiles()
         if (sourceFiles.isEmpty()) {
             FlowCopyStore.get(FlowCopyKey.PHOTO_LIMIT_WARN).toast()
@@ -345,7 +345,7 @@ class MaterialUploadActivity :
 
     private suspend fun simulateGenerateProgress(result: WorkGenerateResult) {
         generateBackPressedCallback.isEnabled = true
-        updateGenerateTip(result.showMsgOne)
+        updateGenerateTip(result.concedearbiter)
         mBind.tvGeneratePercent.text = "0%"
 
         val random = Random.Default
@@ -361,7 +361,7 @@ class MaterialUploadActivity :
 
             if (!phaseTwoStarted && elapsed >= GENERATE_PHASE_ONE_MS) {
                 phaseTwoStarted = true
-                updateGenerateTip(result.showMsgTwo)
+                updateGenerateTip(result.fillblitz)
             }
 
             val maxByTime = ((elapsed.toFloat() / GENERATE_DURATION_MS) * 100)
@@ -396,7 +396,7 @@ class MaterialUploadActivity :
         mBind.flGenerate.isVisible = false
         findActivity<MainActivity>()?.refreshMeWorkListSilently()
 
-        if (GenerateResultDialog.Builder.configForState(result.state) == null) {
+        if (GenerateResultDialog.Builder.configForState(result.afflict) == null) {
             finish()
             return
         }
@@ -404,7 +404,7 @@ class MaterialUploadActivity :
         val builder = GenerateResultDialog.Builder(this)
             .setResult(result)
 
-        when (result.state) {
+        when (result.afflict) {
             WorkGenerateResult.STATE_WAITING -> {
                 builder.setOnConfirm {
                     finish()
@@ -456,7 +456,7 @@ class MaterialUploadActivity :
     }
 
     private fun isMultiUpload(): Boolean {
-        return (templateItem?.uploadNum ?: 1) >= 2
+        return (templateItem?.alimentary ?: 1) >= 2
     }
 
     private fun collectSourcePaths(): List<String> {
@@ -479,8 +479,8 @@ class MaterialUploadActivity :
     }
 
     private fun buildRepeatDialogTexts(pageInfo: SubmitPageInfo): Pair<String, String>? {
-        val title = pageInfo.repeatPopupTitle
-        val content = pageInfo.repeatPopupMsg
+        val title = pageInfo.hatchampion
+        val content = pageInfo.tryamount
         if (title.isBlank() && content.isBlank()) return null
         return when {
             title.isNotBlank() && content.isNotBlank() -> title to content
@@ -553,7 +553,7 @@ class MaterialUploadActivity :
     }
 
     private fun getFirstUploadSlot(): UploadSlot {
-        return if ((templateItem?.uploadNum ?: 1) >= 2) {
+        return if ((templateItem?.alimentary ?: 1) >= 2) {
             UploadSlot.LEFT
         } else {
             UploadSlot.SINGLE
@@ -561,16 +561,16 @@ class MaterialUploadActivity :
     }
 
     private fun bindPhotoUpload(model: TemplateItem) {
-        val isMultiUpload = model.uploadNum >= 2
+        val isMultiUpload = model.alimentary >= 2
         mBind.llSingleUpload.isVisible = !isMultiUpload
         mBind.llDoubleUpload.isVisible = isMultiUpload
     }
 
     private fun bindLockBadge(model: TemplateItem) {
-        val showCost = model.lockIntegral > 0
+        val showCost = model.peacearrow > 0
         mBind.llCost.isVisible = showCost
         if (showCost) {
-            mBind.tvLockIntegral.text = model.lockIntegral.toString()
+            mBind.tvLockIntegral.text = model.peacearrow.toString()
         }
     }
 

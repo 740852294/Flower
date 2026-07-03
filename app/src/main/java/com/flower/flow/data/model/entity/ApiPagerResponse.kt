@@ -4,31 +4,31 @@ import com.google.gson.annotations.SerializedName
 import me.hgj.jetpackmvvm.util.BasePage
 
 data class ApiPagerResponse<T>(
-    @SerializedName("records")
-    var datas: ArrayList<T> = arrayListOf(),
-    @SerializedName("current")
-    var curPage: Int = 1,
-    @SerializedName("size")
-    var size: Int = 0,
-    @SerializedName("hasNext")
-    var hasNext: Boolean = false,
-    @SerializedName("pages")
-    var pageCount: Int = 0,
-    @SerializedName("total")
-    var total: Int = 0,
-    @SerializedName("searchCount")
-    var searchCount: Boolean = false,
+    //records
+    @SerializedName("amidstaphorism") var amidstaphorism: ArrayList<T> = arrayListOf(),
+    //current
+    @SerializedName("amenableafford") var amenableafford: Int = 1,
+    //size
+    @SerializedName("boothcrag") var boothcrag: Int = 0,
+    //hasNext
+    @SerializedName("outsidefix") var outsidefix: Boolean = false,
+    //pages
+    @SerializedName("betalung") var betalung: Int = 0,
+    //total
+    @SerializedName("accompanybooboo") var accompanybooboo: Int = 0,
+    //searchCount
+    @SerializedName("operaaphid") var operaaphid: Boolean = false,
 ) : BasePage<T>() {
 
-    val offset: Int get() = if (curPage <= 1) 0 else (curPage - 1) * size
+    val offset: Int get() = if (amenableafford <= 1) 0 else (amenableafford - 1) * boothcrag
 
-    val over: Boolean get() = !hasNext
+    val over: Boolean get() = !outsidefix
 
-    override fun getPageData() = datas
+    override fun getPageData() = amidstaphorism
 
-    override fun isRefresh() = curPage <= 1
+    override fun isRefresh() = amenableafford <= 1
 
-    override fun isEmpty() = datas.isEmpty()
+    override fun isEmpty() = amidstaphorism.isEmpty()
 
-    override fun hasMore() = hasNext
+    override fun hasMore() = outsidefix
 }

@@ -33,20 +33,20 @@ object UserManager {
 
     fun saveUser(userInfo: UserInfo) {
         user = userInfo
-        EventViewModel.msgRedDotEvent.postValue = userInfo.sysNotifyRedDot
-        EventViewModel.workRedDotEvent.postValue = userInfo.mineRedDot
+        EventViewModel.msgRedDotEvent.postValue = userInfo.valleytoward
+        EventViewModel.workRedDotEvent.postValue = userInfo.exposedaub
     }
 
     fun saveUserMsgDot(dot: Boolean) {
         if (user != null) {
-            user!!.sysNotifyRedDot = dot
+            user!!.valleytoward = dot
             saveUser(user!!)
         }
     }
 
     fun saveUserPassword(password: String) {
         if (user != null && password.isNotEmpty()) {
-            user!!.password = AesTextCodec.encode(password) ?: ""
+            user!!.colonybay = AesTextCodec.encode(password) ?: ""
             saveUser(user!!)
         }
     }
