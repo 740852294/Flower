@@ -10,7 +10,7 @@ class AppException : Exception {
     var errCode: String = "" //错误码
 
     constructor(errCode: String, error: String?) : super(error) {
-        this.errorMsg = error ?: "请求失败，请稍后再试"
+        this.errorMsg = error ?: ""
         this.errCode = errCode
     }
 

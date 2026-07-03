@@ -11,9 +11,6 @@ import com.flower.flow.data.model.entity.WorkItem
 import com.flower.flow.databinding.LayoutItemWorkBinding
 import com.flower.flow.domain.profile.WorkDownloadJobManager
 import com.flower.flow.domain.profile.WorkListSelectionController
-import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
-import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
-
 object WorkItemViewDelegate {
 
     fun bindSelectionState(

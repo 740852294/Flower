@@ -4,6 +4,7 @@ import android.view.View
 import androidx.appcompat.widget.Toolbar
 import com.flower.flow.R
 import com.google.android.material.appbar.MaterialToolbar
+import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
 import me.hgj.jetpackmvvm.ext.util.dp2px
 import me.hgj.jetpackmvvm.ext.util.toHtml
 
@@ -17,7 +18,9 @@ fun MaterialToolbar.initClose(
 ): MaterialToolbar {
     title = titleStr.toHtml()
     setNavigationIcon(backImg)
-    setNavigationOnClickListener { onBack.invoke(this) }
+    setNavigationOnClickListener {
+        doDebouncedClick { onBack.invoke(this) }
+    }
     return this
 }
 
