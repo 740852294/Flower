@@ -1,19 +1,10 @@
+import com.android.build.api.artifact.ArtifactTransformationRequest
 import com.android.build.api.artifact.SingleArtifact
-import com.android.build.api.variant.BuiltArtifactsLoader
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
-import org.gradle.api.file.DirectoryProperty
-import org.gradle.api.provider.Property
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.InputDirectory
-import org.gradle.api.tasks.Internal
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.TaskAction
-import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.atomic.AtomicInteger
 
 plugins {
     alias(libs.plugins.android.application)
@@ -21,35 +12,43 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
-fun apkBuildTime(): String {
-    return SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
-}
-
 abstract class RenameApkTask : DefaultTask() {
     @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
     abstract val input: DirectoryProperty
 
     @get:OutputDirectory
     abstract val output: DirectoryProperty
 
     @get:Internal
-    abstract val builtArtifactsLoader: Property<BuiltArtifactsLoader>
+    abstract val transformationRequest: Property<ArtifactTransformationRequest<RenameApkTask>>
 
     @get:Input
-    abstract val outputFileName: Property<String>
+    abstract val buildType: Property<String>
+
+    @get:Input
+    abstract val versionName: Property<String>
+
+    @get:Input
+    abstract val versionCode: Property<String>
 
     @TaskAction
     fun taskAction() {
-        val builtArtifacts = builtArtifactsLoader.get().load(input.get())
-            ?: throw GradleException("Cannot load APK artifacts")
+        val buildTime = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val index = AtomicInteger(0)
 
-        output.get().asFile.mkdirs()
-        builtArtifacts.elements.forEach { element ->
-            val srcFile = File(element.outputFile)
-            val dstFile = output.get().file(outputFileName.get()).asFile
-            srcFile.copyTo(dstFile, overwrite = true)
-            logger.lifecycle("Copied APK to: ${dstFile.absolutePath}")
+        transformationRequest.get().submit(this) { artifact ->
+            val outputFileName = buildOutputFileName(index.getAndIncrement(), buildTime)
+            val dstFile = output.get().file(outputFileName).asFile
+            File(artifact.outputFile).copyTo(dstFile, overwrite = true)
+            logger.lifecycle("Renamed APK to: ${dstFile.absolutePath}")
+            dstFile
         }
+    }
+
+    private fun buildOutputFileName(index: Int, buildTime: String): String {
+        val suffix = if (index > 0) "_$index" else ""
+        return "Flower_${buildType.get()}_${versionName.get()}_${versionCode.get()}${suffix}_$buildTime.apk"
     }
 }
 
@@ -68,9 +67,19 @@ android {
         buildConfigField("String", "VERSION_INT", "\"45\"")
     }
 
+    signingConfigs {
+        create("test") {
+            storeFile = file("key.jks")
+            storePassword = "flower"
+            keyAlias = "flower"
+            keyPassword = "flower"
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = true
+            signingConfig = signingConfigs.getByName("test")
             proguardFiles("src/main/keepRules/rules.keep")
             buildConfigField("String", "BASE_HTTP_API", "\"http://8.148.151.104:7068/\"")
             buildConfigField("String", "CIPHER_KEY", "\"Flow5f6sdedv63er\"")
@@ -79,6 +88,7 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("test")
             proguardFiles("src/main/keepRules/rules.keep")
             buildConfigField("String", "BASE_HTTP_API", "\"http://8.148.151.104:7068/\"")
             buildConfigField("String", "CIPHER_KEY", "\"Flow5f6sdedv63er\"")
@@ -106,18 +116,23 @@ androidComponents {
         val variantTaskName = variant.name.replaceFirstChar { it.titlecase() }
         val versionName = variant.outputs.first().versionName.orNull ?: "unknown"
         val versionCode = variant.outputs.first().versionCode.orNull?.toString() ?: "0"
-        val outputFileName = "Flower_${buildType}_${versionName}_${versionCode}_${apkBuildTime()}.apk"
 
-        val renameTask = tasks.register<RenameApkTask>("renameApk$variantTaskName") {
-            output.set(layout.buildDirectory.dir("outputs/apk/${variant.name}"))
-            builtArtifactsLoader.set(variant.artifacts.getBuiltArtifactsLoader())
-            this.outputFileName.set(outputFileName)
+        val renameTaskProvider = tasks.register<RenameApkTask>("renameApk$variantTaskName") {
+            this.buildType.set(buildType)
+            this.versionName.set(versionName)
+            this.versionCode.set(versionCode)
         }
 
-        tasks.matching { it.name == "create${variantTaskName}ApkListingFileRedirect" }
-            .configureEach { dependsOn(renameTask) }
+        val apkTransformRequest = variant.artifacts.use(renameTaskProvider)
+            .wiredWithDirectories(
+                { task -> task.input },
+                { task -> task.output },
+            )
+            .toTransformMany(SingleArtifact.APK)
 
-        variant.artifacts.use(renameTask).wiredWith { it.input }.toListenTo(SingleArtifact.APK)
+        renameTaskProvider.configure {
+            transformationRequest.set(apkTransformRequest)
+        }
     }
 }
 
