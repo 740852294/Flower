@@ -3,7 +3,6 @@ package com.flower.flow.ui.fragment
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
-import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
@@ -33,8 +32,8 @@ import com.flower.flow.ui.activity.IntegralRechargeActivity
 import com.flower.flow.ui.activity.MainActivity
 import com.flower.flow.ui.activity.SettingActivity
 import com.flower.flow.ui.activity.VipJoinActivity
-import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.activity.WorkPreviewActivity
+import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.fragment.me.MeRegenerateCoordinator
 import com.flower.flow.ui.fragment.me.MeWorkListBinder
 import kotlinx.coroutines.delay
@@ -57,7 +56,6 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private lateinit var workListBinder: MeWorkListBinder
     private lateinit var regenerateCoordinator: MeRegenerateCoordinator
     private var workListPollingStarted = false
-    private var isLazyLoaded = false
 
     companion object {
         const val SPAN_COUNT = 2
@@ -144,7 +142,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.clInfo.clickNoRepeat {
             openActivityForResult<EditUserInfoActivity> { result ->
                 if (result != null) {
-                    (activity as? MainActivity)?.getUserInfo(isFirst = false, isLoading = true)
+                    (activity as? MainActivity)?.getUserInfo(isLoading = true)
                 }
             }
         }
@@ -194,14 +192,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun lazyLoadData() {
-        loadData(isLoading = true)
         startWorkListPolling()
-        isLazyLoaded = true
-    }
-
-    fun refreshWorkListSilently() {
-        if (!isLazyLoaded) return
-        loadData(isLoading = false)
     }
 
     private fun startWorkListPolling() {
@@ -263,6 +254,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         EventViewModel.workDownloadEvent.observe(viewLifecycleOwner) { workItem ->
             downloadManager.start(workItem)
+        }
+
+        EventViewModel.myPageRefreshEvent.observe(viewLifecycleOwner) { _ ->
+//            if (!isLazyLoaded) return@observe
+            loadData(isLoading = true)
         }
     }
 

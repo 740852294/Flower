@@ -7,6 +7,7 @@ import com.flower.flow.data.model.entity.SubmitPageInfo
 import com.flower.flow.data.model.entity.WorkGenerateResult
 import com.flower.flow.data.repository.AiArtRepository
 import me.hgj.jetpackmvvm.base.vm.BaseViewModel
+import me.hgj.jetpackmvvm.core.data.postValue
 import me.hgj.jetpackmvvm.core.data.request
 import me.hgj.jetpackmvvm.core.net.LoadingType
 import java.io.File
@@ -17,14 +18,9 @@ class MaterialUploadViewModel : BaseViewModel() {
     var leftUploadPath: String? = null
     var rightUploadPath: String? = null
 
-    private val _submitPageInfo = MutableLiveData<SubmitPageInfo>()
-    val submitPageInfo: LiveData<SubmitPageInfo> = _submitPageInfo
-
     fun loadCreateSubmitPage(id: Int) = request {
         onRequest {
-            AiArtRepository.getCreateSubmitPage(id).await().also {
-                _submitPageInfo.value = it
-            }
+            AiArtRepository.getCreateSubmitPage(id).await()
         }
         loadingType = LoadingType.LOADING_NULL
     }

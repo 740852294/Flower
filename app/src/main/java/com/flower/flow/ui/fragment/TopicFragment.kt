@@ -205,7 +205,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
     private fun loadInitialTopicList() {
         if (isLazyLoaded || App.globalConfig == null) return
-        loadTopicList(showPageLoading = true)
+        loadTopicList(showPageLoading = false)
         isLazyLoaded = true
     }
 

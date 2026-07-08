@@ -155,7 +155,7 @@ fun ImageView.loadImageFitWidth(
             id: Long,
             imageOrigin: Int,
             imageInfo: ImageInfo?,
-            drawable: android.graphics.drawable.Drawable?,
+            drawable: Drawable?,
         ) {
             val imageWidth = imageInfo?.width ?: return
             val imageHeight = imageInfo?.height ?: return
@@ -309,7 +309,6 @@ fun ImageView.loadImageFile(
  */
 fun ImageView.loadAvatarFile(
     source: String?,
-    @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
     scaleType: ScalingUtils.ScaleType = ScalingUtils.ScaleType.CENTER_CROP,
     isAutoPlay: Boolean = true,
     onFinalImageSet: ((ImageView) -> Unit)? = null,
@@ -324,7 +323,6 @@ fun ImageView.loadAvatarFile(
     val imageOptionsBuilder = ImageOptions.create()
         .round(RoundingOptions.asCircle())
         .scale(scaleType)
-    placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
     imageOptionsBuilder.autoPlay(isAutoPlay)
     imageOptionsBuilder.autoStop(isAutoPlay)
 
@@ -366,14 +364,12 @@ fun ImageView.loadAvatarFile(
  */
 fun ImageView.loadAvatarFile(
     file: File?,
-    @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
     scaleType: ScalingUtils.ScaleType = ScalingUtils.ScaleType.CENTER_CROP,
     isAutoPlay: Boolean = true,
     onFinalImageSet: ((ImageView) -> Unit)? = null,
 ) {
     loadAvatarFile(
         source = file?.absolutePath,
-        placeholderRes = placeholderRes,
         scaleType = scaleType,
         isAutoPlay = isAutoPlay,
         onFinalImageSet = onFinalImageSet,

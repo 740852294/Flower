@@ -36,6 +36,8 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
     private var isContainerVisible = true
     private var cacheGeneration = 0
 
+    override fun getLoadingView(): View = mBind.rvList
+
     override fun initView(savedInstanceState: Bundle?) {
         tagId = requireArguments().getInt(ARG_TAG_ID)
         (parentFragment as? TagFragment)?.let { parent ->
@@ -45,10 +47,10 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         }
 
         mBind.refreshLayout.refresh {
-            loadTemplates(refresh = true)
+            loadTemplates(refresh = true, isLoading = false)
         }
         mBind.refreshLayout.loadMore {
-            loadTemplates(refresh = false)
+            loadTemplates(refresh = false, isLoading = false)
         }
 
         mBind.rvList.grid(SPAN_COUNT)
@@ -116,7 +118,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
 
     override fun lazyLoadData() {
         if (!restoreTemplatesFromCache()) {
-            loadTemplates(refresh = true)
+            loadTemplates(refresh = true, isLoading = true)
         }
     }
 
@@ -162,8 +164,8 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         return true
     }
 
-    private fun loadTemplates(refresh: Boolean) {
-        mViewModel.loadTemplates(tagId, refresh).obs(this) {
+    private fun loadTemplates(refresh: Boolean, isLoading: Boolean) {
+        mViewModel.loadTemplates(tagId, refresh, isLoading).obs(this) {
             onSuccess { page ->
                 (parentFragment as? TagFragment)?.cacheTemplates(
                     tagId,

@@ -19,14 +19,14 @@ object EventViewModel {
     /** 语言切换  */
     val languageEvent = MutableResult<LanguageItem>()
 
-    /** 刷新系统通知列表 */
-    val systemNotifyRefreshEvent = MutableResult<Boolean>()
-
     /** 专题模板列表分页同步 */
     val topicTemplateListSyncEvent = MutableResult<TopicTemplateListSyncEvent>()
 
     /** 下载作品 */
     val workDownloadEvent = MutableResult<WorkItem>()
+
+    /** 我的页面刷新 */
+    val myPageRefreshEvent = MutableResult<Boolean>()
 }
 
 data class TopicTemplateListSyncEvent(

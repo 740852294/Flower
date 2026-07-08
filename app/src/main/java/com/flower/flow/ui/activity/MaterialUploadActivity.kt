@@ -1,13 +1,12 @@
 package com.flower.flow.ui.activity
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.view.View
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.facebook.drawee.backends.pipeline.Fresco
@@ -34,6 +33,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
+import me.hgj.jetpackmvvm.ext.util.findActivity
+import me.hgj.jetpackmvvm.ext.util.finishActivityByClass
 import me.hgj.jetpackmvvm.ext.util.intent.bundle
 import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
@@ -42,9 +43,6 @@ import me.hgj.jetpackmvvm.ext.util.toast
 import java.io.File
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
-import androidx.core.net.toUri
-import me.hgj.jetpackmvvm.ext.util.findActivity
-import me.hgj.jetpackmvvm.ext.util.finishActivityByClass
 
 class MaterialUploadActivity :
     BaseActivity<MaterialUploadViewModel, ActivityMaterialUploadBinding>() {
@@ -254,7 +252,6 @@ class MaterialUploadActivity :
      * 5s 模拟生成结束后的处理。
      */
     private fun onGenerateSimulationFinished(result: WorkGenerateResult) {
-        findActivity<MainActivity>()?.refreshMeWorkListSilently()
 
         if (GenerateResultDialog.Builder.configForState(result.afflict) == null) {
             finish()

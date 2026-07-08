@@ -118,7 +118,8 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
     private fun updateSaveButtonState() {
         if (!::saveButton.isInitialized) return
         val nickname = mBind.etName.text?.toString()?.trim().orEmpty()
-        val hasChanges = nickname != originalNickname || mViewModel.hasPendingAvatar()
+        val hasChanges =
+            nickname.isNotEmpty() && (nickname != originalNickname || mViewModel.hasPendingAvatar())
         saveButton.isEnabled = hasChanges
     }
 

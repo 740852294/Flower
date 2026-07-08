@@ -13,7 +13,7 @@ class TagListViewModel : BaseViewModel() {
         currentPage = page.coerceAtLeast(1)
     }
 
-    fun loadTemplates(tagId: Int, refresh: Boolean) = request {
+    fun loadTemplates(tagId: Int, refresh: Boolean, isLoading: Boolean) = request {
         onRequest {
             val previousPage = currentPage
             if (refresh) {
@@ -28,6 +28,6 @@ class TagListViewModel : BaseViewModel() {
                 throw e
             }
         }
-        loadingType = if (refresh) LoadingType.LOADING_XML else LoadingType.LOADING_NULL
+        loadingType = if (isLoading) LoadingType.LOADING_XML else LoadingType.LOADING_NULL
     }
 }

@@ -24,6 +24,7 @@ import com.flower.flow.ui.fragment.TopicFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
+import me.hgj.jetpackmvvm.core.data.postValue
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.toast
@@ -75,7 +76,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             onSuccess { result ->
                 when (result) {
                     is MainInitResult.ForceUpdate -> showForceUpdateDialog(result)
-                    is MainInitResult.Ready -> initData()
+                    is MainInitResult.Ready -> initData(result)
                 }
             }
         }
@@ -152,7 +153,10 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         pendingTabIndex = null
     }
 
-    private fun initData() {
+    private fun initData(result: MainInitResult.Ready) {
+        if (!result.userInfo.shareengage && (App.globalConfig?.exaltabrade ?: 0) == 1) {
+            openActivity<VipJoinActivity>()
+        }
         supportFragmentManager.setFragmentResult(
             TopicFragment.REQUEST_MAIN_DATA_READY,
             Bundle(),
@@ -166,26 +170,13 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         lifecycleScope.launch {
             while (true) {
                 delay(USER_INFO_POLL_INTERVAL.milliseconds)
-                getUserInfo(false, isLoading = false)
+                getUserInfo(isLoading = false)
             }
         }
     }
 
-    fun getUserInfo(isFirst: Boolean, isLoading: Boolean) {
-        mViewModel.fetchUserInfo(isLoading).obs(this) {
-            onSuccess { userInfo ->
-                if (isFirst && !userInfo.shareengage && (App.globalConfig?.exaltabrade
-                        ?: 0) == 1
-                ) {
-                    openActivity<VipJoinActivity>()
-                }
-            }
-            onError { error ->
-                if (isFirst) {
-                    error.msg.toast()
-                }
-            }
-        }
+    fun getUserInfo(isLoading: Boolean) {
+        mViewModel.fetchUserInfo(isLoading).obs(this) {}
     }
 
     fun switchTab(index: Int) {
@@ -200,18 +191,14 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         fragment?.refreshHomeTopicList()
     }
 
-    fun refreshMeWorkListSilently() {
-        if (!::tabs.isInitialized) return
-        val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
-            ?.getFragment(MainAdapter.PAGE_USER) as? MeFragment
-        fragment?.refreshWorkListSilently()
-    }
-
     private fun selectTab(index: Int) {
         val previousTab = currentTabIndex
         if (previousTab != index) {
             if ((index == MainAdapter.PAGE_TOPIC || index == MainAdapter.PAGE_TAG) && previousTab != -1) {
-                getUserInfo(isFirst = false, isLoading = false)
+                getUserInfo(isLoading = false)
+            }
+            if (index == MainAdapter.PAGE_USER && previousTab != -1) {
+                EventViewModel.myPageRefreshEvent.postValue = true
             }
             currentTabIndex = index
         }

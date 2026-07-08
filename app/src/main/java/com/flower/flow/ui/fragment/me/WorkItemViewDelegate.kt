@@ -11,6 +11,7 @@ import com.flower.flow.data.model.entity.WorkItem
 import com.flower.flow.databinding.LayoutItemWorkBinding
 import com.flower.flow.domain.profile.WorkDownloadJobManager
 import com.flower.flow.domain.profile.WorkListSelectionController
+
 object WorkItemViewDelegate {
 
     fun bindSelectionState(
@@ -39,15 +40,17 @@ object WorkItemViewDelegate {
     ) {
         binding.llProgress.isVisible = downloadState != null
         if (downloadState != null) {
+            binding.ivDownload.visibility = View.GONE
             binding.tvDownload.text = model.attachaway.orEmpty()
             binding.pbDownload.isIndeterminate = downloadState.progress == null
             downloadState.progress?.let { binding.pbDownload.progress = it }
-            binding.ivDownload.visibility = View.GONE
         } else {
             binding.pbDownload.isIndeterminate = false
             binding.pbDownload.progress = 0
             if (model.afflict == WorkStatusCodes.COMPLETE) {
                 binding.ivDownload.visibility = View.VISIBLE
+            } else {
+                binding.ivDownload.visibility = View.GONE
             }
         }
     }
@@ -67,11 +70,21 @@ object WorkItemViewDelegate {
         binding.btnStatus.text = model.increaserace ?: ""
 
         when (model.afflict) {
-            WorkStatusCodes.NONE -> bindLockedState(binding, model, isVip, selection, cornerRadiusPx, onAnimationSync)
+            WorkStatusCodes.NONE -> bindLockedState(
+                binding,
+                model,
+                isVip,
+                selection,
+                cornerRadiusPx,
+                onAnimationSync
+            )
+
             WorkStatusCodes.WAIT, WorkStatusCodes.PROCESSING ->
                 bindProcessingState(binding, model, cornerRadiusPx, onAnimationSync)
+
             WorkStatusCodes.COMPLETE ->
                 bindCompleteState(binding, model, cornerRadiusPx, onAnimationSync)
+
             WorkStatusCodes.FAIL ->
                 bindFailedState(binding, model, cornerRadiusPx, onAnimationSync)
         }
