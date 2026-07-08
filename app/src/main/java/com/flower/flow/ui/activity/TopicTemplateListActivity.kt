@@ -12,7 +12,6 @@ import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import com.drake.brv.annotaion.DividerOrientation
 import com.drake.brv.utils.bindingAdapter
-import com.drake.brv.utils.divider
 import com.drake.brv.utils.dividerSpace
 import com.drake.brv.utils.setup
 import com.drake.brv.utils.staggered
@@ -31,13 +30,14 @@ import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TopicTemplateListViewModel
 import com.flower.flow.databinding.ActivityTopicTemplateListBinding
 import me.hgj.jetpackmvvm.core.data.obs
-import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
+import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.loadListError
 import me.hgj.jetpackmvvm.ext.util.loadListSuccess
 import me.hgj.jetpackmvvm.ext.util.loadMore
+import me.hgj.jetpackmvvm.ext.util.refresh
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
 
@@ -72,8 +72,12 @@ class TopicTemplateListActivity :
 
         setupList()
 
+        mBind.refreshLayout.refresh {
+            loadTemplates(refresh = true, isLoading = false)
+        }
+
         mBind.refreshLayout.loadMore {
-            loadTemplates(refresh = false)
+            loadTemplates(refresh = false, isLoading = false)
         }
 
         mBind.nestedScrollView.setOnScrollChangeListener(
@@ -83,7 +87,7 @@ class TopicTemplateListActivity :
         )
         updateToolbarBackground(mBind.nestedScrollView.scrollY)
 
-        loadTemplates(refresh = true)
+        loadTemplates(refresh = true, isLoading = true)
 
         val isShowBtn = (App.globalConfig?.athleteacanthus ?: 0) == 1
         if (isShowBtn) {
@@ -99,8 +103,8 @@ class TopicTemplateListActivity :
 
     private fun setupList() {
         mBind.rvList.staggered(SPAN_COUNT)
-            .dividerSpace(dp(4),DividerOrientation.HORIZONTAL)
-            .dividerSpace(dp(8),DividerOrientation.VERTICAL)
+            .dividerSpace(dp(4), DividerOrientation.HORIZONTAL)
+            .dividerSpace(dp(8), DividerOrientation.VERTICAL)
             .setup {
                 addType<TemplateItem> { position ->
                     if (position == 1) {
@@ -121,8 +125,8 @@ class TopicTemplateListActivity :
             }
     }
 
-    private fun loadTemplates(refresh: Boolean) {
-        mViewModel.loadTemplates(topicId, refresh).obs(this) {
+    private fun loadTemplates(refresh: Boolean, isLoading: Boolean) {
+        mViewModel.loadTemplates(topicId, refresh, isLoading).obs(this) {
             onSuccess { page ->
                 hasNext = page.outsidefix
                 loadListSuccess(

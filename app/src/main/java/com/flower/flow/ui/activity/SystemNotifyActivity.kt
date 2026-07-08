@@ -30,7 +30,6 @@ class SystemNotifyActivity :
 
     @SuppressLint("NotifyDataSetChanged")
     override fun initView(savedInstanceState: Bundle?) {
-        UserManager.saveUserMsgDot(false)
 
         mBind.refreshLayout.setEnableLoadMore(false)
         mBind.refreshLayout.refresh {
@@ -66,6 +65,7 @@ class SystemNotifyActivity :
     }
 
     private fun loadNotifyList(showLoading: Boolean) {
+        UserManager.saveUserMsgDot(false)
         mViewModel.loadNotifyList(showLoading).obs(this) {
             onSuccess { list ->
                 mBind.refreshLayout.finishRefresh()

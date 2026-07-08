@@ -104,7 +104,7 @@
 
             <com.hjq.shape.layout.ShapeLinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="88dp"
+                android:layout_height="wrap_content"
                 android:paddingHorizontal="8dp"
                 android:paddingVertical="16dp"
                 app:shape_radiusInBottomEnd="10dp"
@@ -118,9 +118,11 @@
                 <com.hjq.shape.view.ShapeEditText
                     android:id="@+id/etFeedbackContent"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="88dp"
                     android:gravity="start|top"
+                    android:inputType="textCapSentences|textMultiLine"
                     android:padding="8dp"
+                    android:scrollbars="vertical"
                     android:textColor="@color/white"
                     android:textColorHint="#979797"
                     android:textSize="12sp"

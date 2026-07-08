@@ -8,6 +8,8 @@ import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.AppStrings
+import com.flower.flow.app.core.util.enableNestedVerticalScrolling
+import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.SysTypeItem
 import com.flower.flow.data.vm.ReportViewModel
@@ -28,6 +30,7 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
     override fun initView(savedInstanceState: Bundle?) {
         setText()
         setupCharCount()
+        mBind.etReportContent.enableNestedVerticalScrolling()
 
         mBind.rvReportType.vertical()
             .setup {
@@ -66,6 +69,7 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
             mViewModel.submitReport(content, selectedType.acetoneactuate).obs(this) {
                 onSuccess { msg ->
                     msg.toast()
+                    UserManager.saveUserMsgDot(true)
                     finish()
                 }
                 onError { error ->

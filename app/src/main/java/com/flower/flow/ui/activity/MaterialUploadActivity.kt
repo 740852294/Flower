@@ -285,7 +285,7 @@ class MaterialUploadActivity :
                     }
                     .setCancelButtonText(AppStrings.get(StringResId.CANCEL_ACTION))
                     .setOnCancel {
-                        MainNavigator.openMainTab(this, MainAdapter.PAGE_TOPIC)
+                        MainNavigator.openMainTab(this, MainAdapter.PAGE_USER)
                     }
             }
 
@@ -298,7 +298,7 @@ class MaterialUploadActivity :
                     }
                     .setCancelButtonText(AppStrings.get(StringResId.CANCEL_ACTION))
                     .setOnCancel {
-                        MainNavigator.openMainTab(this, MainAdapter.PAGE_TOPIC)
+                        MainNavigator.openMainTab(this, MainAdapter.PAGE_USER)
                     }
             }
         }

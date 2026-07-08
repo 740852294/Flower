@@ -37,7 +37,7 @@
         android:id="@+id/refreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:srlEnableRefresh="false">
+        app:srlHeaderInsetStart="?attr/actionBarSize">
 
         <androidx.core.widget.NestedScrollView
             android:id="@+id/nestedScrollView"

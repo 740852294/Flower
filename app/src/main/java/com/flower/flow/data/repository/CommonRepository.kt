@@ -105,14 +105,14 @@ object CommonRepository {
         content: String,
         contact: String,
         sysTypeId: Int,
-    ): Await<Any> {
+    ): Await<String> {
         return RxHttp.postForm(NetUrl.Common.ADVICE_ADD)
             .add("imitaterise", content)
             .add("bribelack", contact)
             .add("aboundchivalry", sysTypeId)
             .add("baldaconite", RandomDataUtil.getRandomData(3))
             .add("cringefortune", RandomDataUtil.getRandomData(1))
-            .toAwaitResponse()
+            .toAwaitMsgResponse(String::class.java)
     }
 
     /**

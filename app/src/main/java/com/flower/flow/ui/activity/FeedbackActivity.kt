@@ -11,6 +11,7 @@ import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.AppStrings
+import com.flower.flow.app.core.util.enableNestedVerticalScrolling
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.data.model.StringResId
@@ -36,6 +37,7 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
             addReportBtn()
         }
         setText()
+        mBind.etFeedbackContent.enableNestedVerticalScrolling()
 
         mBind.rvFeedbackType.vertical()
             .setup {
@@ -85,7 +87,8 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
 
             val content = mBind.etFeedbackContent.text.toString().trim()
             mViewModel.submitFeedback(content, email, selectedType.acetoneactuate).obs(this) {
-                onSuccess {
+                onSuccess { msg ->
+                    msg.toast()
                     UserManager.saveUserMsgDot(true)
                     finish()
                 }

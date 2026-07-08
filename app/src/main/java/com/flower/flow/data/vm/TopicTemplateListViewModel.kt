@@ -14,7 +14,7 @@ class TopicTemplateListViewModel : BaseViewModel() {
         currentPage = maxOf(currentPage, page.coerceAtLeast(1))
     }
 
-    fun loadTemplates(topicId: Int, refresh: Boolean) = request {
+    fun loadTemplates(topicId: Int, refresh: Boolean, isLoading: Boolean) = request {
         onRequest {
             if (refresh) {
                 currentPage = 1
@@ -30,6 +30,6 @@ class TopicTemplateListViewModel : BaseViewModel() {
                 throw e
             }
         }
-        loadingType = if (refresh) LoadingType.LOADING_XML else LoadingType.LOADING_NULL
+        loadingType = if (isLoading) LoadingType.LOADING_XML else LoadingType.LOADING_NULL
     }
 }

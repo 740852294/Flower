@@ -226,13 +226,14 @@
                 app:layout_constraintBottom_toTopOf="@+id/llPhotoUpload"
                 app:layout_constraintEnd_toEndOf="@+id/llPhotoUpload" />
 
-            <com.hjq.shape.layout.ShapeLinearLayout
+            <com.hjq.shape.layout.ShapeConstraintLayout
                 android:id="@+id/btnCreate"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginBottom="30dp"
                 android:gravity="center"
                 android:orientation="horizontal"
+                android:paddingHorizontal="10dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -247,17 +248,23 @@
                     android:layout_height="wrap_content"
                     android:includeFontPadding="false"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="19sp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:text="Generate immediately" />
 
                 <LinearLayout
                     android:id="@+id/llCost"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="40dp"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
                     android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
                     tools:visibility="visible">
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -272,11 +279,11 @@
                         android:layout_marginStart="3dp"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="20" />
                 </LinearLayout>
 
-            </com.hjq.shape.layout.ShapeLinearLayout>
+            </com.hjq.shape.layout.ShapeConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

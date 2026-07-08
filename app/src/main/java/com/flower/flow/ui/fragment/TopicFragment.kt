@@ -70,6 +70,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
         mBind.refreshLayout.refresh {
             loadTopicList(showPageLoading = false)
+            mViewModel.fetchUserInfo()
         }
 
         mBind.rvList.vertical()
@@ -145,7 +146,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     }
 
     override fun lazyLoadData() {
-        if (App.globalConfig != null){
+        if (App.globalConfig != null) {
             loadInitialTopicList()
         }
     }

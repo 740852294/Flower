@@ -157,7 +157,6 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             TopicFragment.REQUEST_MAIN_DATA_READY,
             Bundle(),
         )
-        getUserInfo(isFirst = true, isLoading = true)
         startUserInfoPolling()
     }
 
@@ -211,7 +210,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     private fun selectTab(index: Int) {
         val previousTab = currentTabIndex
         if (previousTab != index) {
-            if (index == MainAdapter.PAGE_TOPIC && previousTab != -1) {
+            if ((index == MainAdapter.PAGE_TOPIC || index == MainAdapter.PAGE_TAG) && previousTab != -1) {
                 getUserInfo(isFirst = false, isLoading = false)
             }
             currentTabIndex = index

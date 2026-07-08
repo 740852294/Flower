@@ -23,7 +23,9 @@ class MainViewModel : BaseViewModel() {
             }
             val globalConfig = CommonRepository.getGlobalConfig().await()
             App.globalConfig = globalConfig
-            MainInitResult.Ready(globalConfig)
+            val info = UserRepository.getUserInfoLivedata().await()
+            UserManager.saveUser(info)
+            MainInitResult.Ready(globalConfig, info)
         }
         loadingType = LoadingType.LOADING_DIALOG
     }

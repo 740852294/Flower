@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
@@ -302,12 +303,20 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         selectionController.enterSelectionMode()
         workListBinder.updateDeleteButtonText()
         workListBinder.notifySelectionStateChanged()
+        mBind.btnDelete.setTextColor("#FFFF7D00".toColorInt())
+        mBind.btnDelete.shapeDrawableBuilder
+            .setStrokeColor("#FFFF7D00".toColorInt())
+            .intoBackground()
     }
 
     private fun exitSelectionMode(notifyItems: Boolean = true) {
         if (!selectionController.isSelectionMode && !selectionController.hasSelection()) return
         selectionController.exitSelectionMode()
         workListBinder.updateDeleteButtonText()
+        mBind.btnDelete.setTextColor("#FFFFFFFF".toColorInt())
+        mBind.btnDelete.shapeDrawableBuilder
+            .setStrokeColor("#FFFFFFFF".toColorInt())
+            .intoBackground()
         if (notifyItems) workListBinder.notifySelectionStateChanged()
     }
 
