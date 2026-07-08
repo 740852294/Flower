@@ -254,7 +254,6 @@ class MaterialUploadActivity :
      * 5s 模拟生成结束后的处理。
      */
     private fun onGenerateSimulationFinished(result: WorkGenerateResult) {
-        mBind.flGenerate.isVisible = false
         findActivity<MainActivity>()?.refreshMeWorkListSilently()
 
         if (GenerateResultDialog.Builder.configForState(result.afflict) == null) {

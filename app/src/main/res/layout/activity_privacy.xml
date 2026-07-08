@@ -22,33 +22,25 @@
         <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/ivBg"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:adjustViewBounds="true"
             android:contentDescription="@null"
-            android:scaleType="fitXY"
+            android:scaleType="centerCrop"
             android:src="@mipmap/pic_privacy"
-            app:layout_constraintDimensionRatio="375:656"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="0px"
-            android:background="@color/windowBackground"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/ivBg" />
 
         <com.hjq.shape.view.ShapeView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="@id/ivBg"
             app:layout_constraintDimensionRatio="375:328"
-            app:shape_solidGradientEndColor="#FF1F1F1F"
+            app:shape_solidGradientEndColor="#FF000000"
             app:shape_solidGradientOrientation="topToBottom"
             app:shape_solidGradientStartColor="#001F1F1F" />
 
         <TextView
             android:id="@+id/title"
-            android:layout_width="0dp"
+            android:layout_width="310dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="30dp"
             android:layout_marginTop="70dp"
@@ -72,7 +64,7 @@
             android:includeFontPadding="false"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@id/ivBg"
+            app:layout_constraintBottom_toTopOf="@id/btnAgree"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:text="By continuing to use the color walkpaper app, you represent that you have read and accept both the Terms of Use and Privacy Policy." />
@@ -104,8 +96,8 @@
             android:textSize="16sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:shape_radius="21dp"
-            app:shape_solidColor="#1aFFFFFF"
-            app:shape_strokeColor="#1aFFFFFF"
+            app:shape_solidColor="#FF595959"
+            app:shape_strokeColor="#FF696969"
             app:shape_strokeSize="1dp"
             tools:text="DISGREE" />
     </androidx.constraintlayout.widget.ConstraintLayout>

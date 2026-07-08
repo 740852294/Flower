@@ -27,7 +27,6 @@
             android:layout_width="77dp"
             android:layout_height="128dp"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="62dp"
             android:scaleType="centerCrop"
             tools:src="@mipmap/ic_pic_loading" />
 
@@ -36,7 +35,7 @@
             android:layout_width="96dp"
             android:layout_height="144dp"
             android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="31dp"
+            android:layout_marginEnd="16dp"
             android:scaleType="centerCrop"
             tools:src="@mipmap/ic_pic_loading" />
 
@@ -44,6 +43,7 @@
             android:id="@+id/clTemple1"
             android:layout_width="114dp"
             android:layout_height="158dp"
+            android:layout_marginEnd="30dp"
             android:layout_gravity="end">
 
             <ImageView
