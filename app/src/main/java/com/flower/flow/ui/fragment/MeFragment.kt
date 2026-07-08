@@ -9,11 +9,13 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import androidx.core.view.children
 import androidx.core.view.isVisible
+import androidx.core.widget.NestedScrollView
 import androidx.lifecycle.lifecycleScope
 import com.drake.brv.utils.bindingAdapter
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
+import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadAvatarFile
 import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
@@ -56,12 +58,18 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private lateinit var workListBinder: MeWorkListBinder
     private lateinit var regenerateCoordinator: MeRegenerateCoordinator
     private var workListPollingStarted = false
+    private var isWorkListScrolling = false
+    private val resumeWorkAnimationsRunnable = Runnable {
+        isWorkListScrolling = false
+        resumeVisibleAnimations()
+    }
 
     companion object {
         const val SPAN_COUNT = 2
         internal const val PAYLOAD_SELECTION = "payload_selection"
         internal const val PAYLOAD_DOWNLOAD = "payload_download"
         private const val WORK_LIST_POLL_INTERVAL = 2 * 60 * 1000L
+        private const val ANIMATION_SCROLL_IDLE_DELAY_MS = 120L
 
         fun newInstance(): MeFragment = MeFragment()
     }
@@ -102,17 +110,27 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         workListBinder.setupMinHeightObserver()
         workListBinder.setupRecyclerView()
+        setupAnimationScrollTracking()
     }
 
     private val workListCallbacks = object : MeWorkListBinder.Callbacks {
-        override fun isFragmentVisible(): Boolean = isResumed && !isHidden
+        override fun isFragmentVisible(): Boolean =
+            isResumed && !isHidden && !isWorkListScrolling
 
         override fun onRequestAgainGenerate(workItem: WorkItem) {
             regenerateCoordinator.requestAgainGenerate(workItem)
         }
 
         override fun syncAnimationPlayback(imageView: ImageView) {
-            imageView.setImageAnimationRunning(isResumed && !isHidden)
+            val coverCanAnimate =
+                imageView.getTag(R.id.tag_work_cover_animation_enabled) == true
+            imageView.setImageAnimationRunning(
+                isResumed &&
+                    !isHidden &&
+                    !isWorkListScrolling &&
+                    coverCanAnimate &&
+                    imageView.isVisibleOnScreen(),
+            )
         }
 
         override fun onOpenWorkPreview(workItem: WorkItem) {
@@ -176,6 +194,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun onPause() {
+        mBind.nestedScrollView.removeCallbacks(resumeWorkAnimationsRunnable)
+        isWorkListScrolling = false
         setVisibleAnimationsRunning(false)
         exitSelectionMode()
         super.onPause()
@@ -184,6 +204,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (hidden) {
+            mBind.nestedScrollView.removeCallbacks(resumeWorkAnimationsRunnable)
+            isWorkListScrolling = false
             setVisibleAnimationsRunning(false)
             exitSelectionMode()
         } else {
@@ -295,6 +317,23 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         workListBinder.updateDeleteButtonText()
     }
 
+    private fun setupAnimationScrollTracking() {
+        mBind.nestedScrollView.setOnScrollChangeListener(
+            NestedScrollView.OnScrollChangeListener { scrollView, _, scrollY, _, oldScrollY ->
+                if (scrollY == oldScrollY) return@OnScrollChangeListener
+                if (!isWorkListScrolling) {
+                    isWorkListScrolling = true
+                    setVisibleAnimationsRunning(false)
+                }
+                scrollView.removeCallbacks(resumeWorkAnimationsRunnable)
+                scrollView.postDelayed(
+                    resumeWorkAnimationsRunnable,
+                    ANIMATION_SCROLL_IDLE_DELAY_MS,
+                )
+            },
+        )
+    }
+
     private fun enterSelectionMode() {
         selectionController.enterSelectionMode()
         workListBinder.updateDeleteButtonText()
@@ -349,12 +388,17 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun setVisibleAnimationsRunning(running: Boolean) {
-        mBind.ivAvatar.setImageAnimationRunning(running)
+        mBind.ivAvatar.setImageAnimationRunning(running && mBind.ivAvatar.isVisibleOnScreen())
         mBind.rvList.children.forEach { itemView ->
             com.flower.flow.ui.fragment.me.WorkItemViewDelegate.setItemAnimationsRunning(
                 itemView,
-                running
+                running && itemView.isVisibleOnScreen(),
             )
         }
+    }
+
+    override fun onDestroyView() {
+        mBind.nestedScrollView.removeCallbacks(resumeWorkAnimationsRunnable)
+        super.onDestroyView()
     }
 }

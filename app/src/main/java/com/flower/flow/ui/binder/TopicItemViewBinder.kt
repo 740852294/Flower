@@ -1,12 +1,15 @@
 package com.flower.flow.ui.binder
 
 import android.graphics.Color
+import android.util.TypedValue
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
+import androidx.core.view.updateLayoutParams
 import com.flower.flow.app.App
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.setImageAnimationRunning
@@ -14,6 +17,7 @@ import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.model.entity.TopicItem
 import com.flower.flow.databinding.LayoutItemTopicLeftBinding
 import com.flower.flow.databinding.LayoutItemTopicRightBinding
+import kotlin.math.roundToInt
 
 internal data class TopicItemViewRefs(
     val tvName: TextView,
@@ -81,6 +85,23 @@ internal fun LayoutItemTopicRightBinding.bindTopicItem(
     onFinalImageSet: (ImageView) -> Unit,
 ) {
     bindTopicItem(asTopicItemViewRefs(), model, onFinalImageSet)
+
+    fun Int.dpToPx(): Int = TypedValue.applyDimension(
+        TypedValue.COMPLEX_UNIT_DIP,
+        toFloat(),
+        root.resources.displayMetrics,
+    ).roundToInt()
+
+    ivCover2.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        marginEnd = if (ivCover3.isVisible) 16.dpToPx() else 0
+    }
+    clTemple1.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        marginEnd = when {
+            ivCover3.isVisible -> 30.dpToPx()
+            ivCover2.isVisible -> 16.dpToPx()
+            else -> 0
+        }
+    }
 }
 
 internal fun LayoutItemTopicLeftBinding.setTopicItemAnimationsRunning(running: Boolean) {

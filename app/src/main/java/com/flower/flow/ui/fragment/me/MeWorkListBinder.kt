@@ -9,6 +9,7 @@ import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.dividerSpace
 import com.drake.brv.utils.setup
 import com.flower.flow.R
+import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.entity.WorkItem
@@ -104,11 +105,13 @@ class MeWorkListBinder(
                 override fun onChildViewAttachedToWindow(view: View) {
                     WorkItemViewDelegate.setItemAnimationsRunning(
                         view,
-                        callbacks.isFragmentVisible(),
+                        callbacks.isFragmentVisible() && view.isVisibleOnScreen(),
                     )
                 }
 
-                override fun onChildViewDetachedFromWindow(view: View) = Unit
+                override fun onChildViewDetachedFromWindow(view: View) {
+                    WorkItemViewDelegate.setItemAnimationsRunning(view, false)
+                }
             },
         )
     }

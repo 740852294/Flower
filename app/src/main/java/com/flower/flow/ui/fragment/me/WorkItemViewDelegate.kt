@@ -65,6 +65,11 @@ object WorkItemViewDelegate {
     ) {
         val isVip = UserManager.user?.shareengage ?: false
         bindSelectionState(binding, model, selection)
+        binding.ivCover.setTag(
+            R.id.tag_work_cover_animation_enabled,
+            model.afflict == WorkStatusCodes.COMPLETE,
+        )
+        binding.ivCover.setImageAnimationRunning(false)
 
         binding.btnStatus.isVisible = !model.increaserace.isNullOrBlank()
         binding.btnStatus.text = model.increaserace ?: ""
@@ -106,11 +111,12 @@ object WorkItemViewDelegate {
         binding.ivCover.loadImage(
             url = model.clogcadre,
             cornerRadiusDp = 15f,
-            isAutoPlay = true,
+            isAutoPlay = false,
+            resizeToViewport = true,
             onFinalImageSet = onAnimationSync,
         )
         binding.ivCover.applyBlurEffect(true, cornerRadiusPx.toFloat())
-        bindSampleImages(binding, model.aperitifaccost, onAnimationSync)
+        bindSampleImages(binding, model.aperitifaccost)
         binding.llStatus.visibility = View.VISIBLE
         binding.ivStatus.visibility = View.VISIBLE
         binding.ivStatus.setImageResource(R.mipmap.ic_work_lock)
@@ -136,7 +142,8 @@ object WorkItemViewDelegate {
             binding.ivCover.loadImage(
                 url = url,
                 cornerRadiusDp = 15f,
-                isAutoPlay = true,
+                isAutoPlay = false,
+                resizeToViewport = true,
                 onFinalImageSet = onAnimationSync,
             )
         }
@@ -171,7 +178,8 @@ object WorkItemViewDelegate {
             binding.ivCover.loadImage(
                 url = url,
                 cornerRadiusDp = 15f,
-                isAutoPlay = true,
+                isAutoPlay = false,
+                resizeToViewport = true,
                 onFinalImageSet = onAnimationSync,
             )
         }
@@ -196,7 +204,8 @@ object WorkItemViewDelegate {
             binding.ivCover.loadImage(
                 url = url,
                 cornerRadiusDp = 15f,
-                isAutoPlay = true,
+                isAutoPlay = false,
+                resizeToViewport = true,
                 onFinalImageSet = onAnimationSync,
             )
         }
@@ -215,7 +224,6 @@ object WorkItemViewDelegate {
     fun bindSampleImages(
         binding: LayoutItemWorkBinding,
         samples: List<String>?,
-        onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
@@ -226,8 +234,8 @@ object WorkItemViewDelegate {
                 binding.ivSampleSingle.loadImage(
                     url = samples.first(),
                     cornerRadiusDp = 10f,
-                    isAutoPlay = true,
-                    onFinalImageSet = onAnimationSync,
+                    isAutoPlay = false,
+                    resizeToViewport = true,
                 )
             }
 
@@ -236,14 +244,14 @@ object WorkItemViewDelegate {
                 binding.ivSampleLeft.loadImage(
                     url = samples[0],
                     cornerRadiiDp = floatArrayOf(10f, 0f, 0f, 10f),
-                    isAutoPlay = true,
-                    onFinalImageSet = onAnimationSync,
+                    isAutoPlay = false,
+                    resizeToViewport = true,
                 )
                 binding.ivSampleRight.loadImage(
                     url = samples.getOrNull(1),
                     cornerRadiiDp = floatArrayOf(0f, 10f, 10f, 0f),
-                    isAutoPlay = true,
-                    onFinalImageSet = onAnimationSync,
+                    isAutoPlay = false,
+                    resizeToViewport = true,
                 )
             }
         }
@@ -251,10 +259,12 @@ object WorkItemViewDelegate {
 
     fun setItemAnimationsRunning(itemView: View, running: Boolean) {
         LayoutItemWorkBinding.bind(itemView).run {
-            ivCover.setImageAnimationRunning(running)
-            ivSampleSingle.setImageAnimationRunning(running)
-            ivSampleLeft.setImageAnimationRunning(running)
-            ivSampleRight.setImageAnimationRunning(running)
+            val coverCanAnimate =
+                ivCover.getTag(R.id.tag_work_cover_animation_enabled) == true
+            ivCover.setImageAnimationRunning(running && coverCanAnimate)
+            ivSampleSingle.setImageAnimationRunning(false)
+            ivSampleLeft.setImageAnimationRunning(false)
+            ivSampleRight.setImageAnimationRunning(false)
         }
     }
 }

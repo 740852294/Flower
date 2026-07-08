@@ -11,6 +11,7 @@ import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
+import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.data.model.entity.TemplateItem
@@ -65,7 +66,8 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                             url = model.bullmind,
                             cornerRadiusDp = COVER_CORNER_RADIUS_DP,
                             borderWidthDp = COVER_BORDER_WIDTH_DP,
-                            isAutoPlay = true,
+                            isAutoPlay = false,
+                            resizeToViewport = true,
                             onFinalImageSet = ::syncAnimationPlayback,
                         )
                         bindLockBadge(this, model)
@@ -88,7 +90,9 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                     setItemAnimationRunning(view, canPlayAnimations())
                 }
 
-                override fun onChildViewDetachedFromWindow(view: View) = Unit
+                override fun onChildViewDetachedFromWindow(view: View) {
+                    setItemAnimationRunning(view, false)
+                }
             }
         )
         mBind.rvList.addOnScrollListener(
@@ -249,7 +253,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
 
     private fun syncAnimationPlayback(imageView: ImageView) {
         imageView.setImageAnimationRunning(
-            canPlayAnimations() && imageView.isAttachedToWindow,
+            canPlayAnimations() && imageView.isAttachedToWindow && imageView.isVisibleOnScreen(),
         )
     }
 
@@ -272,7 +276,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
 
     private fun setVisibleAnimationsRunning(running: Boolean) {
         mBind.rvList.children.forEach { itemView ->
-            setItemAnimationRunning(itemView, running)
+            setItemAnimationRunning(itemView, running && itemView.isVisibleOnScreen())
         }
     }
 

@@ -33,8 +33,6 @@ class DrawableBlurImageView @JvmOverloads constructor(
     private var blurActive = false
     private var effectRadius = 20f
     private val downsampleRatio = 0.15f
-    private var frameIntervalMs = 33L
-    private var lastProcessTimestamp = 0L
 
     private var sourceBitmap: Bitmap? = null
     private var blurredBitmap: Bitmap? = null
@@ -106,11 +104,9 @@ class DrawableBlurImageView @JvmOverloads constructor(
                 offscreen.restoreToCount(saveCount)
             }
 
-            val now = System.currentTimeMillis()
-            if (now - lastProcessTimestamp >= frameIntervalMs) {
-                processBlurFrame()
-                lastProcessTimestamp = now
-            }
+            // Blurred covers are intentionally static. Recompute only when Android asks
+            // this view to draw instead of scheduling a permanent animation loop.
+            processBlurFrame()
 
             val blurred = blurredBitmap ?: run {
                 super.onDraw(canvas)
@@ -121,10 +117,6 @@ class DrawableBlurImageView @JvmOverloads constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             super.onDraw(canvas)
-        } finally {
-            if (blurActive) {
-                postInvalidateOnAnimation()
-            }
         }
     }
 
