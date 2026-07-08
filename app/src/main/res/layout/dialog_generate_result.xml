@@ -19,7 +19,7 @@
         android:gravity="center"
         android:includeFontPadding="false"
         android:textColor="@color/white"
-        android:textSize="24sp"
+        android:textSize="23sp"
         tools:text="Generating your video" />
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -94,7 +94,7 @@
         android:maxLines="1"
         android:textAllCaps="false"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="18sp"
         app:shape_radius="20dp"
         app:shape_solidGradientEndColor="#FFFD662E"
         app:shape_solidGradientOrientation="leftToRight"
@@ -112,7 +112,7 @@
         android:paddingHorizontal="16dp"
         android:paddingVertical="4dp"
         android:textColor="#FFC1BFBF"
-        android:textSize="20sp"
+        android:textSize="18sp"
         android:visibility="gone"
         tools:text="Cancel"
         tools:visibility="visible" />

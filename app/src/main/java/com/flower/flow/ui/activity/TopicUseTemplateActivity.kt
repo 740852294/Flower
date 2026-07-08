@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
@@ -38,6 +39,7 @@ import me.hgj.jetpackmvvm.ext.util.intent.extraAct
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
+import kotlin.math.abs
 
 class TopicUseTemplateActivity :
     BaseActivity<TopicUseTemplateViewModel, ActivityTopicUseTemplateBinding>() {
@@ -65,6 +67,13 @@ class TopicUseTemplateActivity :
     private var isLoadingMore = false
     private var nextCarouselGestureTime = 0L
     private var isCarouselGestureBlocked = false
+    private var carouselDownX = 0f
+    private var carouselDownY = 0f
+    private var isCarouselAxisLocked = false
+    private var isCarouselVerticalGesture = false
+    private val carouselTouchSlop by lazy {
+        ViewConfiguration.get(this).scaledTouchSlop
+    }
     private val appendedTemplates = arrayListOf<TemplateItem>()
     private lateinit var carouselLayoutManager: SinglePageLinearLayoutManager
 
@@ -137,21 +146,47 @@ class TopicUseTemplateActivity :
 
     private val carouselTouchListener = object : RecyclerView.SimpleOnItemTouchListener() {
         override fun onInterceptTouchEvent(recyclerView: RecyclerView, event: MotionEvent): Boolean {
-            if (event.actionMasked == MotionEvent.ACTION_DOWN) {
-                isCarouselGestureBlocked =
-                    recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE ||
-                        SystemClock.elapsedRealtime() < nextCarouselGestureTime
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    carouselDownX = event.x
+                    carouselDownY = event.y
+                    isCarouselAxisLocked = false
+                    isCarouselVerticalGesture = false
+                    isCarouselGestureBlocked =
+                        recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE ||
+                            SystemClock.elapsedRealtime() < nextCarouselGestureTime
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    if (!isCarouselGestureBlocked && !isCarouselAxisLocked) {
+                        val distanceX = abs(event.x - carouselDownX)
+                        val distanceY = abs(event.y - carouselDownY)
+                        if (maxOf(distanceX, distanceY) > carouselTouchSlop) {
+                            isCarouselAxisLocked = true
+                            isCarouselVerticalGesture = distanceY >= distanceX
+                        }
+                    }
+                }
+
+                MotionEvent.ACTION_UP,
+                MotionEvent.ACTION_CANCEL -> resetCarouselTouchState()
             }
-            return isCarouselGestureBlocked
+            return isCarouselGestureBlocked || isCarouselVerticalGesture
         }
 
         override fun onTouchEvent(recyclerView: RecyclerView, event: MotionEvent) {
             if (event.actionMasked == MotionEvent.ACTION_UP ||
                 event.actionMasked == MotionEvent.ACTION_CANCEL
             ) {
-                isCarouselGestureBlocked = false
+                resetCarouselTouchState()
             }
         }
+    }
+
+    private fun resetCarouselTouchState() {
+        isCarouselGestureBlocked = false
+        isCarouselAxisLocked = false
+        isCarouselVerticalGesture = false
     }
 
     override val showTitle: Boolean
