@@ -74,7 +74,7 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
         mViewModel.getBackgroundVideo().obs(this) {
             onSuccess {
                 if (it.cuspcrow.isNotEmpty()) {
-                    mBind.bgVideo.loadImage(it.cuspcrow)
+                    mBind.bgVideo.loadImage(it.cuspcrow, placeholderRes = R.mipmap.pic_privacy)
                     mBind.ivBg.visibility = View.INVISIBLE
                 }
             }

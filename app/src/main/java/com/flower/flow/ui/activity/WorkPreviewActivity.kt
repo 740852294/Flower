@@ -125,7 +125,6 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
 
         mBind.previewImage.loadImageFitWidth(
             url = url,
-            cornerRadiusDp = PREVIEW_CORNER_RADIUS_DP,
             onAspectRatio = ::updatePreviewAspectRatio,
         )
     }

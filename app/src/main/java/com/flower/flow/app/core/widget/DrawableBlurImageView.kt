@@ -5,14 +5,20 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.Path
 import android.graphics.PorterDuff
 import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.RenderEffect
 import android.graphics.Shader
+import android.graphics.Outline
 import android.os.Build
 import android.util.AttributeSet
+import android.view.View
+import android.view.ViewOutlineProvider
 import androidx.constraintlayout.utils.widget.ImageFilterView
 import androidx.core.graphics.createBitmap
+import com.flower.flow.R
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -41,6 +47,28 @@ class DrawableBlurImageView @JvmOverloads constructor(
     private val drawPaint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val sourceRect = Rect()
     private val destRect = Rect()
+    private val clipPath = Path()
+    private val clipRect = RectF()
+
+    private var cornerRadiusPx = 0f
+
+    init {
+        val typedArray = context.obtainStyledAttributes(
+            attrs,
+            R.styleable.DrawableBlurImageView,
+            defStyleAttr,
+            0,
+        )
+        try {
+            cornerRadiusPx = typedArray.getDimension(
+                R.styleable.DrawableBlurImageView_dbiv_cornerRadius,
+                0f,
+            )
+        } finally {
+            typedArray.recycle()
+        }
+        restoreDefaultRoundStyle()
+    }
 
     /**
      * @param enabled 是否启用模糊
@@ -66,6 +94,46 @@ class DrawableBlurImageView @JvmOverloads constructor(
                 clearOffscreenBitmaps()
             }
             invalidate()
+        }
+    }
+
+    override fun draw(canvas: Canvas) {
+        if (clipPath.isEmpty) {
+            super.draw(canvas)
+            return
+        }
+
+        val saveCount = canvas.save()
+        canvas.clipPath(clipPath)
+        super.draw(canvas)
+        canvas.restoreToCount(saveCount)
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        updateClipPath(w, h)
+        if (cornerRadiusPx > 0f) {
+            invalidateOutline()
+        }
+    }
+
+    fun restoreDefaultRoundStyle() {
+        if (cornerRadiusPx <= 0f) {
+            clipToOutline = false
+            outlineProvider = ViewOutlineProvider.BACKGROUND
+            return
+        }
+
+        clipToOutline = true
+        outlineProvider = object : ViewOutlineProvider() {
+            override fun getOutline(view: View, outline: Outline) {
+                if (view.width <= 0 || view.height <= 0) return
+                outline.setRoundRect(0, 0, view.width, view.height, cornerRadiusPx)
+            }
+        }
+        updateClipPath(width, height)
+        if (width > 0 && height > 0) {
+            invalidateOutline()
         }
     }
 
@@ -118,6 +186,16 @@ class DrawableBlurImageView @JvmOverloads constructor(
             e.printStackTrace()
             super.onDraw(canvas)
         }
+    }
+
+    private fun updateClipPath(width: Int, height: Int) {
+        clipPath.reset()
+        if (width <= 0 || height <= 0 || cornerRadiusPx <= 0f) {
+            return
+        }
+        clipRect.set(0f, 0f, width.toFloat(), height.toFloat())
+        clipPath.addRoundRect(clipRect, cornerRadiusPx, cornerRadiusPx, Path.Direction.CW)
+        clipPath.close()
     }
 
     private fun prepareOffscreenBitmaps(viewWidth: Int, viewHeight: Int) {

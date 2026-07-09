@@ -345,7 +345,6 @@ class TopicUseTemplateActivity :
     private fun bindTemplateUseItem(itemView: View, model: TemplateItem) {
         itemView.findViewById<ImageView>(R.id.ivCover).loadImage(
             url = model.bullmind,
-            cornerRadiusDp = COVER_CORNER_RADIUS_DP,
         )
         val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(2, 3)
@@ -369,7 +368,6 @@ class TopicUseTemplateActivity :
                 ivSampleSingle.isVisible = true
                 ivSampleSingle.loadImage(
                     url = samples.first(),
-                    cornerRadiusDp = SAMPLE_CORNER_RADIUS_DP,
                 )
             }
 
@@ -377,21 +375,9 @@ class TopicUseTemplateActivity :
                 llSampleBottom.isVisible = true
                 itemView.findViewById<ImageView>(R.id.ivSampleLeft).loadImage(
                     url = samples[0],
-                    cornerRadiiDp = floatArrayOf(
-                        SAMPLE_CORNER_RADIUS_DP,
-                        0f,
-                        0f,
-                        SAMPLE_CORNER_RADIUS_DP,
-                    ),
                 )
                 itemView.findViewById<ImageView>(R.id.ivSampleRight).loadImage(
                     url = samples.getOrNull(1),
-                    cornerRadiiDp = floatArrayOf(
-                        0f,
-                        SAMPLE_CORNER_RADIUS_DP,
-                        SAMPLE_CORNER_RADIUS_DP,
-                        0f,
-                    ),
                 )
             }
         }
@@ -453,8 +439,6 @@ class TopicUseTemplateActivity :
         private const val ASPECT_HEIGHT = 358f
         private const val ITEM_OVERLAP_RATIO = 0.84f
         private const val CAROUSEL_DEBOUNCE_DURATION_MS = 250L
-        private const val COVER_CORNER_RADIUS_DP = 15f
-        private const val SAMPLE_CORNER_RADIUS_DP = 5f
 
         const val EXTRA_TOPIC_ID = "topic_id"
         const val EXTRA_TOPIC_NAME = "topic_name"

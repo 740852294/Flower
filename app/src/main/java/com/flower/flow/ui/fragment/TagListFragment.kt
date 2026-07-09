@@ -64,8 +64,6 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                         tvTitle.text = model.dazzledeacon
                         ivCover.loadImage(
                             url = model.bullmind,
-                            cornerRadiusDp = COVER_CORNER_RADIUS_DP,
-                            borderWidthDp = COVER_BORDER_WIDTH_DP,
                             isAutoPlay = false,
                             resizeToViewport = true,
                             onFinalImageSet = ::syncAnimationPlayback,
@@ -226,7 +224,6 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                 binding.ivSampleSingle.isVisible = true
                 binding.ivSampleSingle.loadImage(
                     url = samples.first(),
-                    cornerRadiusDp = SAMPLE_CORNER_RADIUS_DP,
                     isAutoPlay = false,
                     resizeToViewport = true,
                 )
@@ -236,23 +233,11 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                 binding.llSampleBottom.isVisible = true
                 binding.ivSampleLeft.loadImage(
                     url = samples[0],
-                    cornerRadiiDp = floatArrayOf(
-                        SAMPLE_CORNER_RADIUS_DP,
-                        0f,
-                        0f,
-                        SAMPLE_CORNER_RADIUS_DP,
-                    ),
                     isAutoPlay = false,
                     resizeToViewport = true,
                 )
                 binding.ivSampleRight.loadImage(
                     url = samples.getOrNull(1),
-                    cornerRadiiDp = floatArrayOf(
-                        0f,
-                        SAMPLE_CORNER_RADIUS_DP,
-                        SAMPLE_CORNER_RADIUS_DP,
-                        0f,
-                    ),
                     isAutoPlay = false,
                     resizeToViewport = true,
                 )
@@ -309,9 +294,6 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
     companion object {
         private const val ARG_TAG_ID = "tag_id"
         private const val SPAN_COUNT = 2
-        private const val COVER_CORNER_RADIUS_DP = 15f
-        private const val COVER_BORDER_WIDTH_DP = 1f
-        private const val SAMPLE_CORNER_RADIUS_DP = 5f
 
         fun newInstance(tagId: Int): TagListFragment {
             return TagListFragment().apply {

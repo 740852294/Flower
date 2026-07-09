@@ -10,4 +10,18 @@
         <attr name="dlv_lineWidth" format="dimension" />
         <attr name="dlv_lineColor" format="color" />
     </declare-styleable>
+
+    <declare-styleable name="RoundCornerImageView">
+        <attr name="rciv_cornerRadius" format="dimension" />
+        <attr name="rciv_cornerTopLeftRadius" format="dimension" />
+        <attr name="rciv_cornerTopRightRadius" format="dimension" />
+        <attr name="rciv_cornerBottomRightRadius" format="dimension" />
+        <attr name="rciv_cornerBottomLeftRadius" format="dimension" />
+        <attr name="rciv_borderWidth" format="dimension" />
+        <attr name="rciv_borderColor" format="color" />
+    </declare-styleable>
+
+    <declare-styleable name="DrawableBlurImageView">
+        <attr name="dbiv_cornerRadius" format="dimension" />
+    </declare-styleable>
 </resources>

@@ -39,7 +39,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle">
 
-        <ImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivCover"
             android:layout_width="0px"
             android:layout_height="0px"
@@ -48,6 +48,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:rciv_borderColor="#FFFFFFFF"
+            app:rciv_borderWidth="1dp"
+            app:rciv_cornerRadius="15dp"
             tools:src="@mipmap/ic_pic_loading" />
 
         <com.hjq.shape.layout.ShapeLinearLayout
@@ -88,7 +91,7 @@
 
         </com.hjq.shape.layout.ShapeLinearLayout>
 
-        <ImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivSampleSingle"
             android:layout_width="28dp"
             android:layout_height="40dp"
@@ -98,6 +101,7 @@
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:rciv_cornerRadius="5dp"
             tools:visibility="visible" />
 
         <LinearLayout
@@ -113,17 +117,21 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:visibility="visible">
 
-            <ImageView
+            <com.flower.flow.app.core.widget.RoundCornerImageView
                 android:id="@+id/ivSampleLeft"
                 android:layout_width="28dp"
                 android:layout_height="40dp"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:rciv_cornerBottomLeftRadius="5dp"
+                app:rciv_cornerTopLeftRadius="5dp" />
 
-            <ImageView
+            <com.flower.flow.app.core.widget.RoundCornerImageView
                 android:id="@+id/ivSampleRight"
                 android:layout_width="28dp"
                 android:layout_height="40dp"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                app:rciv_cornerBottomRightRadius="5dp"
+                app:rciv_cornerTopRightRadius="5dp" />
 
         </LinearLayout>
 

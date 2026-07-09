@@ -101,7 +101,7 @@
                     android:layout_marginTop="30dp"
                     android:paddingHorizontal="16dp">
 
-                    <com.hjq.shape.view.ShapeImageView
+                    <com.flower.flow.app.core.widget.RoundCornerImageView
                         android:id="@+id/ivAvatar"
                         android:layout_width="64dp"
                         android:layout_height="64dp"
@@ -109,9 +109,9 @@
                         android:src="@mipmap/ic_default_avatar"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:shape_radius="32dp"
-                        app:shape_strokeColor="@color/white"
-                        app:shape_strokeSize="2dp" />
+                        app:rciv_borderColor="@color/white"
+                        app:rciv_borderWidth="2dp"
+                        app:rciv_cornerRadius="32dp" />
 
                     <TextView
                         android:id="@+id/tvName"

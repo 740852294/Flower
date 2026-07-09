@@ -1,6 +1,5 @@
 package com.flower.flow.ui.binder
 
-import android.graphics.Color
 import android.util.TypedValue
 import android.view.View
 import android.view.ViewGroup
@@ -126,8 +125,6 @@ internal fun bindTopicItem(
         refs.clTemple1.isVisible = true
         refs.ivCover1.loadImage(
             url = model1.bullmind,
-            cornerRadiusDp = 10f,
-            borderWidthDp = 1f,
             isAutoPlay = true,
             onFinalImageSet = onFinalImageSet,
         )
@@ -143,34 +140,26 @@ internal fun bindTopicItem(
     bindOptionalCover(
         refs.ivCover2,
         modelList?.getOrNull(1),
-        cornerRadiusDp = 10f,
         onFinalImageSet = onFinalImageSet,
     )
     bindOptionalCover(
         refs.ivCover3,
         modelList?.getOrNull(2),
-        cornerRadiusDp = 10f,
         onFinalImageSet = onFinalImageSet,
     )
     bindOptionalCover(
         refs.ivCover4,
         modelList?.getOrNull(3),
-        cornerRadiusDp = 16f,
-        borderColor = Color.BLACK,
         isAutoPlay = false,
     )
     bindOptionalCover(
         refs.ivCover5,
         modelList?.getOrNull(4),
-        cornerRadiusDp = 16f,
-        borderColor = Color.BLACK,
         isAutoPlay = false,
     )
     bindOptionalCover(
         refs.ivCover6,
         modelList?.getOrNull(5),
-        cornerRadiusDp = 16f,
-        borderColor = Color.BLACK,
         isAutoPlay = false,
     )
 }
@@ -178,8 +167,6 @@ internal fun bindTopicItem(
 private fun bindOptionalCover(
     imageView: ImageView,
     template: TemplateItem?,
-    cornerRadiusDp: Float,
-    borderColor: Int = Color.WHITE,
     onFinalImageSet: ((ImageView) -> Unit)? = null,
     isAutoPlay: Boolean = true,
 ) {
@@ -187,9 +174,6 @@ private fun bindOptionalCover(
         imageView.isVisible = true
         imageView.loadImage(
             url = template.bullmind,
-            cornerRadiusDp = cornerRadiusDp,
-            borderWidthDp = 1f,
-            borderColor = borderColor,
             isAutoPlay = isAutoPlay,
             onFinalImageSet = onFinalImageSet,
         )
@@ -211,7 +195,6 @@ private fun bindSampleImages(
             refs.ivSampleSingle.isVisible = true
             refs.ivSampleSingle.loadImage(
                 url = samples.first(),
-                cornerRadiusDp = 4f,
                 isAutoPlay = true,
                 onFinalImageSet = onFinalImageSet,
             )
@@ -221,13 +204,11 @@ private fun bindSampleImages(
             refs.llSampleBottom.isVisible = true
             refs.ivSampleLeft.loadImage(
                 url = samples[0],
-                cornerRadiiDp = floatArrayOf(4f, 0f, 0f, 4f),
                 isAutoPlay = true,
                 onFinalImageSet = onFinalImageSet,
             )
             refs.ivSampleRight.loadImage(
                 url = samples.getOrNull(1),
-                cornerRadiiDp = floatArrayOf(0f, 4f, 4f, 0f),
                 isAutoPlay = true,
                 onFinalImageSet = onFinalImageSet,
             )

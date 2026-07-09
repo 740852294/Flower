@@ -29,7 +29,7 @@
             android:paddingHorizontal="16dp"
             android:paddingTop="16dp">
 
-            <ImageView
+            <com.flower.flow.app.core.widget.RoundCornerImageView
                 android:id="@+id/ivCover"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -45,6 +45,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0"
+                app:rciv_cornerRadius="30dp"
                 tools:src="@mipmap/ic_pic_loading" />
 
             <com.hjq.shape.layout.ShapeLinearLayout

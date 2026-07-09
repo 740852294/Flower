@@ -18,13 +18,13 @@
         app:layout_constraintTop_toTopOf="parent"
         app:shape_radius="15dp">
 
-        <com.hjq.shape.view.ShapeImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/previewImage"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            app:shape_radius="15dp"
+            app:rciv_cornerRadius="15dp"
             tools:src="@mipmap/ic_pic_loading" />
 
         <androidx.media3.ui.PlayerView

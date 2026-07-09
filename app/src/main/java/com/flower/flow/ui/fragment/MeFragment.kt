@@ -261,6 +261,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         EventViewModel.languageEvent.observe(this) {
             setText()
+            loadData(isLoading = false)
         }
 
         EventViewModel.workDownloadEvent.observe(viewLifecycleOwner) { workItem ->

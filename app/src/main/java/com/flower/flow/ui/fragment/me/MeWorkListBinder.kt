@@ -51,7 +51,6 @@ class MeWorkListBinder(
                             model = getModel(),
                             selection = selectionController,
                             downloadState = downloadManager.stateOf(getModel<WorkItem>().baptismdictate),
-                            cornerRadiusPx = dp2px(15f),
                             onAnimationSync = callbacks::syncAnimationPlayback,
                         )
                     }

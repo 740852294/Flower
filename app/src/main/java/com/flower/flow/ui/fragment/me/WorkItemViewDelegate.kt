@@ -54,7 +54,6 @@ object WorkItemViewDelegate {
         model: WorkItem,
         selection: WorkListSelectionController,
         downloadState: WorkDownloadJobManager.DownloadUiState?,
-        cornerRadiusPx: Int,
         onAnimationSync: (ImageView) -> Unit,
     ) {
         val isVip = UserManager.user?.shareengage ?: false
@@ -70,18 +69,17 @@ object WorkItemViewDelegate {
                 model,
                 isVip,
                 selection,
-                cornerRadiusPx,
                 onAnimationSync
             )
 
             WorkStatusCodes.WAIT, WorkStatusCodes.PROCESSING ->
-                bindProcessingState(binding, model, cornerRadiusPx, onAnimationSync)
+                bindProcessingState(binding, model, onAnimationSync)
 
             WorkStatusCodes.COMPLETE ->
-                bindCompleteState(binding, model, cornerRadiusPx, onAnimationSync)
+                bindCompleteState(binding, model, onAnimationSync)
 
             WorkStatusCodes.FAIL ->
-                bindFailedState(binding, model, cornerRadiusPx, onAnimationSync)
+                bindFailedState(binding, model, onAnimationSync)
         }
         bindDownloadState(binding, model, downloadState)
     }
@@ -91,7 +89,6 @@ object WorkItemViewDelegate {
         model: WorkItem,
         isVip: Boolean,
         selection: WorkListSelectionController,
-        cornerRadiusPx: Int,
         onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.lockDot.visibility = if (selection.isSelectionMode) View.GONE else View.VISIBLE
@@ -100,12 +97,11 @@ object WorkItemViewDelegate {
         binding.ivDownload.visibility = View.INVISIBLE
         binding.ivCover.loadImage(
             url = model.clogcadre,
-            cornerRadiusDp = 15f,
             isAutoPlay = false,
             resizeToViewport = true,
             onFinalImageSet = onAnimationSync,
         )
-        binding.ivCover.applyBlurEffect(true, cornerRadiusPx.toFloat())
+        binding.ivCover.applyBlurEffect(true)
         bindSampleImages(binding, model.aperitifaccost)
         binding.llStatus.visibility = View.VISIBLE
         binding.ivStatus.visibility = View.VISIBLE
@@ -120,7 +116,6 @@ object WorkItemViewDelegate {
     private fun bindProcessingState(
         binding: LayoutItemWorkBinding,
         model: WorkItem,
-        cornerRadiusPx: Int,
         onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.lockDot.visibility = View.GONE
@@ -131,13 +126,12 @@ object WorkItemViewDelegate {
         if (url.isNotBlank()) {
             binding.ivCover.loadImage(
                 url = url,
-                cornerRadiusDp = 15f,
                 isAutoPlay = false,
                 resizeToViewport = true,
                 onFinalImageSet = onAnimationSync,
             )
         }
-        binding.ivCover.applyBlurEffect(true, cornerRadiusPx.toFloat())
+        binding.ivCover.applyBlurEffect(true)
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
         binding.llStatus.visibility = View.VISIBLE
@@ -154,7 +148,6 @@ object WorkItemViewDelegate {
     private fun bindCompleteState(
         binding: LayoutItemWorkBinding,
         model: WorkItem,
-        cornerRadiusPx: Int,
         onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.lockDot.visibility = View.GONE
@@ -167,7 +160,6 @@ object WorkItemViewDelegate {
         if (url.isNotBlank()) {
             binding.ivCover.loadImage(
                 url = url,
-                cornerRadiusDp = 15f,
                 isAutoPlay = false,
                 resizeToViewport = true,
                 onFinalImageSet = onAnimationSync,
@@ -182,7 +174,6 @@ object WorkItemViewDelegate {
     private fun bindFailedState(
         binding: LayoutItemWorkBinding,
         model: WorkItem,
-        cornerRadiusPx: Int,
         onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.lockDot.visibility = View.GONE
@@ -193,13 +184,12 @@ object WorkItemViewDelegate {
         if (url.isNotBlank()) {
             binding.ivCover.loadImage(
                 url = url,
-                cornerRadiusDp = 15f,
                 isAutoPlay = false,
                 resizeToViewport = true,
                 onFinalImageSet = onAnimationSync,
             )
         }
-        binding.ivCover.applyBlurEffect(true, cornerRadiusPx.toFloat())
+        binding.ivCover.applyBlurEffect(true)
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
         binding.llStatus.visibility = View.VISIBLE
@@ -223,7 +213,6 @@ object WorkItemViewDelegate {
                 binding.ivSampleSingle.isVisible = true
                 binding.ivSampleSingle.loadImage(
                     url = samples.first(),
-                    cornerRadiusDp = 10f,
                     isAutoPlay = false,
                     resizeToViewport = true,
                 )
@@ -233,13 +222,11 @@ object WorkItemViewDelegate {
                 binding.llSampleBottom.isVisible = true
                 binding.ivSampleLeft.loadImage(
                     url = samples[0],
-                    cornerRadiiDp = floatArrayOf(10f, 0f, 0f, 10f),
                     isAutoPlay = false,
                     resizeToViewport = true,
                 )
                 binding.ivSampleRight.loadImage(
                     url = samples.getOrNull(1),
-                    cornerRadiiDp = floatArrayOf(0f, 10f, 10f, 0f),
                     isAutoPlay = false,
                     resizeToViewport = true,
                 )

@@ -22,22 +22,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivCover3"
             android:layout_width="77dp"
             android:layout_height="128dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="62dp"
             android:scaleType="centerCrop"
+            app:rciv_borderColor="@color/white"
+            app:rciv_borderWidth="1dp"
+            app:rciv_cornerRadius="10dp"
             tools:src="@mipmap/ic_pic_loading" />
 
-        <ImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivCover2"
             android:layout_width="96dp"
             android:layout_height="144dp"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="31dp"
             android:scaleType="centerCrop"
+            app:rciv_borderColor="@color/white"
+            app:rciv_borderWidth="1dp"
+            app:rciv_cornerRadius="10dp"
             tools:src="@mipmap/ic_pic_loading" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -45,7 +51,7 @@
             android:layout_width="114dp"
             android:layout_height="158dp">
 
-            <ImageView
+            <com.flower.flow.app.core.widget.RoundCornerImageView
                 android:id="@+id/ivCover1"
                 android:layout_width="0px"
                 android:layout_height="0px"
@@ -54,6 +60,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:rciv_borderColor="@color/white"
+                app:rciv_borderWidth="1dp"
+                app:rciv_cornerRadius="10dp"
                 tools:src="@mipmap/ic_pic_loading" />
 
             <com.hjq.shape.layout.ShapeLinearLayout
@@ -94,7 +103,7 @@
 
             </com.hjq.shape.layout.ShapeLinearLayout>
 
-            <ImageView
+            <com.flower.flow.app.core.widget.RoundCornerImageView
                 android:id="@+id/ivSampleSingle"
                 android:layout_width="23dp"
                 android:layout_height="32dp"
@@ -104,6 +113,7 @@
                 android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
+                app:rciv_cornerRadius="4dp"
                 tools:visibility="visible" />
 
             <LinearLayout
@@ -119,17 +129,21 @@
                 app:layout_constraintStart_toStartOf="parent"
                 tools:visibility="visible">
 
-                <ImageView
+                <com.flower.flow.app.core.widget.RoundCornerImageView
                     android:id="@+id/ivSampleLeft"
                     android:layout_width="23dp"
                     android:layout_height="32dp"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    app:rciv_cornerBottomLeftRadius="4dp"
+                    app:rciv_cornerTopLeftRadius="4dp" />
 
-                <ImageView
+                <com.flower.flow.app.core.widget.RoundCornerImageView
                     android:id="@+id/ivSampleRight"
                     android:layout_width="23dp"
                     android:layout_height="32dp"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    app:rciv_cornerBottomRightRadius="4dp"
+                    app:rciv_cornerTopRightRadius="4dp" />
 
             </LinearLayout>
 
@@ -184,40 +198,40 @@
         app:layout_constraintStart_toStartOf="@id/tvName"
         app:layout_constraintTop_toTopOf="@id/ivEnter">
 
-        <com.hjq.shape.view.ShapeImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivCover4"
             android:layout_width="32dp"
             android:layout_height="32dp"
+            android:background="#666666"
             android:scaleType="centerCrop"
-            app:shape_radius="16dp"
-            app:shape_solidColor="#666666"
-            app:shape_strokeColor="#000000"
-            app:shape_strokeSize="1dp" />
+            app:rciv_borderColor="#000000"
+            app:rciv_borderWidth="1dp"
+            app:rciv_cornerRadius="16dp" />
 
-        <com.hjq.shape.view.ShapeImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivCover5"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="20dp"
+            android:background="#666666"
             android:scaleType="centerCrop"
             android:visibility="gone"
-            app:shape_radius="16dp"
-            app:shape_solidColor="#666666"
-            app:shape_strokeColor="#000000"
-            app:shape_strokeSize="1dp"
+            app:rciv_borderColor="#000000"
+            app:rciv_borderWidth="1dp"
+            app:rciv_cornerRadius="16dp"
             tools:visibility="visible" />
 
-        <com.hjq.shape.view.ShapeImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivCover6"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:layout_marginStart="40dp"
+            android:background="#666666"
             android:scaleType="centerCrop"
             android:visibility="gone"
-            app:shape_radius="16dp"
-            app:shape_solidColor="#666666"
-            app:shape_strokeColor="#000000"
-            app:shape_strokeSize="1dp"
+            app:rciv_borderColor="#000000"
+            app:rciv_borderWidth="1dp"
+            app:rciv_cornerRadius="16dp"
             tools:visibility="visible" />
 
     </FrameLayout>

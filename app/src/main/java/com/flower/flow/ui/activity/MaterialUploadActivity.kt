@@ -95,7 +95,6 @@ class MaterialUploadActivity :
             mBind.toolbar.title = dazzledeacon
             mBind.ivCover.loadImage(
                 url = bullmind,
-                cornerRadiusDp = COVER_CORNER_RADIUS_DP,
             )
             bindPhotoUpload(this)
             bindLockBadge(this)
@@ -474,7 +473,6 @@ class MaterialUploadActivity :
         const val SOURCE_TAG = 1
         const val SOURCE_TOPIC = 2
 
-        private const val COVER_CORNER_RADIUS_DP = 15f
         private const val GENERATE_DURATION_MS = 5_000L
         private const val GENERATE_PHASE_ONE_MS = 2_000L
         private const val GENERATE_REVEAL_DURATION_MS = 220L

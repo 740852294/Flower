@@ -48,8 +48,6 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
 
             mBind.ivCover.loadImage(
                 url = this.bullmind,
-                cornerRadiusDp = COVER_CORNER_RADIUS_DP,
-                borderWidthDp = COVER_BORDER_WIDTH_DP,
             )
 
             bindLockBadge(mBind, this)
@@ -130,7 +128,6 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
                 binding.ivSampleSingle.isVisible = true
                 binding.ivSampleSingle.loadImage(
                     url = samples.first(),
-                    cornerRadiusDp = SAMPLE_CORNER_RADIUS_DP,
                 )
             }
 
@@ -138,29 +135,11 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
                 binding.llSampleBottom.isVisible = true
                 binding.ivSampleLeft.loadImage(
                     url = samples[0],
-                    cornerRadiiDp = floatArrayOf(
-                        SAMPLE_CORNER_RADIUS_DP,
-                        0f,
-                        0f,
-                        SAMPLE_CORNER_RADIUS_DP,
-                    ),
                 )
                 binding.ivSampleRight.loadImage(
                     url = samples.getOrNull(1),
-                    cornerRadiiDp = floatArrayOf(
-                        0f,
-                        SAMPLE_CORNER_RADIUS_DP,
-                        SAMPLE_CORNER_RADIUS_DP,
-                        0f,
-                    ),
                 )
             }
         }
-    }
-
-    companion object {
-        private const val COVER_CORNER_RADIUS_DP = 15f
-        private const val COVER_BORDER_WIDTH_DP = 1f
-        private const val SAMPLE_CORNER_RADIUS_DP = 5f
     }
 }

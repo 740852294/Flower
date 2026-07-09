@@ -11,13 +11,14 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:scaleType="centerCrop"
+        app:dbiv_cornerRadius="15dp"
         app:layout_constraintDimensionRatio="168:237"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@mipmap/ic_pic_loading" />
 
-    <ImageView
+    <com.flower.flow.app.core.widget.RoundCornerImageView
         android:id="@+id/ivSampleSingle"
         android:layout_width="32dp"
         android:layout_height="42dp"
@@ -27,6 +28,7 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:rciv_cornerRadius="10dp"
         tools:visibility="visible" />
 
     <LinearLayout
@@ -42,17 +44,21 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible">
 
-        <ImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivSampleLeft"
             android:layout_width="32dp"
             android:layout_height="44dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:rciv_cornerBottomLeftRadius="10dp"
+            app:rciv_cornerTopLeftRadius="10dp" />
 
-        <ImageView
+        <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivSampleRight"
             android:layout_width="32dp"
             android:layout_height="44dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:rciv_cornerBottomRightRadius="10dp"
+            app:rciv_cornerTopRightRadius="10dp" />
 
     </LinearLayout>
 

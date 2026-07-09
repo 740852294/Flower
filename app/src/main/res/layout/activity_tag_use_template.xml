@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:id="@+id/llContent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@mipmap/pic_use_temple_bg"
     android:orientation="vertical">
@@ -80,11 +80,14 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
+            <com.flower.flow.app.core.widget.RoundCornerImageView
                 android:id="@+id/ivCover"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
+                app:rciv_borderColor="#FFFFFFFF"
+                app:rciv_borderWidth="1dp"
+                app:rciv_cornerRadius="15dp"
                 tools:src="@mipmap/ic_pic_loading" />
 
             <com.hjq.shape.layout.ShapeLinearLayout
@@ -124,7 +127,7 @@
 
             </com.hjq.shape.layout.ShapeLinearLayout>
 
-            <ImageView
+            <com.flower.flow.app.core.widget.RoundCornerImageView
                 android:id="@+id/ivSampleSingle"
                 android:layout_width="52dp"
                 android:layout_height="74dp"
@@ -132,6 +135,7 @@
                 android:layout_marginTop="12dp"
                 android:scaleType="centerCrop"
                 android:visibility="gone"
+                app:rciv_cornerRadius="5dp"
                 tools:src="@mipmap/ic_pic_loading"
                 tools:visibility="visible" />
 
@@ -145,17 +149,21 @@
                 android:visibility="gone"
                 tools:visibility="visible">
 
-                <ImageView
+                <com.flower.flow.app.core.widget.RoundCornerImageView
                     android:id="@+id/ivSampleLeft"
                     android:layout_width="52dp"
                     android:layout_height="74dp"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    app:rciv_cornerBottomLeftRadius="5dp"
+                    app:rciv_cornerTopLeftRadius="5dp" />
 
-                <ImageView
+                <com.flower.flow.app.core.widget.RoundCornerImageView
                     android:id="@+id/ivSampleRight"
                     android:layout_width="52dp"
                     android:layout_height="74dp"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    app:rciv_cornerBottomRightRadius="5dp"
+                    app:rciv_cornerTopRightRadius="5dp" />
 
             </LinearLayout>
         </FrameLayout>
