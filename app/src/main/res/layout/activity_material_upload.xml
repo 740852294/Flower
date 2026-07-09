@@ -293,7 +293,7 @@
         android:id="@+id/flGenerate"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/windowBackground"
+        android:background="@android:color/transparent"
         android:visibility="gone"
         tools:visibility="gone">
 
@@ -301,7 +301,8 @@
             android:id="@+id/gifView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
+            app:actualImageScaleType="centerCrop"
+            app:fadeDuration="0" />
 
         <com.hjq.shape.layout.ShapeLinearLayout
             android:layout_width="match_parent"

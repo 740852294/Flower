@@ -349,7 +349,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="19sp"
         app:layout_constraintBottom_toTopOf="@id/btnDisagree"
         app:shape_radius="30dp"
         app:shape_solidGradientEndColor="#FFFD662E"

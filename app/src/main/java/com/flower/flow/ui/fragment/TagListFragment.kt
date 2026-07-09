@@ -87,7 +87,10 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         mBind.rvList.addOnChildAttachStateChangeListener(
             object : RecyclerView.OnChildAttachStateChangeListener {
                 override fun onChildViewAttachedToWindow(view: View) {
-                    setItemAnimationRunning(view, canPlayAnimations())
+                    setItemAnimationRunning(
+                        view,
+                        canPlayAnimations() && view.isVisibleOnScreen(),
+                    )
                 }
 
                 override fun onChildViewDetachedFromWindow(view: View) {
@@ -97,11 +100,15 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         )
         mBind.rvList.addOnScrollListener(
             object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dx != 0 || dy != 0) {
+                        syncVisibleAnimations()
+                    }
+                }
+
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                         resumeVisibleAnimations()
-                    } else {
-                        setVisibleAnimationsRunning(false)
                     }
                 }
             }
@@ -261,8 +268,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         if (view == null) return false
         return isContainerVisible &&
                 !isHidden &&
-                (isResumed || isPagerTransitioning) &&
-                mBind.rvList.scrollState == RecyclerView.SCROLL_STATE_IDLE
+                (isResumed || isPagerTransitioning)
     }
 
     private fun resumeVisibleAnimations() {
@@ -271,6 +277,14 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
             if (canPlayAnimations()) {
                 setVisibleAnimationsRunning(true)
             }
+        }
+    }
+
+    private fun syncVisibleAnimations() {
+        if (canPlayAnimations()) {
+            setVisibleAnimationsRunning(true)
+        } else {
+            setVisibleAnimationsRunning(false)
         }
     }
 

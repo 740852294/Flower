@@ -15,6 +15,8 @@ import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.annotation.ColorInt
 import androidx.annotation.DrawableRes
+import com.facebook.drawee.drawable.ArrayDrawable
+import com.facebook.drawee.drawable.DrawableParent
 import com.facebook.drawee.drawable.ScalingUtils
 import com.facebook.fresco.vito.options.ImageOptions
 import com.facebook.fresco.vito.options.RoundingOptions
@@ -52,6 +54,7 @@ fun ImageView.loadImage(
     resizeToViewport: Boolean = false,
     onFinalImageSet: ((ImageView) -> Unit)? = null,
 ) {
+    clearStoredImageAnimationDrawable()
     if (url.isNullOrBlank()) {
         clearImage()
         return
@@ -91,6 +94,7 @@ fun ImageView.loadImage(
             imageInfo: ImageInfo?,
             drawable: Drawable?,
         ) {
+            target.setStoredImageAnimationDrawable(drawable)
             target.post {
                 onFinalImageSet(target)
             }
@@ -108,7 +112,13 @@ fun ImageView.loadImage(
 
 /** 控制 Fresco Vito 加载的 WebP/GIF 动图播放状态，静态图片会被忽略。 */
 fun ImageView.setImageAnimationRunning(running: Boolean) {
-    val animatable = VitoView.getDrawable(this)?.actualImageDrawable as? Animatable ?: return
+    val frescoDrawable = VitoView.getDrawable(this)
+    val animatable = findImageAnimatable(
+        getStoredImageAnimationDrawable(),
+        frescoDrawable?.actualImageDrawable,
+        frescoDrawable as? Drawable,
+        drawable,
+    ) ?: return
     if (running) {
         if (!animatable.isRunning) animatable.start()
     } else if (animatable.isRunning) {
@@ -313,6 +323,7 @@ fun ImageView.loadAvatarFile(
     isAutoPlay: Boolean = true,
     onFinalImageSet: ((ImageView) -> Unit)? = null,
 ) {
+    clearStoredImageAnimationDrawable()
     if (source.isNullOrBlank()) {
         setImageDrawable(null)
         return
@@ -344,6 +355,7 @@ fun ImageView.loadAvatarFile(
             imageInfo: ImageInfo?,
             drawable: Drawable?,
         ) {
+            target.setStoredImageAnimationDrawable(drawable)
             target.post {
                 onFinalImageSet(target)
             }
@@ -391,6 +403,46 @@ private fun resolveAvatarSource(source: String): String {
  * 释放 Vito 图片资源并清空 ImageView。
  */
 fun ImageView.clearImage() {
+    clearStoredImageAnimationDrawable()
     VitoView.release(this)
     setImageDrawable(null)
 }
+
+private fun ImageView.setStoredImageAnimationDrawable(drawable: Drawable?) {
+    setTag(R.id.tag_image_animation_drawable, drawable)
+}
+
+private fun ImageView.getStoredImageAnimationDrawable(): Drawable? {
+    return getTag(R.id.tag_image_animation_drawable) as? Drawable
+}
+
+private fun ImageView.clearStoredImageAnimationDrawable() {
+    setStoredImageAnimationDrawable(null)
+}
+
+private fun findImageAnimatable(vararg drawables: Drawable?): Animatable? {
+    drawables.forEach { drawable ->
+        val animatable = findAnimatable(drawable)
+        if (animatable != null) return animatable
+    }
+    return null
+}
+
+private fun findAnimatable(drawable: Drawable?, depth: Int = 0): Animatable? {
+    if (drawable == null || depth > MAX_DRAWABLE_UNWRAP_DEPTH) return null
+    if (drawable is Animatable) return drawable
+
+    if (drawable is DrawableParent) {
+        findAnimatable(drawable.drawable, depth + 1)?.let { return it }
+    }
+
+    if (drawable is ArrayDrawable) {
+        for (index in 0 until drawable.numberOfLayers) {
+            findAnimatable(drawable.getDrawable(index), depth + 1)?.let { return it }
+        }
+    }
+
+    return null
+}
+
+private const val MAX_DRAWABLE_UNWRAP_DEPTH = 8

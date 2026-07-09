@@ -4,12 +4,15 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import com.facebook.drawee.backends.pipeline.Fresco
+import com.facebook.drawee.controller.BaseControllerListener
+import com.facebook.imagepipeline.image.ImageInfo
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
@@ -54,6 +57,8 @@ class MaterialUploadActivity :
     private var submitPageInfo: SubmitPageInfo? = null
     private var pickSlot = UploadSlot.SINGLE
     private var generateSimulationJob: Job? = null
+    private var isGenerateAnimationReady = false
+    private var pendingGenerateReveal: (() -> Unit)? = null
     private lateinit var imagePickDelegate: ImagePickDelegate
 
     private val generateBackPressedCallback = object : OnBackPressedCallback(false) {
@@ -95,6 +100,8 @@ class MaterialUploadActivity :
             bindPhotoUpload(this)
             bindLockBadge(this)
         }
+
+        preloadGenerateAnimation()
 
         mBind.root.post {
             pickSlot = getFirstUploadSlot()
@@ -182,17 +189,78 @@ class MaterialUploadActivity :
 
         findActivity<MainActivity>()?.refreshTopicListSilently()
 
+        mBind.tvGeneratePercent.text = "0%"
+        updateGenerateTip(result.concedearbiter)
+        generateBackPressedCallback.isEnabled = true
+        mBind.flGenerate.animate().cancel()
+        mBind.flGenerate.alpha = 0f
         mBind.flGenerate.visibility = View.VISIBLE
 
-        val uri = "res://${packageName}/${R.drawable.generate}".toUri()
+        var hasRevealed = false
 
+        fun revealGenerateOverlay() {
+            if (hasRevealed) return
+            hasRevealed = true
+            pendingGenerateReveal = null
+            startGenerateAnimation()
+            mBind.flGenerate.animate()
+                .alpha(1f)
+                .setDuration(GENERATE_REVEAL_DURATION_MS)
+                .setInterpolator(AccelerateDecelerateInterpolator())
+                .withEndAction {
+                    startGenerateSimulation(result)
+                }
+                .start()
+        }
+
+        if (isGenerateAnimationReady) {
+            mBind.root.post {
+                revealGenerateOverlay()
+            }
+        } else {
+            pendingGenerateReveal = ::revealGenerateOverlay
+        }
+
+        lifecycleScope.launch {
+            delay(GENERATE_REVEAL_FALLBACK_MS.milliseconds)
+            revealGenerateOverlay()
+        }
+    }
+
+    private fun preloadGenerateAnimation() {
+        isGenerateAnimationReady = false
+        val uri = "res://${packageName}/${R.drawable.generate}".toUri()
         val controller = Fresco.newDraweeControllerBuilder()
             .setUri(uri)
-            .setAutoPlayAnimations(true)
+            .setAutoPlayAnimations(false)
+            .setOldController(mBind.gifView.controller)
+            .setControllerListener(object : BaseControllerListener<ImageInfo>() {
+                override fun onFinalImageSet(
+                    id: String?,
+                    imageInfo: ImageInfo?,
+                    animatable: android.graphics.drawable.Animatable?,
+                ) {
+                    animatable?.stop()
+                    isGenerateAnimationReady = true
+                    mBind.root.post {
+                        if (mBind.flGenerate.isVisible) {
+                            startGenerateAnimation()
+                        }
+                        pendingGenerateReveal?.invoke()
+                        pendingGenerateReveal = null
+                    }
+                }
+            })
             .build()
 
         mBind.gifView.controller = controller
-        startGenerateSimulation(result)
+    }
+
+    private fun startGenerateAnimation() {
+        val animatable = mBind.gifView.controller?.animatable ?: return
+        if (!animatable.isRunning) {
+            animatable.start()
+        }
     }
 
     private fun startGenerateSimulation(result: WorkGenerateResult) {
@@ -409,5 +477,7 @@ class MaterialUploadActivity :
         private const val COVER_CORNER_RADIUS_DP = 15f
         private const val GENERATE_DURATION_MS = 5_000L
         private const val GENERATE_PHASE_ONE_MS = 2_000L
+        private const val GENERATE_REVEAL_DURATION_MS = 220L
+        private const val GENERATE_REVEAL_FALLBACK_MS = 600L
     }
 }

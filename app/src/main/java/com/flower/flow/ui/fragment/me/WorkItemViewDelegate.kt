@@ -40,18 +40,12 @@ object WorkItemViewDelegate {
     ) {
         binding.llProgress.isVisible = downloadState != null
         if (downloadState != null) {
-            binding.ivDownload.visibility = View.GONE
             binding.tvDownload.text = model.attachaway.orEmpty()
             binding.pbDownload.isIndeterminate = downloadState.progress == null
             downloadState.progress?.let { binding.pbDownload.progress = it }
         } else {
             binding.pbDownload.isIndeterminate = false
             binding.pbDownload.progress = 0
-            if (model.afflict == WorkStatusCodes.COMPLETE) {
-                binding.ivDownload.visibility = View.VISIBLE
-            } else {
-                binding.ivDownload.visibility = View.GONE
-            }
         }
     }
 
@@ -65,10 +59,6 @@ object WorkItemViewDelegate {
     ) {
         val isVip = UserManager.user?.shareengage ?: false
         bindSelectionState(binding, model, selection)
-        binding.ivCover.setTag(
-            R.id.tag_work_cover_animation_enabled,
-            model.afflict == WorkStatusCodes.COMPLETE,
-        )
         binding.ivCover.setImageAnimationRunning(false)
 
         binding.btnStatus.isVisible = !model.increaserace.isNullOrBlank()
@@ -105,9 +95,9 @@ object WorkItemViewDelegate {
         onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.lockDot.visibility = if (selection.isSelectionMode) View.GONE else View.VISIBLE
-        binding.llTime.visibility = View.GONE
+        binding.llTime.visibility = View.INVISIBLE
         binding.llProgress.visibility = View.GONE
-        binding.ivDownload.visibility = View.GONE
+        binding.ivDownload.visibility = View.INVISIBLE
         binding.ivCover.loadImage(
             url = model.clogcadre,
             cornerRadiusDp = 15f,
@@ -134,9 +124,9 @@ object WorkItemViewDelegate {
         onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.lockDot.visibility = View.GONE
-        binding.llTime.visibility = View.GONE
+        binding.llTime.visibility = View.INVISIBLE
         binding.llProgress.visibility = View.GONE
-        binding.ivDownload.visibility = View.GONE
+        binding.ivDownload.visibility = View.INVISIBLE
         val url = model.aperitifaccost?.firstOrNull() ?: ""
         if (url.isNotBlank()) {
             binding.ivCover.loadImage(
@@ -169,7 +159,7 @@ object WorkItemViewDelegate {
     ) {
         binding.lockDot.visibility = View.GONE
         binding.llTime.visibility =
-            if (model.behavebanister == 2) View.VISIBLE else View.GONE
+            if (model.behavebanister == 2) View.VISIBLE else View.INVISIBLE
         binding.tvTime.text = model.aggregatechief.orEmpty()
         binding.llProgress.visibility = View.GONE
         binding.ivDownload.visibility = View.VISIBLE
@@ -196,9 +186,9 @@ object WorkItemViewDelegate {
         onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.lockDot.visibility = View.GONE
-        binding.llTime.visibility = View.GONE
+        binding.llTime.visibility = View.INVISIBLE
         binding.llProgress.visibility = View.GONE
-        binding.ivDownload.visibility = View.GONE
+        binding.ivDownload.visibility = View.INVISIBLE
         val url = model.aperitifaccost?.firstOrNull() ?: ""
         if (url.isNotBlank()) {
             binding.ivCover.loadImage(
@@ -259,9 +249,7 @@ object WorkItemViewDelegate {
 
     fun setItemAnimationsRunning(itemView: View, running: Boolean) {
         LayoutItemWorkBinding.bind(itemView).run {
-            val coverCanAnimate =
-                ivCover.getTag(R.id.tag_work_cover_animation_enabled) == true
-            ivCover.setImageAnimationRunning(running && coverCanAnimate)
+            ivCover.setImageAnimationRunning(running)
             ivSampleSingle.setImageAnimationRunning(false)
             ivSampleLeft.setImageAnimationRunning(false)
             ivSampleRight.setImageAnimationRunning(false)

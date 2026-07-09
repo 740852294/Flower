@@ -230,6 +230,6 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     }
 
     private companion object {
-        private const val USER_INFO_POLL_INTERVAL = 2 * 60 * 1000L
+        private const val USER_INFO_POLL_INTERVAL = 30 * 1000L
     }
 }
