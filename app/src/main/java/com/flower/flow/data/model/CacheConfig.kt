@@ -16,6 +16,9 @@ object CacheConfig {
     /** 文案 Map 的 JSON 缓存，key 为 StringResId 本地常量 */
     var copyTextsJson by Cache("")
 
+    /** 当前文案缓存对应的 languageId */
+    var languageConfigLanguageId by Cache(0)
+
     /** 语言列表 JSON 缓存 */
     var languageListJson by Cache("")
 
@@ -26,6 +29,8 @@ object CacheConfig {
     var lastGenerateSourcePathsJson by Cache("")
 
     fun hasLanguageConfigCache(): Boolean {
-        return copyTextsJson.isNotBlank() && languageListJson.isNotBlank()
+        return copyTextsJson.isNotBlank() &&
+            languageConfigLanguageId > 0 &&
+            languageListJson.isNotBlank()
     }
 }

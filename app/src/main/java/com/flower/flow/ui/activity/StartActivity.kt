@@ -2,7 +2,6 @@ package com.flower.flow.ui.activity
 
 import android.os.Bundle
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.util.LanguageConfigHelper
 import com.flower.flow.data.model.CacheConfig
 import com.flower.flow.data.vm.StartViewModel
 import com.flower.flow.databinding.ActivityStartBinding
@@ -24,11 +23,6 @@ class StartActivity : BaseActivity<StartViewModel, ActivityStartBinding>() {
         if (!CacheConfig.isAgree) {
             openActivity<PrivacyActivity>()
             finish()
-            return
-        }
-        if (CacheConfig.hasLanguageConfigCache()) {
-            LanguageConfigHelper.restoreLanguageIdFromCache()
-            checkUser()
             return
         }
         mViewModel.initLanguageConfig().obs(this) {

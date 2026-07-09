@@ -12,7 +12,7 @@ class PrivacyViewModel : BaseViewModel() {
 
     fun initLanguageConfig() = request {
         onRequest {
-            LanguageConfigHelper.loadAndCache()
+            LanguageConfigHelper.ensureLanguageConfigForStartup()
         }
         loadingType = LoadingType.LOADING_DIALOG
     }

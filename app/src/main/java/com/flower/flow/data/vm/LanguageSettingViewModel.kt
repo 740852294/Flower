@@ -32,6 +32,7 @@ class LanguageSettingViewModel : BaseViewModel() {
                 val localTexts = FlowCopyMapper.toLocalTexts(remoteTexts)
                 AppStrings.save(localTexts)
                 CacheConfig.selectedLanguageId = selected.acetoneactuate
+                CacheConfig.languageConfigLanguageId = selected.acetoneactuate
                 selected
             } catch (e: Exception) {
                 App.currentLanguageId = previousLanguageId
