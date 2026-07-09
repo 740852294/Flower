@@ -144,7 +144,9 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
 
     internal fun setPagerTransitioning(transitioning: Boolean) {
         isPagerTransitioning = transitioning
-        if (transitioning || isResumed) {
+        if (!isParentContainerVisible()) {
+            setVisibleAnimationsRunning(false)
+        } else if (transitioning || isResumed) {
             resumeVisibleAnimations()
         } else {
             setVisibleAnimationsRunning(false)
@@ -267,8 +269,13 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
     private fun canPlayAnimations(): Boolean {
         if (view == null) return false
         return isContainerVisible &&
+                isParentContainerVisible() &&
                 !isHidden &&
                 (isResumed || isPagerTransitioning)
+    }
+
+    private fun isParentContainerVisible(): Boolean {
+        return (parentFragment as? TagFragment)?.isTagContainerVisible() ?: true
     }
 
     private fun resumeVisibleAnimations() {
