@@ -31,7 +31,7 @@ fun ImageView.loadImage(
     @DrawableRes placeholderRes: Int = R.mipmap.ic_pic_loading,
     scaleType: ScalingUtils.ScaleType = ScalingUtils.ScaleType.CENTER_CROP,
     isAutoPlay: Boolean = true,
-    resizeToViewport: Boolean = false,
+    resizeToViewport: Boolean = true,
     onFinalImageSet: ((ImageView) -> Unit)? = null,
 ) {
     clearStoredImageAnimationDrawable()
@@ -42,9 +42,9 @@ fun ImageView.loadImage(
 
     val imageOptionsBuilder = ImageOptions.create()
         .scale(scaleType)
-    if (resizeToViewport) {
-        imageOptionsBuilder.resizeToViewport(true)
-    }
+//    if (resizeToViewport) {
+//        imageOptionsBuilder.resizeToViewport(true)
+//    }
     placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
     imageOptionsBuilder.autoPlay(isAutoPlay)
     imageOptionsBuilder.autoStop(isAutoPlay)

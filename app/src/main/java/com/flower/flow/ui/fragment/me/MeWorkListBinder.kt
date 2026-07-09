@@ -7,7 +7,6 @@ import com.drake.brv.BindingAdapter
 import com.drake.brv.annotaion.DividerOrientation
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.dividerSpace
-import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.util.AppStrings
@@ -39,65 +38,73 @@ class MeWorkListBinder(
     }
 
     fun setupRecyclerView() {
+        val adapter = object : BindingAdapter() {
+            override fun onViewRecycled(holder: BindingViewHolder) {
+                WorkItemViewDelegate.recycleItem(holder.itemView)
+                super.onViewRecycled(holder)
+            }
+        }
+
         binding.rvList.grid(MeFragment.SPAN_COUNT)
             .dividerSpace(dp2px(8f), DividerOrientation.GRID)
-            .setup {
-                addType<WorkItem>(R.layout.layout_item_work)
+        adapter.apply {
+            addType<WorkItem>(R.layout.layout_item_work)
 
-                onBind {
-                    getBindingOrNull<LayoutItemWorkBinding>()?.run {
-                        WorkItemViewDelegate.bindWorkItemContent(
-                            binding = this,
-                            model = getModel(),
-                            selection = selectionController,
-                            downloadState = downloadManager.stateOf(getModel<WorkItem>().baptismdictate),
-                            onAnimationSync = callbacks::syncAnimationPlayback,
+            onBind {
+                getBindingOrNull<LayoutItemWorkBinding>()?.run {
+                    WorkItemViewDelegate.bindWorkItemContent(
+                        binding = this,
+                        model = getModel(),
+                        selection = selectionController,
+                        downloadState = downloadManager.stateOf(getModel<WorkItem>().baptismdictate),
+                        onAnimationSync = callbacks::syncAnimationPlayback,
+                    )
+                }
+            }
+
+            onPayload { payloads ->
+                getBindingOrNull<LayoutItemWorkBinding>()?.run {
+                    val model = getModel<WorkItem>()
+                    if (MeFragment.PAYLOAD_SELECTION in payloads) {
+                        WorkItemViewDelegate.bindSelectionState(this, model, selectionController)
+                    }
+                    if (MeFragment.PAYLOAD_DOWNLOAD in payloads) {
+                        WorkItemViewDelegate.bindDownloadState(
+                            this,
+                            model,
+                            downloadManager.stateOf(model.baptismdictate),
                         )
                     }
                 }
+            }
 
-                onPayload { payloads ->
-                    getBindingOrNull<LayoutItemWorkBinding>()?.run {
-                        val model = getModel<WorkItem>()
-                        if (MeFragment.PAYLOAD_SELECTION in payloads) {
-                            WorkItemViewDelegate.bindSelectionState(this, model, selectionController)
-                        }
-                        if (MeFragment.PAYLOAD_DOWNLOAD in payloads) {
-                            WorkItemViewDelegate.bindDownloadState(
-                                this,
-                                model,
-                                downloadManager.stateOf(model.baptismdictate),
-                            )
-                        }
-                    }
-                }
-
-                onClick(R.id.rootItem) {
-                    doDebouncedClick {
-                        val model = getModel<WorkItem>()
-                        if (selectionController.isSelectionMode) {
-                            selectionController.toggleSelection(model.baptismdictate)
-                            notifyItemChanged(modelPosition, MeFragment.PAYLOAD_SELECTION)
-                            callbacks.onSelectionChanged()
-                        } else if (
-                            model.afflict == WorkStatusCodes.COMPLETE &&
-                            !downloadManager.isActive(model.baptismdictate) &&
-                            downloadManager.stateOf(model.baptismdictate) == null
-                        ) {
-                            callbacks.onOpenWorkPreview(model)
-                        }
-                    }
-                }
-
-                onClick(R.id.btnStatus) {
-                    doDebouncedClick {
-                        val model = getModel<WorkItem>()
-                        if (!selectionController.isSelectionMode) {
-                            callbacks.onRequestAgainGenerate(model)
-                        }
+            onClick(R.id.rootItem) {
+                doDebouncedClick {
+                    val model = getModel<WorkItem>()
+                    if (selectionController.isSelectionMode) {
+                        selectionController.toggleSelection(model.baptismdictate)
+                        notifyItemChanged(modelPosition, MeFragment.PAYLOAD_SELECTION)
+                        callbacks.onSelectionChanged()
+                    } else if (
+                        model.afflict == WorkStatusCodes.COMPLETE &&
+                        !downloadManager.isActive(model.baptismdictate) &&
+                        downloadManager.stateOf(model.baptismdictate) == null
+                    ) {
+                        callbacks.onOpenWorkPreview(model)
                     }
                 }
             }
+
+            onClick(R.id.btnStatus) {
+                doDebouncedClick {
+                    val model = getModel<WorkItem>()
+                    if (!selectionController.isSelectionMode) {
+                        callbacks.onRequestAgainGenerate(model)
+                    }
+                }
+            }
+        }
+        binding.rvList.adapter = adapter
 
         binding.rvList.addOnChildAttachStateChangeListener(
             object : RecyclerView.OnChildAttachStateChangeListener {

@@ -4,6 +4,7 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.flower.flow.R
+import com.flower.flow.app.core.ext.clearImage
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.app.core.util.UserManager
@@ -240,6 +241,17 @@ object WorkItemViewDelegate {
             ivSampleSingle.setImageAnimationRunning(false)
             ivSampleLeft.setImageAnimationRunning(false)
             ivSampleRight.setImageAnimationRunning(false)
+        }
+    }
+
+    fun recycleItem(itemView: View) {
+        LayoutItemWorkBinding.bind(itemView).run {
+            ivCover.setImageAnimationRunning(false)
+            ivCover.applyBlurEffect(false)
+            ivCover.clearImage()
+            ivSampleSingle.clearImage()
+            ivSampleLeft.clearImage()
+            ivSampleRight.clearImage()
         }
     }
 }
