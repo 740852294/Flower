@@ -187,6 +187,7 @@ class MaterialUploadActivity :
     private fun handleGenerateResult(result: WorkGenerateResult) {
 
         findActivity<MainActivity>()?.refreshTopicListSilently()
+        findActivity<MainActivity>()?.refreshMeSilently()
 
         mBind.tvGeneratePercent.text = "0%"
         updateGenerateTip(result.concedearbiter)
@@ -331,6 +332,7 @@ class MaterialUploadActivity :
         when (result.afflict) {
             WorkGenerateResult.STATE_WAITING -> {
                 builder.setOnConfirm {
+                    findActivity<MainActivity>()?.getUserInfo(false)
                     finish()
                     if (source == SOURCE_TOPIC) {
                         finishActivityByClass(TopicUseTemplateActivity::class.java)

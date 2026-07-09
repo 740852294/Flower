@@ -215,7 +215,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
     }
 
-    private fun refreshWorkList(refresh: Boolean, isLoading: Boolean) {
+    fun refreshWorkList(refresh: Boolean, isLoading: Boolean) {
         mViewModel.loadWorkList(refresh = refresh, isLoading = isLoading).obs(viewLifecycleOwner) {
             onSuccess { page ->
                 workListBinder.bindWorkList(
@@ -232,7 +232,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
     }
 
-    private fun loadData(isLoading: Boolean) {
+    fun loadData(isLoading: Boolean) {
         mViewModel.initData(isLoading).obs(viewLifecycleOwner) {
             onSuccess { page ->
                 workListBinder.bindWorkList(
@@ -261,7 +261,6 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         EventViewModel.languageEvent.observe(this) {
             setText()
-            loadData(isLoading = false)
         }
 
         EventViewModel.workDownloadEvent.observe(viewLifecycleOwner) { workItem ->

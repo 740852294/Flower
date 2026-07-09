@@ -6,11 +6,12 @@ import android.widget.ImageView
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import com.drake.brv.BindingAdapter
 import com.drake.brv.utils.bindingAdapter
-import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
+import com.flower.flow.app.core.ext.clearImage
 import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.setImageAnimationRunning
@@ -54,33 +55,41 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
             loadTemplates(refresh = false, isLoading = false)
         }
 
+        val adapter = object : BindingAdapter() {
+            override fun onViewRecycled(holder: BindingViewHolder) {
+                recycleTemplateItem(holder.itemView)
+                super.onViewRecycled(holder)
+            }
+        }
+
         mBind.rvList.grid(SPAN_COUNT)
-            .setup {
-                addType<TemplateItem>(R.layout.layout_item_tag_template)
+        adapter.apply {
+            addType<TemplateItem>(R.layout.layout_item_tag_template)
 
-                onBind {
-                    getBindingOrNull<LayoutItemTagTemplateBinding>()?.run {
-                        val model = getModel<TemplateItem>()
-                        tvTitle.text = model.dazzledeacon
-                        ivCover.loadImage(
-                            url = model.bullmind,
-                            isAutoPlay = false,
-                            resizeToViewport = true,
-                            onFinalImageSet = ::syncAnimationPlayback,
-                        )
-                        bindLockBadge(this, model)
-                        bindSampleImages(this, model.neverchapter)
-                    }
-                }
-
-                onClick(R.id.rootItem) {
-                    doDebouncedClick {
-                        openActivity<TagUseTemplateActivity>(
-                            MaterialUploadActivity.EXTRA_TEMPLATE_ITEM to getModel<TemplateItem>(),
-                        )
-                    }
+            onBind {
+                getBindingOrNull<LayoutItemTagTemplateBinding>()?.run {
+                    val model = getModel<TemplateItem>()
+                    tvTitle.text = model.dazzledeacon
+                    ivCover.loadImage(
+                        url = model.bullmind,
+                        isAutoPlay = false,
+                        resizeToViewport = true,
+                        onFinalImageSet = ::syncAnimationPlayback,
+                    )
+                    bindLockBadge(this, model)
+                    bindSampleImages(this, model.neverchapter)
                 }
             }
+
+            onClick(R.id.rootItem) {
+                doDebouncedClick {
+                    openActivity<TagUseTemplateActivity>(
+                        MaterialUploadActivity.EXTRA_TEMPLATE_ITEM to getModel<TemplateItem>(),
+                    )
+                }
+            }
+        }
+        mBind.rvList.adapter = adapter
 
         mBind.rvList.addOnChildAttachStateChangeListener(
             object : RecyclerView.OnChildAttachStateChangeListener {
@@ -289,6 +298,16 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
     private fun setItemAnimationRunning(itemView: View, running: Boolean) {
         LayoutItemTagTemplateBinding.bind(itemView).ivCover
             .setImageAnimationRunning(running)
+    }
+
+    private fun recycleTemplateItem(itemView: View) {
+        LayoutItemTagTemplateBinding.bind(itemView).run {
+            ivCover.setImageAnimationRunning(false)
+            ivCover.clearImage()
+            ivSampleSingle.clearImage()
+            ivSampleLeft.clearImage()
+            ivSampleRight.clearImage()
+        }
     }
 
     companion object {

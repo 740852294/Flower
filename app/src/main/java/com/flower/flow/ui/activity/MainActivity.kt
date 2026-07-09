@@ -191,6 +191,13 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         fragment?.refreshHomeTopicList()
     }
 
+    fun refreshMeSilently() {
+        if (!::tabs.isInitialized) return
+        val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
+            ?.getFragment(MainAdapter.PAGE_USER) as? MeFragment
+        fragment?.loadData(false)
+    }
+
     private fun selectTab(index: Int) {
         val previousTab = currentTabIndex
         if (previousTab != index) {

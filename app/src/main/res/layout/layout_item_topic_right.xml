@@ -28,7 +28,9 @@
             android:layout_height="128dp"
             android:layout_gravity="end|center_vertical"
             android:scaleType="centerCrop"
-            app:rciv_borderColor="@color/white"
+            app:rciv_borderGradientEndColor="#00999999"
+            app:rciv_borderGradientOrientation="topToBottom"
+            app:rciv_borderGradientStartColor="@color/white"
             app:rciv_borderWidth="1dp"
             app:rciv_cornerRadius="10dp"
             tools:src="@mipmap/ic_pic_loading" />
@@ -40,7 +42,9 @@
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="16dp"
             android:scaleType="centerCrop"
-            app:rciv_borderColor="@color/white"
+            app:rciv_borderGradientEndColor="#00999999"
+            app:rciv_borderGradientOrientation="topToBottom"
+            app:rciv_borderGradientStartColor="@color/white"
             app:rciv_borderWidth="1dp"
             app:rciv_cornerRadius="10dp"
             tools:src="@mipmap/ic_pic_loading" />
@@ -61,7 +65,9 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:rciv_borderColor="@color/white"
+                app:rciv_borderGradientEndColor="#00999999"
+                app:rciv_borderGradientOrientation="topToBottom"
+                app:rciv_borderGradientStartColor="@color/white"
                 app:rciv_borderWidth="1dp"
                 app:rciv_cornerRadius="10dp"
                 tools:src="@mipmap/ic_pic_loading" />

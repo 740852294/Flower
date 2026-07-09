@@ -19,6 +19,12 @@
         <attr name="rciv_cornerBottomLeftRadius" format="dimension" />
         <attr name="rciv_borderWidth" format="dimension" />
         <attr name="rciv_borderColor" format="color" />
+        <attr name="rciv_borderGradientStartColor" format="color" />
+        <attr name="rciv_borderGradientEndColor" format="color" />
+        <attr name="rciv_borderGradientOrientation" format="enum">
+            <enum name="leftToRight" value="0" />
+            <enum name="topToBottom" value="1" />
+        </attr>
     </declare-styleable>
 
     <declare-styleable name="DrawableBlurImageView">

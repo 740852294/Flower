@@ -24,6 +24,7 @@ import com.flower.flow.databinding.LayoutItemLanguageBinding
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
+import me.hgj.jetpackmvvm.ext.util.findActivity
 import me.hgj.jetpackmvvm.ext.util.toast
 
 class LanguageSettingActivity :
@@ -125,6 +126,7 @@ class LanguageSettingActivity :
         mViewModel.applyLanguage(selected, currentLanguageId).obs(this) {
             onSuccess {
                 EventViewModel.languageEvent.value = selected
+                findActivity<MainActivity>()?.refreshMeSilently()
                 finish()
             }
             onError { error ->
