@@ -9,12 +9,9 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
-import androidx.core.view.doOnAttach
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
-import androidx.recyclerview.widget.RecyclerView
 import com.drake.brv.BindingAdapter
 import com.drake.brv.annotaion.DividerOrientation
 import com.drake.brv.utils.bindingAdapter
@@ -25,7 +22,6 @@ import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.clearGlideImage
 import com.flower.flow.app.core.ext.initClose
-import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadGlideImage
 import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
@@ -61,8 +57,6 @@ class TopicTemplateListActivity :
 
     private var hasNext = false
 
-    private var isResumed = false
-
     override val showTitle: Boolean
         get() = false
 
@@ -78,9 +72,12 @@ class TopicTemplateListActivity :
         if (topicImg.isNotEmpty()) {
             mBind.ivImg.loadGlideImage(
                 url = topicImg,
-                scaleType = ImageView.ScaleType.MATRIX,
+                scaleType = ImageView.ScaleType.CENTER_CROP,
                 autoPlay = true,
-                onResourceReady = ::syncAnimationPlayback,
+                onResourceReady = { imageView ->
+                    imageView.applyTopCropScale()
+                    imageView.setGlideAnimationRunning(true)
+                },
             )
         }
 
@@ -115,36 +112,11 @@ class TopicTemplateListActivity :
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        isResumed = true
-        resumeVisibleAnimations()
-    }
-
-    override fun onPause() {
-        isResumed = false
-        setVisibleAnimationsRunning(false)
-        super.onPause()
-    }
-
     private fun setupList() {
         val adapter = object : BindingAdapter() {
             override fun onViewRecycled(holder: BindingViewHolder) {
                 super.onViewRecycled(holder)
                 recycleTemplateItem(holder.itemView)
-            }
-
-            override fun onViewAttachedToWindow(holder: BindingViewHolder) {
-                super.onViewAttachedToWindow(holder)
-                setTemplateItemAnimationsRunning(
-                    holder.itemView,
-                    isResumed && holder.itemView.isVisibleOnScreen(),
-                )
-            }
-
-            override fun onViewDetachedFromWindow(holder: BindingViewHolder) {
-                super.onViewDetachedFromWindow(holder)
-                setTemplateItemAnimationsRunning(holder.itemView, false)
             }
         }
 
@@ -171,22 +143,6 @@ class TopicTemplateListActivity :
             }
         }
         mBind.rvList.adapter = adapter
-
-        mBind.rvList.addOnScrollListener(
-            object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dx != 0 || dy != 0) {
-                        syncVisibleAnimations()
-                    }
-                }
-
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        resumeVisibleAnimations()
-                    }
-                }
-            },
-        )
     }
 
     private fun loadTemplates(refresh: Boolean, isLoading: Boolean) {
@@ -249,7 +205,6 @@ class TopicTemplateListActivity :
         itemView.findViewById<TextView>(R.id.tvTitle).text = model.dazzledeacon
         itemView.findViewById<ImageView>(R.id.ivCover).loadGlideImage(
             url = model.bullmind,
-            onResourceReady = ::syncAnimationPlayback,
         )
         val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(2, 3)
@@ -276,11 +231,11 @@ class TopicTemplateListActivity :
                 ivSampleRight.clearGlideImage()
                 return
             }
+
             samples.size == 1 -> {
                 ivSampleSingle.isVisible = true
                 ivSampleSingle.loadGlideImage(
                     url = samples.first(),
-                    onResourceReady = ::syncAnimationPlayback,
                 )
                 ivSampleLeft.clearGlideImage()
                 ivSampleRight.clearGlideImage()
@@ -291,35 +246,12 @@ class TopicTemplateListActivity :
                 ivSampleSingle.clearGlideImage()
                 ivSampleLeft.loadGlideImage(
                     url = samples[0],
-                    onResourceReady = ::syncAnimationPlayback,
                 )
                 ivSampleRight.loadGlideImage(
                     url = samples.getOrNull(1),
-                    onResourceReady = ::syncAnimationPlayback,
                 )
             }
         }
-    }
-
-    private fun syncAnimationPlayback(imageView: ImageView) {
-        if (!imageView.isAttachedToWindow) {
-            imageView.doOnAttach { syncAnimationPlayback(imageView) }
-            return
-        }
-
-        if (imageView.width <= 0 || imageView.height <= 0) {
-            imageView.doOnLayout { syncAnimationPlayback(imageView) }
-            return
-        }
-
-        if (imageView == mBind.ivImg) {
-            imageView.applyTopCropScale()
-            imageView.setGlideAnimationRunning(true)
-            return
-        }
-        imageView.setGlideAnimationRunning(
-            isResumed && imageView.isAttachedToWindow && imageView.isVisibleOnScreen(),
-        )
     }
 
     private fun ImageView.applyTopCropScale() {
@@ -340,36 +272,11 @@ class TopicTemplateListActivity :
             viewHeight.toFloat() / imageHeight,
         )
         val dx = (viewWidth - imageWidth * scale) / 2f + paddingLeft
+        scaleType = ImageView.ScaleType.MATRIX
         imageMatrix = Matrix().apply {
             setScale(scale, scale)
             postTranslate(dx, paddingTop.toFloat())
         }
-    }
-
-    private fun resumeVisibleAnimations() {
-        mBind.rvList.post {
-            if (isResumed) {
-                setVisibleAnimationsRunning(true)
-                mBind.ivImg.setGlideAnimationRunning(true)
-            }
-        }
-    }
-
-    private fun syncVisibleAnimations() {
-        setVisibleAnimationsRunning(isResumed)
-    }
-
-    private fun setVisibleAnimationsRunning(running: Boolean) {
-        mBind.rvList.children.forEach { itemView ->
-            setTemplateItemAnimationsRunning(itemView, running && itemView.isVisibleOnScreen())
-        }
-    }
-
-    private fun setTemplateItemAnimationsRunning(itemView: View, running: Boolean) {
-        itemView.findViewById<ImageView>(R.id.ivCover).setGlideAnimationRunning(running)
-        itemView.findViewById<ImageView>(R.id.ivSampleSingle).setGlideAnimationRunning(running)
-        itemView.findViewById<ImageView>(R.id.ivSampleLeft).setGlideAnimationRunning(running)
-        itemView.findViewById<ImageView>(R.id.ivSampleRight).setGlideAnimationRunning(running)
     }
 
     private fun recycleTemplateItem(itemView: View) {
