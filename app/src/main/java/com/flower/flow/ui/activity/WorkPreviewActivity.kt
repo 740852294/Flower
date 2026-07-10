@@ -11,7 +11,6 @@ import androidx.media3.common.VideoSize
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.ext.applyCornerRadius
 import com.flower.flow.app.core.ext.loadGlideImageFitWidth
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.LegacyStoragePermission
@@ -70,8 +69,6 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         }
 
         setText()
-        mBind.preview.applyCornerRadius(PREVIEW_CORNER_RADIUS_DP)
-        mBind.previewVideo.applyCornerRadius(PREVIEW_CORNER_RADIUS_DP)
         applyDefaultPreviewHeight()
 
         if (isVideoOutput(outputUrl)) {
@@ -245,8 +242,6 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
 
     companion object {
         const val EXTRA_WORK_ITEM = "workItem"
-
-        private const val PREVIEW_CORNER_RADIUS_DP = 15f
         private const val DEFAULT_ASPECT_WIDTH = 325
         private const val DEFAULT_ASPECT_HEIGHT = 488
         private const val VIDEO_ART_TYPE = 2

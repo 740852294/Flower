@@ -100,7 +100,6 @@ class MaterialUploadActivity :
             mBind.toolbar.title = dazzledeacon
             mBind.ivCover.loadGlideImage(
                 url = bullmind,
-                onResourceReady = ::syncCoverAnimationPlayback,
             )
             bindPhotoUpload(this)
             bindLockBadge(this)
@@ -146,16 +145,12 @@ class MaterialUploadActivity :
 
     override fun onResume() {
         super.onResume()
-        if (!isCoverCleared) {
-            mBind.ivCover.setGlideAnimationRunning(true)
-        }
         if (mBind.flGenerate.isVisible) {
             startGenerateAnimation()
         }
     }
 
     override fun onPause() {
-        mBind.ivCover.setGlideAnimationRunning(false)
         gifDrawable.stop()
         super.onPause()
     }
@@ -217,7 +212,7 @@ class MaterialUploadActivity :
         clearCoverImage()
 
         findActivity<MainActivity>()?.refreshTopicListSilently()
-        findActivity<MainActivity>()?.refreshMeSilently()
+        findActivity<MainActivity>()?.refreshMeSilently(false)
 
         mBind.tvGeneratePercent.text = "0%"
         updateGenerateTip(result.concedearbiter)
@@ -255,11 +250,6 @@ class MaterialUploadActivity :
             delay(GENERATE_REVEAL_FALLBACK_MS.milliseconds)
             revealGenerateOverlay()
         }
-    }
-
-    private fun syncCoverAnimationPlayback(imageView: ImageView) {
-        if (isCoverCleared) return
-        imageView.setGlideAnimationRunning(true)
     }
 
     private fun clearCoverImage() {

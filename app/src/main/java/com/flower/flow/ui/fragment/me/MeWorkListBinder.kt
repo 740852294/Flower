@@ -3,6 +3,7 @@ package com.flower.flow.ui.fragment.me
 import androidx.core.view.isVisible
 import com.drake.brv.BindingAdapter
 import com.drake.brv.annotaion.DividerOrientation
+import com.drake.brv.listener.ItemDifferCallback
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.dividerSpace
 import com.flower.flow.R
@@ -59,6 +60,7 @@ class MeWorkListBinder(
         binding.rvList.grid(MeFragment.SPAN_COUNT)
             .dividerSpace(dp2px(8f), DividerOrientation.GRID)
         adapter.apply {
+            itemDifferCallback = workItemDifferCallback
             addType<WorkItem>(R.layout.layout_item_work)
 
             onBind {
@@ -75,7 +77,15 @@ class MeWorkListBinder(
 
             onPayload { payloads ->
                 getBindingOrNull<LayoutItemWorkBinding>()?.run {
-                    val model = getModel<WorkItem>()
+                    val model = currentWorkItem() ?: return@run
+                    if (PAYLOAD_WORK_CONTENT in payloads) {
+                        WorkItemViewDelegate.bindWorkItemUiContent(
+                            binding = this,
+                            model = model,
+                            selection = selectionController,
+                            downloadState = downloadManager.stateOf(model.baptismdictate),
+                        )
+                    }
                     if (MeFragment.PAYLOAD_SELECTION in payloads) {
                         WorkItemViewDelegate.bindSelectionState(this, model, selectionController)
                     }
@@ -91,7 +101,7 @@ class MeWorkListBinder(
 
             onClick(R.id.rootItem) {
                 doDebouncedClick {
-                    val model = getModel<WorkItem>()
+                    val model = currentWorkItem() ?: return@doDebouncedClick
                     if (selectionController.isSelectionMode) {
                         selectionController.toggleSelection(model.baptismdictate)
                         notifyItemChanged(modelPosition, MeFragment.PAYLOAD_SELECTION)
@@ -108,7 +118,7 @@ class MeWorkListBinder(
 
             onClick(R.id.btnStatus) {
                 doDebouncedClick {
-                    val model = getModel<WorkItem>()
+                    val model = currentWorkItem() ?: return@doDebouncedClick
                     if (!selectionController.isSelectionMode) {
                         callbacks.onRequestAgainGenerate(model)
                     }
@@ -127,7 +137,7 @@ class MeWorkListBinder(
         val refresh = isRefresh ?: baseListNetEntity.isRefresh()
         if (refresh) {
             onExitSelection()
-            bindingAdapter.models = baseListNetEntity.getPageData()
+            bindingAdapter.setDifferModels(baseListNetEntity.getPageData(), detectMoves = false)
             binding.refreshLayout.finishRefresh()
         } else {
             bindingAdapter.addModels(baseListNetEntity.getPageData())
@@ -190,5 +200,52 @@ class MeWorkListBinder(
             StringResId.DELETE_ACTION
         }
         binding.btnDelete.text = AppStrings.get(copyKey)
+    }
+
+    private fun BindingAdapter.BindingViewHolder.currentWorkItem(): WorkItem? {
+        return adapter.models?.getOrNull(modelPosition) as? WorkItem
+    }
+
+    private val workItemDifferCallback = object : ItemDifferCallback {
+        override fun areItemsTheSame(oldItem: Any, newItem: Any): Boolean {
+            val oldWorkItem = oldItem as? WorkItem ?: return false
+            val newWorkItem = newItem as? WorkItem ?: return false
+            return oldWorkItem.baptismdictate == newWorkItem.baptismdictate
+        }
+
+        override fun areContentsTheSame(oldItem: Any, newItem: Any): Boolean {
+            return oldItem == newItem
+        }
+
+        override fun getChangePayload(oldItem: Any, newItem: Any): Any? {
+            val oldWorkItem = oldItem as? WorkItem ?: return null
+            val newWorkItem = newItem as? WorkItem ?: return null
+            return if (oldWorkItem.canUpdateWithoutReloadingImages(newWorkItem)) {
+                PAYLOAD_WORK_CONTENT
+            } else {
+                null
+            }
+        }
+    }
+
+    private fun WorkItem.canUpdateWithoutReloadingImages(newItem: WorkItem): Boolean {
+        return afflict == newItem.afflict && imageKeys() == newItem.imageKeys()
+    }
+
+    private fun WorkItem.imageKeys(): List<String?> {
+        return when (afflict) {
+            WorkStatusCodes.NONE -> listOf(clogcadre) + aperitifaccost.orEmpty()
+            WorkStatusCodes.WAIT, WorkStatusCodes.PROCESSING ->
+                listOf(aperitifaccost?.firstOrNull())
+            WorkStatusCodes.COMPLETE ->
+                listOf(aperitifaccost?.firstOrNull() ?: clogcadre)
+            WorkStatusCodes.FAIL ->
+                listOf(aperitifaccost?.firstOrNull())
+            else -> emptyList()
+        }
+    }
+
+    private companion object {
+        const val PAYLOAD_WORK_CONTENT = "payload_work_content"
     }
 }

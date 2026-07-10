@@ -126,7 +126,7 @@ class LanguageSettingActivity :
         mViewModel.applyLanguage(selected, currentLanguageId).obs(this) {
             onSuccess {
                 EventViewModel.languageEvent.value = selected
-                findActivity<MainActivity>()?.refreshMeSilently()
+                findActivity<MainActivity>()?.refreshMeSilently(false)
                 finish()
             }
             onError { error ->

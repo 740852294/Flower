@@ -5,14 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingHorizontal="25dp"
     android:paddingVertical="12dp">
 
     <com.hjq.shape.layout.ShapeFrameLayout
         android:id="@+id/preview"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:clipToOutline="true"
+        app:layout_constraintBottom_toTopOf="@id/btnDownload"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -24,7 +23,6 @@
             android:layout_height="match_parent"
             android:contentDescription="@null"
             android:scaleType="centerCrop"
-            app:rciv_cornerRadius="15dp"
             tools:src="@mipmap/ic_pic_loading" />
 
         <androidx.media3.ui.PlayerView
@@ -53,13 +51,13 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="20sp"
+        android:textSize="19sp"
+        android:layout_marginHorizontal="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/preview"
         app:shape_radius="30dp"
         app:shape_solidGradientEndColor="#FFFD662E"
         app:shape_solidGradientOrientation="leftToRight"

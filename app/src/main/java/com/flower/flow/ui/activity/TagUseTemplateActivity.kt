@@ -4,15 +4,12 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.FrameLayout
-import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.clearGlideImage
 import com.flower.flow.app.core.ext.initClose
-import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadGlideImage
-import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.data.model.StringResId
@@ -30,8 +27,6 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
         null,
         MaterialUploadActivity.EXTRA_TEMPLATE_ITEM,
     )
-
-    private var isResumed = false
 
     override val showTitle: Boolean
         get() = false
@@ -54,7 +49,6 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
 
             mBind.ivCover.loadGlideImage(
                 url = this.bullmind,
-                onResourceReady = ::syncAnimationPlayback,
             )
 
             bindLockBadge(mBind, this)
@@ -75,18 +69,6 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
 
     override fun createObserver() {
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isResumed = true
-        setTemplateImagesAnimationRunning(true)
-    }
-
-    override fun onPause() {
-        isResumed = false
-        setTemplateImagesAnimationRunning(false)
-        super.onPause()
     }
 
     fun addReportBtn() {
@@ -152,7 +134,6 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
                 binding.ivSampleSingle.isVisible = true
                 binding.ivSampleSingle.loadGlideImage(
                     url = samples.first(),
-                    onResourceReady = ::syncAnimationPlayback,
                 )
                 binding.ivSampleLeft.clearGlideImage()
                 binding.ivSampleRight.clearGlideImage()
@@ -163,31 +144,11 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
                 binding.ivSampleSingle.clearGlideImage()
                 binding.ivSampleLeft.loadGlideImage(
                     url = samples[0],
-                    onResourceReady = ::syncAnimationPlayback,
                 )
                 binding.ivSampleRight.loadGlideImage(
                     url = samples.getOrNull(1),
-                    onResourceReady = ::syncAnimationPlayback,
                 )
             }
-        }
-    }
-
-    private fun syncAnimationPlayback(imageView: ImageView) {
-        imageView.setGlideAnimationRunning(
-            isResumed && imageView.isVisibleOnScreen(),
-        )
-    }
-
-    private fun setTemplateImagesAnimationRunning(running: Boolean) {
-        val imageViews = arrayOf(
-            mBind.ivCover,
-            mBind.ivSampleSingle,
-            mBind.ivSampleLeft,
-            mBind.ivSampleRight,
-        )
-        imageViews.forEach { imageView ->
-            imageView.setGlideAnimationRunning(running && imageView.isVisibleOnScreen())
         }
     }
 }

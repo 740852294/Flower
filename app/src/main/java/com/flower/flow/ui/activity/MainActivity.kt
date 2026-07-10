@@ -24,7 +24,6 @@ import com.flower.flow.ui.fragment.TopicFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
-import me.hgj.jetpackmvvm.core.data.postValue
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import kotlin.time.Duration.Companion.milliseconds
@@ -155,8 +154,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         if (!result.userInfo.shareengage && (App.globalConfig?.exaltabrade ?: 0) == 1) {
             openActivity<VipJoinActivity>()
             lifecycleScope.launch {
-                delay(500.milliseconds)
-                refreshTopicList(false)
+                delay(200.milliseconds)
+                refreshTopicList(true)
             }
         } else {
             refreshTopicList(true)
@@ -186,11 +185,11 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         fragment?.refreshHomeTopicList()
     }
 
-    fun refreshMeSilently() {
+    fun refreshMeSilently(isLoading: Boolean) {
         if (!::tabs.isInitialized) return
         val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
             ?.getFragment(MainAdapter.PAGE_USER) as? MeFragment
-        fragment?.loadData(false)
+        fragment?.loadData(isLoading)
     }
 
     private fun selectTab(index: Int) {
@@ -200,7 +199,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
                 getUserInfo(isLoading = false)
             }
             if (index == MainAdapter.PAGE_USER && previousTab != -1) {
-                EventViewModel.myPageRefreshEvent.postValue = true
+                refreshMeSilently(true)
             }
             currentTabIndex = index
         }

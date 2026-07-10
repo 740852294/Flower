@@ -129,9 +129,9 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
     }
 
     override fun lazyLoadData() {
-        if (App.globalConfig != null) {
-            loadInitialTopicList()
-        }
+//        if (App.globalConfig != null) {
+//            loadInitialTopicList()
+//        }
     }
 
     fun refreshHomeTopicList() {

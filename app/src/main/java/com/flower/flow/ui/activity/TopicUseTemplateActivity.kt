@@ -255,11 +255,7 @@ class TopicUseTemplateActivity :
 
             override fun onViewAttachedToWindow(holder: BindingViewHolder) {
                 super.onViewAttachedToWindow(holder)
-                val position = rv.getChildAdapterPosition(holder.itemView)
-                val shouldRun = isResumed &&
-                    rv.scrollState == RecyclerView.SCROLL_STATE_IDLE &&
-                    position == previewPosition
-                setItemAnimationRunning(holder.itemView, shouldRun)
+                setItemAnimationRunning(holder.itemView, shouldPlayItemAnimation(holder.itemView))
             }
 
             override fun onViewDetachedFromWindow(holder: BindingViewHolder) {
@@ -446,9 +442,7 @@ class TopicUseTemplateActivity :
         val rv = mBind.rvTemplate
         val position = rv.getChildAdapterPosition(itemView)
         imageView.setGlideAnimationRunning(
-            isResumed &&
-                rv.scrollState == RecyclerView.SCROLL_STATE_IDLE &&
-                position == previewPosition &&
+            shouldPlayItemAnimation(itemView, position) &&
                 imageView.isVisibleOnScreen(),
         )
     }
@@ -458,14 +452,17 @@ class TopicUseTemplateActivity :
             if (!isResumed) return@post
             setAllItemAnimationsRunning(false)
             val rv = mBind.rvTemplate
-            val layoutManager = rv.layoutManager ?: return@post
-            val centerView = snapHelper.findSnapView(layoutManager) ?: return@post
-            setItemAnimationRunning(centerView, centerView.isVisibleOnScreen())
+            rv.children.forEach { itemView ->
+                setItemAnimationRunning(itemView, shouldPlayItemAnimation(itemView))
+            }
         }
     }
 
     private fun syncVisibleAnimations() {
-        setAllItemAnimationsRunning(false)
+        if (!isResumed) return
+        mBind.rvTemplate.children.forEach { itemView ->
+            setItemAnimationRunning(itemView, shouldPlayItemAnimation(itemView))
+        }
     }
 
     private fun setAllItemAnimationsRunning(running: Boolean) {
@@ -479,6 +476,16 @@ class TopicUseTemplateActivity :
         itemView.findViewById<ImageView>(R.id.ivSampleSingle).setGlideAnimationRunning(running)
         itemView.findViewById<ImageView>(R.id.ivSampleLeft).setGlideAnimationRunning(running)
         itemView.findViewById<ImageView>(R.id.ivSampleRight).setGlideAnimationRunning(running)
+    }
+
+    private fun shouldPlayItemAnimation(
+        itemView: View,
+        position: Int = mBind.rvTemplate.getChildAdapterPosition(itemView),
+    ): Boolean {
+        return isResumed &&
+            position != RecyclerView.NO_POSITION &&
+            abs(position - previewPosition) <= 1 &&
+            itemView.isVisibleOnScreen()
     }
 
     private fun recycleTemplateItem(itemView: View) {

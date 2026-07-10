@@ -8,6 +8,7 @@ import com.flower.flow.app.core.ext.clearGlideImage
 import com.flower.flow.app.core.ext.loadGlideImage
 import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.UserManager
+import com.flower.flow.app.core.widget.DrawableBlurImageView
 import com.flower.flow.data.model.entity.WorkItem
 import com.flower.flow.databinding.LayoutItemWorkBinding
 import com.flower.flow.domain.profile.WorkDownloadJobManager
@@ -48,6 +49,27 @@ object WorkItemViewDelegate {
             binding.pbDownload.isIndeterminate = false
             binding.pbDownload.progress = 0
         }
+    }
+
+    fun bindWorkItemUiContent(
+        binding: LayoutItemWorkBinding,
+        model: WorkItem,
+        selection: WorkListSelectionController,
+        downloadState: WorkDownloadJobManager.DownloadUiState?,
+    ) {
+        val isVip = UserManager.user?.shareengage ?: false
+        bindSelectionState(binding, model, selection)
+
+        binding.btnStatus.isVisible = !model.increaserace.isNullOrBlank()
+        binding.btnStatus.text = model.increaserace ?: ""
+
+        when (model.afflict) {
+            WorkStatusCodes.NONE -> bindLockedUi(binding, model, isVip, selection)
+            WorkStatusCodes.WAIT, WorkStatusCodes.PROCESSING -> bindProcessingUi(binding, model)
+            WorkStatusCodes.COMPLETE -> bindCompleteUi(binding, model)
+            WorkStatusCodes.FAIL -> bindFailedUi(binding, model)
+        }
+        bindDownloadState(binding, model, downloadState)
     }
 
     fun bindWorkItemContent(
@@ -96,13 +118,25 @@ object WorkItemViewDelegate {
         binding.llTime.visibility = View.INVISIBLE
         binding.llProgress.visibility = View.GONE
         binding.ivDownload.visibility = View.INVISIBLE
-        binding.ivCover.loadGlideImage(
+        binding.ivCover.loadGlideImageWithBlur(
             url = model.clogcadre,
-            onResourceReady = onAnimationSync,
+            onAnimationSync = onAnimationSync,
         )
-        binding.ivCover.applyBlurEffect(true)
         bindSampleImages(binding, model.aperitifaccost, onAnimationSync)
+        bindLockedUi(binding, model, isVip, selection)
+    }
+
+    private fun bindLockedUi(
+        binding: LayoutItemWorkBinding,
+        model: WorkItem,
+        isVip: Boolean,
+        selection: WorkListSelectionController,
+    ) {
         binding.llStatus.visibility = View.VISIBLE
+        binding.lockDot.visibility = if (selection.isSelectionMode) View.GONE else View.VISIBLE
+        binding.llTime.visibility = View.INVISIBLE
+        binding.llProgress.visibility = View.GONE
+        binding.ivDownload.visibility = View.INVISIBLE
         binding.ivStatus.visibility = View.VISIBLE
         binding.ivStatus.setImageResource(R.mipmap.ic_work_lock)
         binding.tvStatus1.visibility = View.GONE
@@ -123,19 +157,30 @@ object WorkItemViewDelegate {
         binding.ivDownload.visibility = View.INVISIBLE
         val url = model.aperitifaccost?.firstOrNull() ?: ""
         if (url.isNotBlank()) {
-            binding.ivCover.loadGlideImage(
+            binding.ivCover.loadGlideImageWithBlur(
                 url = url,
-                onResourceReady = onAnimationSync,
+                onAnimationSync = onAnimationSync,
             )
         } else {
+            binding.ivCover.applyBlurEffect(false)
             binding.ivCover.clearGlideImage()
         }
-        binding.ivCover.applyBlurEffect(true)
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
         binding.ivSampleSingle.clearGlideImage()
         binding.ivSampleLeft.clearGlideImage()
         binding.ivSampleRight.clearGlideImage()
+        bindProcessingUi(binding, model)
+    }
+
+    private fun bindProcessingUi(
+        binding: LayoutItemWorkBinding,
+        model: WorkItem,
+    ) {
+        binding.lockDot.visibility = View.GONE
+        binding.llTime.visibility = View.INVISIBLE
+        binding.llProgress.visibility = View.GONE
+        binding.ivDownload.visibility = View.INVISIBLE
         binding.llStatus.visibility = View.VISIBLE
         binding.ivStatus.visibility = View.GONE
         binding.tvStatus1.visibility =
@@ -173,6 +218,19 @@ object WorkItemViewDelegate {
         binding.ivSampleSingle.clearGlideImage()
         binding.ivSampleLeft.clearGlideImage()
         binding.ivSampleRight.clearGlideImage()
+        bindCompleteUi(binding, model)
+    }
+
+    private fun bindCompleteUi(
+        binding: LayoutItemWorkBinding,
+        model: WorkItem,
+    ) {
+        binding.lockDot.visibility = View.GONE
+        binding.llTime.visibility =
+            if (model.behavebanister == 2) View.VISIBLE else View.INVISIBLE
+        binding.tvTime.text = model.aggregatechief.orEmpty()
+        binding.llProgress.visibility = View.GONE
+        binding.ivDownload.visibility = View.VISIBLE
         binding.llStatus.visibility = View.GONE
     }
 
@@ -187,19 +245,30 @@ object WorkItemViewDelegate {
         binding.ivDownload.visibility = View.INVISIBLE
         val url = model.aperitifaccost?.firstOrNull() ?: ""
         if (url.isNotBlank()) {
-            binding.ivCover.loadGlideImage(
+            binding.ivCover.loadGlideImageWithBlur(
                 url = url,
-                onResourceReady = onAnimationSync,
+                onAnimationSync = onAnimationSync,
             )
         } else {
+            binding.ivCover.applyBlurEffect(false)
             binding.ivCover.clearGlideImage()
         }
-        binding.ivCover.applyBlurEffect(true)
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
         binding.ivSampleSingle.clearGlideImage()
         binding.ivSampleLeft.clearGlideImage()
         binding.ivSampleRight.clearGlideImage()
+        bindFailedUi(binding, model)
+    }
+
+    private fun bindFailedUi(
+        binding: LayoutItemWorkBinding,
+        model: WorkItem,
+    ) {
+        binding.lockDot.visibility = View.GONE
+        binding.llTime.visibility = View.INVISIBLE
+        binding.llProgress.visibility = View.GONE
+        binding.ivDownload.visibility = View.INVISIBLE
         binding.llStatus.visibility = View.VISIBLE
         binding.ivStatus.visibility = View.VISIBLE
         binding.ivStatus.setImageResource(R.mipmap.ic_work_failed)
@@ -246,6 +315,23 @@ object WorkItemViewDelegate {
                 )
             }
         }
+    }
+
+    private fun DrawableBlurImageView.loadGlideImageWithBlur(
+        url: String?,
+        onAnimationSync: (ImageView) -> Unit,
+    ) {
+        val currentUrl = getTag(R.id.tag_image_url) as? String
+        if (url.isNullOrBlank() || currentUrl != url) {
+            applyBlurEffect(false)
+        }
+        loadGlideImage(
+            url = url,
+            onResourceReady = { imageView ->
+                applyBlurEffect(true)
+                onAnimationSync(imageView)
+            },
+        )
     }
 
     fun setItemAnimationsRunning(itemView: View, running: Boolean) {

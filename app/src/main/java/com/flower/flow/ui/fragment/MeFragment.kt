@@ -57,7 +57,6 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private lateinit var workListBinder: MeWorkListBinder
     private lateinit var regenerateCoordinator: MeRegenerateCoordinator
     private var workListPollingStarted = false
-    private var isLazyLoaded = false
 
     companion object {
         const val SPAN_COUNT = 2
@@ -119,7 +118,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
             imageView.post {
                 imageView.setGlideAnimationRunning(
                     canPlayWorkAnimations() &&
-                        imageView.isVisibleOnScreen(),
+                            imageView.isVisibleOnScreen(),
                 )
                 syncVisibleAnimations()
             }
@@ -188,7 +187,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
     }
 
-    private fun openEditUserInfoActivity(){
+    private fun openEditUserInfoActivity() {
         openActivityForResult<EditUserInfoActivity> { result ->
             if (result != null) {
                 (activity as? MainActivity)?.getUserInfo(isLoading = true)
@@ -218,8 +217,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun lazyLoadData() {
-        loadData(isLoading = true)
-        isLazyLoaded = true
+        loadData(true)
         startWorkListPolling()
     }
 
@@ -229,7 +227,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             while (true) {
                 delay(WORK_LIST_POLL_INTERVAL.milliseconds)
-                refreshWorkList(refresh = true, isLoading = false)
+                loadData(isLoading = false)
             }
         }
     }
@@ -284,11 +282,6 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         EventViewModel.workDownloadEvent.observe(viewLifecycleOwner) { workItem ->
             downloadManager.start(workItem)
-        }
-
-        EventViewModel.myPageRefreshEvent.observe(viewLifecycleOwner) { _ ->
-            if (!isLazyLoaded) return@observe
-            loadData(isLoading = true)
         }
     }
 

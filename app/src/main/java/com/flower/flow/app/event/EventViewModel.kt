@@ -24,9 +24,6 @@ object EventViewModel {
 
     /** 下载作品 */
     val workDownloadEvent = MutableResult<WorkItem>()
-
-    /** 我的页面刷新 */
-    val myPageRefreshEvent = MutableResult<Boolean>()
 }
 
 data class TopicTemplateListSyncEvent(

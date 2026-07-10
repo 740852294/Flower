@@ -1,5 +1,6 @@
 package com.flower.flow.ui.activity
 
+import android.graphics.Matrix
 import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
@@ -9,6 +10,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
+import androidx.core.view.doOnAttach
+import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.RecyclerView
@@ -75,6 +78,8 @@ class TopicTemplateListActivity :
         if (topicImg.isNotEmpty()) {
             mBind.ivImg.loadGlideImage(
                 url = topicImg,
+                scaleType = ImageView.ScaleType.MATRIX,
+                autoPlay = true,
                 onResourceReady = ::syncAnimationPlayback,
             )
         }
@@ -119,7 +124,6 @@ class TopicTemplateListActivity :
     override fun onPause() {
         isResumed = false
         setVisibleAnimationsRunning(false)
-        mBind.ivImg.setGlideAnimationRunning(false)
         super.onPause()
     }
 
@@ -298,16 +302,55 @@ class TopicTemplateListActivity :
     }
 
     private fun syncAnimationPlayback(imageView: ImageView) {
+        if (!imageView.isAttachedToWindow) {
+            imageView.doOnAttach { syncAnimationPlayback(imageView) }
+            return
+        }
+
+        if (imageView.width <= 0 || imageView.height <= 0) {
+            imageView.doOnLayout { syncAnimationPlayback(imageView) }
+            return
+        }
+
+        if (imageView == mBind.ivImg) {
+            imageView.applyTopCropScale()
+            imageView.setGlideAnimationRunning(true)
+            return
+        }
         imageView.setGlideAnimationRunning(
             isResumed && imageView.isAttachedToWindow && imageView.isVisibleOnScreen(),
         )
+    }
+
+    private fun ImageView.applyTopCropScale() {
+        val drawable = drawable ?: return
+        val imageWidth = drawable.intrinsicWidth
+        val imageHeight = drawable.intrinsicHeight
+        if (imageWidth <= 0 || imageHeight <= 0) return
+
+        val viewWidth = width - paddingLeft - paddingRight
+        val viewHeight = height - paddingTop - paddingBottom
+        if (viewWidth <= 0 || viewHeight <= 0) {
+            doOnLayout { applyTopCropScale() }
+            return
+        }
+
+        val scale = maxOf(
+            viewWidth.toFloat() / imageWidth,
+            viewHeight.toFloat() / imageHeight,
+        )
+        val dx = (viewWidth - imageWidth * scale) / 2f + paddingLeft
+        imageMatrix = Matrix().apply {
+            setScale(scale, scale)
+            postTranslate(dx, paddingTop.toFloat())
+        }
     }
 
     private fun resumeVisibleAnimations() {
         mBind.rvList.post {
             if (isResumed) {
                 setVisibleAnimationsRunning(true)
-                mBind.ivImg.setGlideAnimationRunning(mBind.ivImg.isVisibleOnScreen())
+                mBind.ivImg.setGlideAnimationRunning(true)
             }
         }
     }
