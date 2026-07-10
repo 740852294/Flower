@@ -88,3 +88,14 @@
 # Fresco 3.7 通过反射创建 GIF/WebP 动图解码器，必须保留完整类和构造方法。
 -keep class com.facebook.animated.webp.WebPImageDecoder { *; }
 -keep class com.facebook.animated.gif.GifImageDecoder { *; }
+-keepclassmembers class com.facebook.fresco.animation.drawable.AnimatedDrawable2 {
+    private boolean _isRunning;
+    private long startTimeMs;
+    private long expectedRenderTimeMs;
+    private long lastFrameAnimationTimeMs;
+    private int lastDrawnFrameNumber;
+    private long pausedStartTimeMsDifference;
+    private long pausedLastFrameAnimationTimeMsDifference;
+    private int pausedLastDrawnFrameNumber;
+    private java.lang.Runnable invalidateRunnable;
+}

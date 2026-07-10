@@ -12,8 +12,8 @@ import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.MainNavigator
 import com.flower.flow.app.event.EventViewModel
-import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.model.MainInitResult
+import com.flower.flow.data.model.StringResId
 import com.flower.flow.data.vm.MainViewModel
 import com.flower.flow.databinding.ActivityMainBinding
 import com.flower.flow.databinding.LayoutMainBottomTabItemBinding
@@ -27,7 +27,6 @@ import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.core.data.postValue
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
-import me.hgj.jetpackmvvm.ext.util.toast
 import kotlin.time.Duration.Companion.milliseconds
 
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
@@ -36,7 +35,6 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
 
     private var msgRedDot = false
     private var workRedDot = false
-    private var userInfoPollingStarted = false
 
     private data class TabConfig(
         val binding: LayoutMainBottomTabItemBinding,
@@ -147,7 +145,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         }
 
         mBind.mainViewPager.adapter = MainAdapter(this)
-        mBind.mainViewPager.offscreenPageLimit = mBind.mainViewPager.adapter!!.itemCount
+//        mBind.mainViewPager.offscreenPageLimit = mBind.mainViewPager.adapter!!.itemCount
         mBind.mainViewPager.isUserInputEnabled = false
         selectTab(pendingTabIndex ?: MainAdapter.PAGE_TOPIC)
         pendingTabIndex = null
@@ -156,22 +154,12 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     private fun initData(result: MainInitResult.Ready) {
         if (!result.userInfo.shareengage && (App.globalConfig?.exaltabrade ?: 0) == 1) {
             openActivity<VipJoinActivity>()
-        }
-        supportFragmentManager.setFragmentResult(
-            TopicFragment.REQUEST_MAIN_DATA_READY,
-            Bundle(),
-        )
-        startUserInfoPolling()
-    }
-
-    private fun startUserInfoPolling() {
-        if (userInfoPollingStarted) return
-        userInfoPollingStarted = true
-        lifecycleScope.launch {
-            while (true) {
-                delay(USER_INFO_POLL_INTERVAL.milliseconds)
-                getUserInfo(isLoading = false)
+            lifecycleScope.launch {
+                delay(500.milliseconds)
+                refreshTopicList(false)
             }
+        } else {
+            refreshTopicList(true)
         }
     }
 
@@ -182,6 +170,13 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
     fun switchTab(index: Int) {
         if (!::tabs.isInitialized) return
         selectTab(index)
+    }
+
+    fun refreshTopicList(showPageLoading: Boolean){
+        if (!::tabs.isInitialized) return
+        val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
+            ?.getFragment(MainAdapter.PAGE_TOPIC) as? TopicFragment
+        fragment?.loadTopicList(showPageLoading)
     }
 
     fun refreshTopicListSilently() {
@@ -234,9 +229,5 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
             }
             startActivity(intent)
         }
-    }
-
-    private companion object {
-        private const val USER_INFO_POLL_INTERVAL = 30 * 1000L
     }
 }

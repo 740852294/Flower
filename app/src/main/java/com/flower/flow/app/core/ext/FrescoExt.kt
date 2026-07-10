@@ -3,12 +3,14 @@ package com.flower.flow.app.core.ext
 import android.graphics.drawable.Animatable
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.SystemClock
 import android.view.ViewTreeObserver
 import android.widget.ImageView
 import androidx.annotation.DrawableRes
 import com.facebook.drawee.drawable.ArrayDrawable
 import com.facebook.drawee.drawable.DrawableParent
 import com.facebook.drawee.drawable.ScalingUtils
+import com.facebook.fresco.animation.drawable.AnimatedDrawable2
 import com.facebook.fresco.vito.listener.BaseImageListener
 import com.facebook.fresco.vito.options.ImageOptions
 import com.facebook.fresco.vito.source.ImageSourceProvider
@@ -16,6 +18,7 @@ import com.facebook.fresco.vito.view.VitoView
 import com.facebook.imagepipeline.image.ImageInfo
 import com.flower.flow.R
 import java.io.File
+import java.lang.reflect.Field
 
 /**
  * 通用网络图片加载方法（基于 Fresco Vito）。
@@ -34,18 +37,49 @@ fun ImageView.loadImage(
     resizeToViewport: Boolean = true,
     onFinalImageSet: ((ImageView) -> Unit)? = null,
 ) {
-    clearStoredImageAnimationDrawable()
     if (url.isNullOrBlank()) {
         clearImage()
         return
     }
 
+    val currentUrl = getTag(R.id.tag_image_url) as? String
+    if (currentUrl == url) {
+        if (hasDisplayedImageDrawable()) {
+            onFinalImageSet?.invoke(this)
+            return
+        }
+        // View 从窗口 detach 后 drawable 可能被释放，从缓存静默恢复，避免重复走占位图。
+        showImage(
+            url = url,
+            placeholderRes = null,
+            scaleType = scaleType,
+            isAutoPlay = isAutoPlay,
+            onFinalImageSet = onFinalImageSet,
+        )
+        return
+    }
+    clearStoredImageAnimationDrawable()
+    setTag(R.id.tag_image_url, url)
+
+    showImage(
+        url = url,
+        placeholderRes = placeholderRes,
+        scaleType = scaleType,
+        isAutoPlay = isAutoPlay,
+        onFinalImageSet = onFinalImageSet,
+    )
+}
+
+private fun ImageView.showImage(
+    url: String,
+    @DrawableRes placeholderRes: Int?,
+    scaleType: ScalingUtils.ScaleType,
+    isAutoPlay: Boolean,
+    onFinalImageSet: ((ImageView) -> Unit)?,
+) {
     val imageOptionsBuilder = ImageOptions.create()
         .scale(scaleType)
-//    if (resizeToViewport) {
-//        imageOptionsBuilder.resizeToViewport(true)
-//    }
-    placeholderRes.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
+    placeholderRes?.let { imageOptionsBuilder.placeholderRes(it, scaleType) }
     imageOptionsBuilder.autoPlay(isAutoPlay)
     imageOptionsBuilder.autoStop(isAutoPlay)
 
@@ -95,7 +129,9 @@ fun ImageView.setImageAnimationRunning(running: Boolean) {
     if (running) {
         if (!animatable.isRunning) animatable.start()
     } else if (animatable.isRunning) {
-        animatable.stop()
+        if (!animatable.pauseWithoutClearingFrameCache()) {
+            animatable.stop()
+        }
     }
 }
 
@@ -285,6 +321,7 @@ private fun resolveAvatarSource(source: String): String {
  */
 fun ImageView.clearImage() {
     clearStoredImageAnimationDrawable()
+    setTag(R.id.tag_image_url, null)
     VitoView.release(this)
     setImageDrawable(null)
 }
@@ -299,6 +336,12 @@ private fun ImageView.getStoredImageAnimationDrawable(): Drawable? {
 
 private fun ImageView.clearStoredImageAnimationDrawable() {
     setStoredImageAnimationDrawable(null)
+}
+
+private fun ImageView.hasDisplayedImageDrawable(): Boolean {
+    return VitoView.getDrawable(this) != null ||
+        getStoredImageAnimationDrawable() != null ||
+        drawable != null
 }
 
 private fun findImageAnimatable(vararg drawables: Drawable?): Animatable? {
@@ -324,6 +367,77 @@ private fun findAnimatable(drawable: Drawable?, depth: Int = 0): Animatable? {
     }
 
     return null
+}
+
+private fun Animatable.pauseWithoutClearingFrameCache(): Boolean {
+    val animatedDrawable = this as? AnimatedDrawable2 ?: return false
+    return AnimatedDrawable2SoftPause.pause(animatedDrawable)
+}
+
+private object AnimatedDrawable2SoftPause {
+    private val fields = runCatching {
+        Fields(
+            isRunning = AnimatedDrawable2::class.java.accessibleField("_isRunning"),
+            startTimeMs = AnimatedDrawable2::class.java.accessibleField("startTimeMs"),
+            expectedRenderTimeMs =
+                AnimatedDrawable2::class.java.accessibleField("expectedRenderTimeMs"),
+            lastFrameAnimationTimeMs =
+                AnimatedDrawable2::class.java.accessibleField("lastFrameAnimationTimeMs"),
+            lastDrawnFrameNumber =
+                AnimatedDrawable2::class.java.accessibleField("lastDrawnFrameNumber"),
+            pausedStartTimeMsDifference =
+                AnimatedDrawable2::class.java.accessibleField("pausedStartTimeMsDifference"),
+            pausedLastFrameAnimationTimeMsDifference =
+                AnimatedDrawable2::class.java.accessibleField(
+                    "pausedLastFrameAnimationTimeMsDifference",
+                ),
+            pausedLastDrawnFrameNumber =
+                AnimatedDrawable2::class.java.accessibleField("pausedLastDrawnFrameNumber"),
+            invalidateRunnable =
+                AnimatedDrawable2::class.java.accessibleField("invalidateRunnable"),
+        )
+    }.getOrNull()
+
+    fun pause(drawable: AnimatedDrawable2): Boolean {
+        val fields = fields ?: return false
+        return runCatching {
+            val now = SystemClock.uptimeMillis()
+            fields.pausedStartTimeMsDifference.setLong(
+                drawable,
+                now - fields.startTimeMs.getLong(drawable),
+            )
+            fields.pausedLastFrameAnimationTimeMsDifference.setLong(
+                drawable,
+                now - fields.lastFrameAnimationTimeMs.getLong(drawable),
+            )
+            fields.pausedLastDrawnFrameNumber.setInt(
+                drawable,
+                fields.lastDrawnFrameNumber.getInt(drawable),
+            )
+            fields.isRunning.setBoolean(drawable, false)
+            fields.startTimeMs.setLong(drawable, 0L)
+            fields.expectedRenderTimeMs.setLong(drawable, 0L)
+            fields.lastFrameAnimationTimeMs.setLong(drawable, -1L)
+            fields.lastDrawnFrameNumber.setInt(drawable, -1)
+            (fields.invalidateRunnable.get(drawable) as? Runnable)?.let(drawable::unscheduleSelf)
+        }.isSuccess
+    }
+
+    private data class Fields(
+        val isRunning: Field,
+        val startTimeMs: Field,
+        val expectedRenderTimeMs: Field,
+        val lastFrameAnimationTimeMs: Field,
+        val lastDrawnFrameNumber: Field,
+        val pausedStartTimeMsDifference: Field,
+        val pausedLastFrameAnimationTimeMsDifference: Field,
+        val pausedLastDrawnFrameNumber: Field,
+        val invalidateRunnable: Field,
+    )
+}
+
+private fun Class<*>.accessibleField(name: String): Field {
+    return getDeclaredField(name).apply { isAccessible = true }
 }
 
 private const val MAX_DRAWABLE_UNWRAP_DEPTH = 8

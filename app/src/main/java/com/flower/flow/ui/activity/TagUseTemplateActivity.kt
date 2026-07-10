@@ -4,11 +4,14 @@ import android.os.Bundle
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.FrameLayout
+import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
+import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.data.model.StringResId
@@ -26,6 +29,8 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
         null,
         MaterialUploadActivity.EXTRA_TEMPLATE_ITEM,
     )
+
+    private var isResumed = false
 
     override val showTitle: Boolean
         get() = false
@@ -48,6 +53,8 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
 
             mBind.ivCover.loadImage(
                 url = this.bullmind,
+                isAutoPlay = false,
+                onFinalImageSet = ::syncAnimationPlayback,
             )
 
             bindLockBadge(mBind, this)
@@ -68,6 +75,18 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
 
     override fun createObserver() {
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isResumed = true
+        mBind.ivCover.setImageAnimationRunning(mBind.ivCover.isVisibleOnScreen())
+    }
+
+    override fun onPause() {
+        isResumed = false
+        mBind.ivCover.setImageAnimationRunning(false)
+        super.onPause()
     }
 
     fun addReportBtn() {
@@ -128,6 +147,7 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
                 binding.ivSampleSingle.isVisible = true
                 binding.ivSampleSingle.loadImage(
                     url = samples.first(),
+                    isAutoPlay = false,
                 )
             }
 
@@ -135,11 +155,19 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
                 binding.llSampleBottom.isVisible = true
                 binding.ivSampleLeft.loadImage(
                     url = samples[0],
+                    isAutoPlay = false,
                 )
                 binding.ivSampleRight.loadImage(
                     url = samples.getOrNull(1),
+                    isAutoPlay = false,
                 )
             }
         }
+    }
+
+    private fun syncAnimationPlayback(imageView: ImageView) {
+        imageView.setImageAnimationRunning(
+            isResumed && imageView.isVisibleOnScreen(),
+        )
     }
 }

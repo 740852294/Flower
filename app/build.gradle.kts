@@ -62,7 +62,6 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-        multiDexEnabled = true
 
         buildConfigField("String", "VERSION_INT", "\"45\"")
     }
@@ -78,7 +77,7 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             signingConfig = signingConfigs.getByName("test")
             proguardFiles("src/main/keepRules/rules.keep")
             buildConfigField("String", "BASE_HTTP_API", "\"http://8.148.151.104:7068/\"")
@@ -176,7 +175,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.fragment.ktx)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.androidx.multidex)
     implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.androidx.preference.ktx)
 

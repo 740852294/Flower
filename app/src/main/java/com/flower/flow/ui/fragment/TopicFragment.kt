@@ -121,7 +121,9 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
                     setItemAnimationsRunning(view, isResumed && !isHidden)
                 }
 
-                override fun onChildViewDetachedFromWindow(view: View) = Unit
+                override fun onChildViewDetachedFromWindow(view: View) {
+                    setItemAnimationsRunning(view, false)
+                }
             }
         )
     }
@@ -186,7 +188,7 @@ class TopicFragment : BaseFragment<TopicViewModel, FragmentTopicBinding>() {
 
     }
 
-    private fun loadTopicList(showPageLoading: Boolean) {
+    fun loadTopicList(showPageLoading: Boolean) {
         mViewModel.loadTopicList(showPageLoading).obs(this) {
             onSuccess { list ->
                 loadListSuccess(

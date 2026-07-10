@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.provider.OpenableColumns
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.net.toUri
@@ -15,9 +16,11 @@ import com.facebook.drawee.controller.BaseControllerListener
 import com.facebook.imagepipeline.image.ImageInfo
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
+import com.flower.flow.app.core.ext.clearImage
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.loadImage
 import com.flower.flow.app.core.ext.loadImageFile
+import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.GenerateSubmitCache
 import com.flower.flow.app.core.util.MainNavigator
@@ -58,6 +61,7 @@ class MaterialUploadActivity :
     private var pickSlot = UploadSlot.SINGLE
     private var generateSimulationJob: Job? = null
     private var isGenerateAnimationReady = false
+    private var isCoverCleared = false
     private var pendingGenerateReveal: (() -> Unit)? = null
     private lateinit var imagePickDelegate: ImagePickDelegate
 
@@ -95,6 +99,8 @@ class MaterialUploadActivity :
             mBind.toolbar.title = dazzledeacon
             mBind.ivCover.loadImage(
                 url = bullmind,
+                isAutoPlay = false,
+                onFinalImageSet = ::syncCoverAnimationPlayback,
             )
             bindPhotoUpload(this)
             bindLockBadge(this)
@@ -185,6 +191,7 @@ class MaterialUploadActivity :
     }
 
     private fun handleGenerateResult(result: WorkGenerateResult) {
+        clearCoverImage()
 
         findActivity<MainActivity>()?.refreshTopicListSilently()
         findActivity<MainActivity>()?.refreshMeSilently()
@@ -225,6 +232,19 @@ class MaterialUploadActivity :
             delay(GENERATE_REVEAL_FALLBACK_MS.milliseconds)
             revealGenerateOverlay()
         }
+    }
+
+    private fun syncCoverAnimationPlayback(imageView: ImageView) {
+        if (isCoverCleared) return
+        imageView.setImageAnimationRunning(true)
+    }
+
+    private fun clearCoverImage() {
+        if (isCoverCleared) return
+        isCoverCleared = true
+        mBind.ivCover.setImageAnimationRunning(false)
+        mBind.ivCover.clearImage()
+        mBind.ivCover.isVisible = false
     }
 
     private fun preloadGenerateAnimation() {

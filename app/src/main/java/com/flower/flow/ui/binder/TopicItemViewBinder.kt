@@ -125,7 +125,7 @@ internal fun bindTopicItem(
         refs.clTemple1.isVisible = true
         refs.ivCover1.loadImage(
             url = model1.bullmind,
-            isAutoPlay = true,
+            isAutoPlay = false,
             onFinalImageSet = onFinalImageSet,
         )
         val showCost = model1.peacearrow > 0
@@ -168,7 +168,7 @@ private fun bindOptionalCover(
     imageView: ImageView,
     template: TemplateItem?,
     onFinalImageSet: ((ImageView) -> Unit)? = null,
-    isAutoPlay: Boolean = true,
+    isAutoPlay: Boolean = false,
 ) {
     if (template != null) {
         imageView.isVisible = true
@@ -195,7 +195,7 @@ private fun bindSampleImages(
             refs.ivSampleSingle.isVisible = true
             refs.ivSampleSingle.loadImage(
                 url = samples.first(),
-                isAutoPlay = true,
+                isAutoPlay = false,
                 onFinalImageSet = onFinalImageSet,
             )
         }
@@ -204,12 +204,12 @@ private fun bindSampleImages(
             refs.llSampleBottom.isVisible = true
             refs.ivSampleLeft.loadImage(
                 url = samples[0],
-                isAutoPlay = true,
+                isAutoPlay = false,
                 onFinalImageSet = onFinalImageSet,
             )
             refs.ivSampleRight.loadImage(
                 url = samples.getOrNull(1),
-                isAutoPlay = true,
+                isAutoPlay = false,
                 onFinalImageSet = onFinalImageSet,
             )
         }

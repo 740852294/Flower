@@ -12,18 +12,21 @@ import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.drake.brv.BindingAdapter
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.models
-import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
+import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.app.core.widget.CoverFlowScrollListener
@@ -71,6 +74,7 @@ class TopicUseTemplateActivity :
     private var carouselDownY = 0f
     private var isCarouselAxisLocked = false
     private var isCarouselVerticalGesture = false
+    private var isResumed = false
     private val carouselTouchSlop by lazy {
         ViewConfiguration.get(this).scaledTouchSlop
     }
@@ -128,17 +132,26 @@ class TopicUseTemplateActivity :
     private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             updatePreviewPosition(recyclerView)
+            if (dx != 0) {
+                syncVisibleAnimations()
+            }
         }
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
                 RecyclerView.SCROLL_STATE_DRAGGING -> {
                     carouselLayoutManager.beginSinglePageScroll()
+                    syncVisibleAnimations()
                 }
 
                 RecyclerView.SCROLL_STATE_IDLE -> {
                     carouselLayoutManager.endSinglePageScroll()
                     updateSelectedPosition(recyclerView)
+                    resumeVisibleAnimations()
+                }
+
+                RecyclerView.SCROLL_STATE_SETTLING -> {
+                    syncVisibleAnimations()
                 }
             }
         }
@@ -232,7 +245,14 @@ class TopicUseTemplateActivity :
         rv.addOnScrollListener(coverFlowListener)
         rv.addOnScrollListener(scrollListener)
         rv.addOnItemTouchListener(carouselTouchListener)
-        rv.setup {
+
+        val adapter = object : BindingAdapter() {
+            override fun onViewRecycled(holder: BindingViewHolder) {
+                recycleTemplateItem(holder.itemView)
+                super.onViewRecycled(holder)
+            }
+        }
+        adapter.apply {
             addType<TemplateItem>(R.layout.layout_item_topic_template_use)
             onBind {
                 if (itemWidth > 0) {
@@ -248,6 +268,23 @@ class TopicUseTemplateActivity :
                 coverFlowListener.applyTransform(rv)
             }
         }
+        rv.adapter = adapter
+
+        rv.addOnChildAttachStateChangeListener(
+            object : RecyclerView.OnChildAttachStateChangeListener {
+                override fun onChildViewAttachedToWindow(view: View) {
+                    val position = rv.getChildAdapterPosition(view)
+                    val shouldRun = isResumed &&
+                        rv.scrollState == RecyclerView.SCROLL_STATE_IDLE &&
+                        position == previewPosition
+                    setItemAnimationRunning(view, shouldRun)
+                }
+
+                override fun onChildViewDetachedFromWindow(view: View) {
+                    setItemAnimationRunning(view, false)
+                }
+            },
+        )
 
         mBind.llRv.post {
             val containerHeight = mBind.llRv.height
@@ -269,6 +306,7 @@ class TopicUseTemplateActivity :
                 ?.scrollToPositionWithOffset(selectedPosition, 0)
             coverFlowListener.applyTransform(rv)
             loadMoreIfNeeded(selectedPosition)
+            resumeVisibleAnimations()
         }
     }
 
@@ -345,6 +383,10 @@ class TopicUseTemplateActivity :
     private fun bindTemplateUseItem(itemView: View, model: TemplateItem) {
         itemView.findViewById<ImageView>(R.id.ivCover).loadImage(
             url = model.bullmind,
+            isAutoPlay = false,
+            onFinalImageSet = { imageView ->
+                syncAnimationPlayback(imageView, itemView)
+            },
         )
         val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(2, 3)
@@ -368,6 +410,7 @@ class TopicUseTemplateActivity :
                 ivSampleSingle.isVisible = true
                 ivSampleSingle.loadImage(
                     url = samples.first(),
+                    isAutoPlay = false,
                 )
             }
 
@@ -375,12 +418,54 @@ class TopicUseTemplateActivity :
                 llSampleBottom.isVisible = true
                 itemView.findViewById<ImageView>(R.id.ivSampleLeft).loadImage(
                     url = samples[0],
+                    isAutoPlay = false,
                 )
                 itemView.findViewById<ImageView>(R.id.ivSampleRight).loadImage(
                     url = samples.getOrNull(1),
+                    isAutoPlay = false,
                 )
             }
         }
+    }
+
+    private fun syncAnimationPlayback(imageView: ImageView, itemView: View) {
+        val rv = mBind.rvTemplate
+        val position = rv.getChildAdapterPosition(itemView)
+        imageView.setImageAnimationRunning(
+            isResumed &&
+                rv.scrollState == RecyclerView.SCROLL_STATE_IDLE &&
+                position == previewPosition &&
+                imageView.isVisibleOnScreen(),
+        )
+    }
+
+    private fun resumeVisibleAnimations() {
+        mBind.rvTemplate.post {
+            if (!isResumed) return@post
+            setAllItemAnimationsRunning(false)
+            val rv = mBind.rvTemplate
+            val layoutManager = rv.layoutManager ?: return@post
+            val centerView = snapHelper.findSnapView(layoutManager) ?: return@post
+            setItemAnimationRunning(centerView, centerView.isVisibleOnScreen())
+        }
+    }
+
+    private fun syncVisibleAnimations() {
+        setAllItemAnimationsRunning(false)
+    }
+
+    private fun setAllItemAnimationsRunning(running: Boolean) {
+        mBind.rvTemplate.children.forEach { itemView ->
+            setItemAnimationRunning(itemView, running)
+        }
+    }
+
+    private fun setItemAnimationRunning(itemView: View, running: Boolean) {
+        itemView.findViewById<ImageView>(R.id.ivCover).setImageAnimationRunning(running)
+    }
+
+    private fun recycleTemplateItem(itemView: View) {
+        itemView.findViewById<ImageView>(R.id.ivCover).setImageAnimationRunning(false)
     }
 
     override fun onBindViewClick() {
@@ -396,6 +481,18 @@ class TopicUseTemplateActivity :
 
     override fun createObserver() {
 
+    }
+
+    override fun onResume() {
+        super.onResume()
+        isResumed = true
+        resumeVisibleAnimations()
+    }
+
+    override fun onPause() {
+        isResumed = false
+        setAllItemAnimationsRunning(false)
+        super.onPause()
     }
 
     override fun onDestroy() {

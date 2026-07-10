@@ -8,18 +8,22 @@ import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.RecyclerView
+import com.drake.brv.BindingAdapter
 import com.drake.brv.annotaion.DividerOrientation
 import com.drake.brv.utils.bindingAdapter
 import com.drake.brv.utils.dividerSpace
-import com.drake.brv.utils.setup
 import com.drake.brv.utils.staggered
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.initClose
+import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.app.core.ext.setImageAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.app.event.EventViewModel
@@ -53,6 +57,8 @@ class TopicTemplateListActivity :
 
     private var hasNext = false
 
+    private var isResumed = false
+
     override val showTitle: Boolean
         get() = false
 
@@ -66,7 +72,11 @@ class TopicTemplateListActivity :
         mBind.tvDes.text = topicDescription
 
         if (topicImg.isNotEmpty()) {
-            mBind.ivImg.loadImage(url = topicImg)
+            mBind.ivImg.loadImage(
+                url = topicImg,
+                isAutoPlay = false,
+                onFinalImageSet = ::syncAnimationPlayback,
+            )
         }
 
         setupList()
@@ -100,28 +110,80 @@ class TopicTemplateListActivity :
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        isResumed = true
+        resumeVisibleAnimations()
+    }
+
+    override fun onPause() {
+        isResumed = false
+        setVisibleAnimationsRunning(false)
+        mBind.ivImg.setImageAnimationRunning(false)
+        super.onPause()
+    }
+
     private fun setupList() {
+        val adapter = object : BindingAdapter() {
+            override fun onViewRecycled(holder: BindingViewHolder) {
+                recycleTemplateItem(holder.itemView)
+                super.onViewRecycled(holder)
+            }
+        }
+
         mBind.rvList.staggered(SPAN_COUNT)
             .dividerSpace(dp(4), DividerOrientation.HORIZONTAL)
             .dividerSpace(dp(8), DividerOrientation.VERTICAL)
-            .setup {
-                addType<TemplateItem> { position ->
-                    if (position == 1) {
-                        R.layout.layout_item_topic_template_min
-                    } else {
-                        R.layout.layout_item_topic_template
-                    }
-                }
-                onBind {
-                    bindTemplateItem(itemView, getModel())
-                }
 
-                onClick(R.id.rootItem) {
-                    doDebouncedClick {
-                        openTopicUseTemplate(modelPosition)
-                    }
+        adapter.apply {
+            addType<TemplateItem> { position ->
+                if (position == 1) {
+                    R.layout.layout_item_topic_template_min
+                } else {
+                    R.layout.layout_item_topic_template
                 }
             }
+            onBind {
+                bindTemplateItem(itemView, getModel())
+            }
+
+            onClick(R.id.rootItem) {
+                doDebouncedClick {
+                    openTopicUseTemplate(modelPosition)
+                }
+            }
+        }
+        mBind.rvList.adapter = adapter
+
+        mBind.rvList.addOnChildAttachStateChangeListener(
+            object : RecyclerView.OnChildAttachStateChangeListener {
+                override fun onChildViewAttachedToWindow(view: View) {
+                    setItemAnimationRunning(
+                        view,
+                        isResumed && view.isVisibleOnScreen(),
+                    )
+                }
+
+                override fun onChildViewDetachedFromWindow(view: View) {
+                    setItemAnimationRunning(view, false)
+                }
+            },
+        )
+        mBind.rvList.addOnScrollListener(
+            object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (dx != 0 || dy != 0) {
+                        syncVisibleAnimations()
+                    }
+                }
+
+                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        resumeVisibleAnimations()
+                    }
+                }
+            },
+        )
     }
 
     private fun loadTemplates(refresh: Boolean, isLoading: Boolean) {
@@ -184,6 +246,8 @@ class TopicTemplateListActivity :
         itemView.findViewById<TextView>(R.id.tvTitle).text = model.dazzledeacon
         itemView.findViewById<ImageView>(R.id.ivCover).loadImage(
             url = model.bullmind,
+            isAutoPlay = false,
+            onFinalImageSet = ::syncAnimationPlayback,
         )
         val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(2, 3)
@@ -207,6 +271,7 @@ class TopicTemplateListActivity :
                 ivSampleSingle.isVisible = true
                 ivSampleSingle.loadImage(
                     url = samples.first(),
+                    isAutoPlay = false,
                 )
             }
 
@@ -214,12 +279,47 @@ class TopicTemplateListActivity :
                 llSampleBottom.isVisible = true
                 itemView.findViewById<ImageView>(R.id.ivSampleLeft).loadImage(
                     url = samples[0],
+                    isAutoPlay = false,
                 )
                 itemView.findViewById<ImageView>(R.id.ivSampleRight).loadImage(
                     url = samples.getOrNull(1),
+                    isAutoPlay = false,
                 )
             }
         }
+    }
+
+    private fun syncAnimationPlayback(imageView: ImageView) {
+        imageView.setImageAnimationRunning(
+            isResumed && imageView.isAttachedToWindow && imageView.isVisibleOnScreen(),
+        )
+    }
+
+    private fun resumeVisibleAnimations() {
+        mBind.rvList.post {
+            if (isResumed) {
+                setVisibleAnimationsRunning(true)
+                mBind.ivImg.setImageAnimationRunning(mBind.ivImg.isVisibleOnScreen())
+            }
+        }
+    }
+
+    private fun syncVisibleAnimations() {
+        setVisibleAnimationsRunning(isResumed)
+    }
+
+    private fun setVisibleAnimationsRunning(running: Boolean) {
+        mBind.rvList.children.forEach { itemView ->
+            setItemAnimationRunning(itemView, running && itemView.isVisibleOnScreen())
+        }
+    }
+
+    private fun setItemAnimationRunning(itemView: View, running: Boolean) {
+        itemView.findViewById<ImageView>(R.id.ivCover).setImageAnimationRunning(running)
+    }
+
+    private fun recycleTemplateItem(itemView: View) {
+        itemView.findViewById<ImageView>(R.id.ivCover).setImageAnimationRunning(false)
     }
 
     fun addReportBtn() {

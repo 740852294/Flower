@@ -57,6 +57,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private lateinit var workListBinder: MeWorkListBinder
     private lateinit var regenerateCoordinator: MeRegenerateCoordinator
     private var workListPollingStarted = false
+    private var isLazyLoaded = false
 
     companion object {
         const val SPAN_COUNT = 2
@@ -148,12 +149,20 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         mBind.clVip.clickNoRepeat { openActivity<VipJoinActivity>() }
 
-        mBind.clInfo.clickNoRepeat {
-            openActivityForResult<EditUserInfoActivity> { result ->
-                if (result != null) {
-                    (activity as? MainActivity)?.getUserInfo(isLoading = true)
-                }
-            }
+        mBind.ivAvatar.clickNoRepeat {
+            openEditUserInfoActivity()
+        }
+
+        mBind.tvName.clickNoRepeat {
+            openEditUserInfoActivity()
+        }
+
+        mBind.ivEdit.clickNoRepeat {
+            openEditUserInfoActivity()
+        }
+
+        mBind.ivVipLabel.clickNoRepeat {
+            openEditUserInfoActivity()
         }
 
         mBind.rlWorkAdd.clickNoRepeat {
@@ -175,6 +184,14 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                         loadData(isLoading = true)
                     },
                 )
+            }
+        }
+    }
+
+    private fun openEditUserInfoActivity(){
+        openActivityForResult<EditUserInfoActivity> { result ->
+            if (result != null) {
+                (activity as? MainActivity)?.getUserInfo(isLoading = true)
             }
         }
     }
@@ -201,6 +218,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun lazyLoadData() {
+        loadData(isLoading = true)
+        isLazyLoaded = true
         startWorkListPolling()
     }
 
@@ -268,7 +287,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
 
         EventViewModel.myPageRefreshEvent.observe(viewLifecycleOwner) { _ ->
-//            if (!isLazyLoaded) return@observe
+            if (!isLazyLoaded) return@observe
             loadData(isLoading = true)
         }
     }

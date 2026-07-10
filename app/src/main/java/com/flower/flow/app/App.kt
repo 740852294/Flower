@@ -1,9 +1,11 @@
 package com.flower.flow.app
 
 import android.app.Application
+import com.facebook.common.internal.Suppliers
 import com.facebook.cache.disk.DiskCacheConfig
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.facebook.fresco.vito.init.FrescoVito
+import com.facebook.fresco.vito.view.impl.VitoViewImpl2
 import com.facebook.imagepipeline.core.ImagePipelineConfig
 import com.flower.flow.app.core.net.AppExceptionMessageProvider
 import com.flower.flow.app.core.util.AppStrings
@@ -57,5 +59,8 @@ class App : Application(){
 
         Fresco.initialize(this, imagePipelineConfig)
         FrescoVito.initialize()
+        // Keep loaded images mounted when pages are covered; animation playback is controlled manually.
+        VitoViewImpl2.useVisibilityCallbacks = Suppliers.BOOLEAN_FALSE
+        VitoViewImpl2.useReleaseInViewDetached = Suppliers.BOOLEAN_FALSE
     }
 }
