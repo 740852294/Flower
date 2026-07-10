@@ -2,19 +2,15 @@ package com.flower.flow.ui.fragment
 
 import android.os.Bundle
 import android.view.View
-import android.widget.ImageView
-import androidx.core.view.children
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
 import com.drake.brv.BindingAdapter
 import com.drake.brv.utils.bindingAdapter
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
-import com.flower.flow.app.core.ext.clearImage
-import com.flower.flow.app.core.ext.isVisibleOnScreen
-import com.flower.flow.app.core.ext.loadImage
-import com.flower.flow.app.core.ext.setImageAnimationRunning
+import com.flower.flow.app.core.ext.clearGlideImage
+import com.flower.flow.app.core.ext.loadGlideImage
+import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.vm.TagListViewModel
 import com.flower.flow.databinding.FragmentTagListBinding
@@ -34,19 +30,13 @@ import me.hgj.jetpackmvvm.ext.view.grid
 class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>() {
 
     private var tagId: Int = 0
-    private var isPagerTransitioning = false
-    private var isContainerVisible = true
     private var cacheGeneration = 0
 
     override fun getLoadingView(): View = mBind.rvList
 
     override fun initView(savedInstanceState: Bundle?) {
         tagId = requireArguments().getInt(ARG_TAG_ID)
-        (parentFragment as? TagFragment)?.let { parent ->
-            isPagerTransitioning = parent.isTagPagerTransitioning()
-            isContainerVisible = parent.isTagContainerVisible()
-            cacheGeneration = parent.getTemplateCacheGeneration()
-        }
+        cacheGeneration = (parentFragment as? TagFragment)?.getTemplateCacheGeneration() ?: 0
 
         mBind.refreshLayout.refresh {
             loadTemplates(refresh = true, isLoading = false)
@@ -57,8 +47,18 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
 
         val adapter = object : BindingAdapter() {
             override fun onViewRecycled(holder: BindingViewHolder) {
-                recycleTemplateItem(holder.itemView)
                 super.onViewRecycled(holder)
+                recycleTemplateItem(holder.itemView)
+            }
+
+            override fun onViewAttachedToWindow(holder: BindingViewHolder) {
+                super.onViewAttachedToWindow(holder)
+                setTemplateItemAnimationsRunning(holder.itemView, true)
+            }
+
+            override fun onViewDetachedFromWindow(holder: BindingViewHolder) {
+                super.onViewDetachedFromWindow(holder)
+                setTemplateItemAnimationsRunning(holder.itemView, false)
             }
         }
 
@@ -70,12 +70,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
                 getBindingOrNull<LayoutItemTagTemplateBinding>()?.run {
                     val model = getModel<TemplateItem>()
                     tvTitle.text = model.dazzledeacon
-                    ivCover.loadImage(
-                        url = model.bullmind,
-                        isAutoPlay = false,
-                        resizeToViewport = true,
-                        onFinalImageSet = ::syncAnimationPlayback,
-                    )
+                    ivCover.loadGlideImage(model.bullmind)
                     bindLockBadge(this, model)
                     bindSampleImages(this, model.neverchapter)
                 }
@@ -90,82 +85,11 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
             }
         }
         mBind.rvList.adapter = adapter
-
-        mBind.rvList.addOnChildAttachStateChangeListener(
-            object : RecyclerView.OnChildAttachStateChangeListener {
-                override fun onChildViewAttachedToWindow(view: View) {
-                    setItemAnimationRunning(
-                        view,
-                        canPlayAnimations() && view.isVisibleOnScreen(),
-                    )
-                }
-
-                override fun onChildViewDetachedFromWindow(view: View) {
-                    setItemAnimationRunning(view, false)
-                }
-            }
-        )
-        mBind.rvList.addOnScrollListener(
-            object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (dx != 0 || dy != 0) {
-                        syncVisibleAnimations()
-                    }
-                }
-
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
-                        resumeVisibleAnimations()
-                    }
-                }
-            }
-        )
-    }
-
-    override fun onResume() {
-        super.onResume()
-        resumeVisibleAnimations()
-    }
-
-    override fun onPause() {
-        if (!isPagerTransitioning || !isContainerVisible) {
-            setVisibleAnimationsRunning(false)
-        }
-        super.onPause()
     }
 
     override fun lazyLoadData() {
         if (!restoreTemplatesFromCache()) {
             loadTemplates(refresh = true, isLoading = true)
-        }
-    }
-
-    override fun onHiddenChanged(hidden: Boolean) {
-        super.onHiddenChanged(hidden)
-        if (hidden) {
-            setVisibleAnimationsRunning(false)
-        } else {
-            resumeVisibleAnimations()
-        }
-    }
-
-    internal fun setPagerTransitioning(transitioning: Boolean) {
-        isPagerTransitioning = transitioning
-        if (!isParentContainerVisible()) {
-            setVisibleAnimationsRunning(false)
-        } else if (transitioning || isResumed) {
-            resumeVisibleAnimations()
-        } else {
-            setVisibleAnimationsRunning(false)
-        }
-    }
-
-    internal fun setContainerVisible(visible: Boolean) {
-        isContainerVisible = visible
-        if (visible) {
-            resumeVisibleAnimations()
-        } else if (view != null) {
-            setVisibleAnimationsRunning(false)
         }
     }
 
@@ -228,85 +152,43 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
         when {
-            samples.isNullOrEmpty() -> return
+            samples.isNullOrEmpty() -> {
+                binding.ivSampleSingle.clearGlideImage()
+                binding.ivSampleLeft.clearGlideImage()
+                binding.ivSampleRight.clearGlideImage()
+                return
+            }
             samples.size == 1 -> {
                 binding.ivSampleSingle.isVisible = true
-                binding.ivSampleSingle.loadImage(
-                    url = samples.first(),
-                    isAutoPlay = false,
-                    resizeToViewport = true,
-                )
+                binding.ivSampleSingle.loadGlideImage(samples.first())
+                binding.ivSampleLeft.clearGlideImage()
+                binding.ivSampleRight.clearGlideImage()
             }
 
             else -> {
                 binding.llSampleBottom.isVisible = true
-                binding.ivSampleLeft.loadImage(
-                    url = samples[0],
-                    isAutoPlay = false,
-                    resizeToViewport = true,
-                )
-                binding.ivSampleRight.loadImage(
-                    url = samples.getOrNull(1),
-                    isAutoPlay = false,
-                    resizeToViewport = true,
-                )
+                binding.ivSampleSingle.clearGlideImage()
+                binding.ivSampleLeft.loadGlideImage(samples[0])
+                binding.ivSampleRight.loadGlideImage(samples.getOrNull(1))
             }
         }
-    }
-
-    private fun syncAnimationPlayback(imageView: ImageView) {
-        imageView.setImageAnimationRunning(
-            canPlayAnimations() && imageView.isAttachedToWindow && imageView.isVisibleOnScreen(),
-        )
-    }
-
-    private fun canPlayAnimations(): Boolean {
-        if (view == null) return false
-        return isContainerVisible &&
-                isParentContainerVisible() &&
-                !isHidden &&
-                (isResumed || isPagerTransitioning)
-    }
-
-    private fun isParentContainerVisible(): Boolean {
-        return (parentFragment as? TagFragment)?.isTagContainerVisible() ?: true
-    }
-
-    private fun resumeVisibleAnimations() {
-        if (view == null) return
-        mBind.rvList.post {
-            if (canPlayAnimations()) {
-                setVisibleAnimationsRunning(true)
-            }
-        }
-    }
-
-    private fun syncVisibleAnimations() {
-        if (canPlayAnimations()) {
-            setVisibleAnimationsRunning(true)
-        } else {
-            setVisibleAnimationsRunning(false)
-        }
-    }
-
-    private fun setVisibleAnimationsRunning(running: Boolean) {
-        mBind.rvList.children.forEach { itemView ->
-            setItemAnimationRunning(itemView, running && itemView.isVisibleOnScreen())
-        }
-    }
-
-    private fun setItemAnimationRunning(itemView: View, running: Boolean) {
-        LayoutItemTagTemplateBinding.bind(itemView).ivCover
-            .setImageAnimationRunning(running)
     }
 
     private fun recycleTemplateItem(itemView: View) {
         LayoutItemTagTemplateBinding.bind(itemView).run {
-            ivCover.setImageAnimationRunning(false)
-            ivCover.clearImage()
-            ivSampleSingle.clearImage()
-            ivSampleLeft.clearImage()
-            ivSampleRight.clearImage()
+            ivCover.clearGlideImage()
+            ivSampleSingle.clearGlideImage()
+            ivSampleLeft.clearGlideImage()
+            ivSampleRight.clearGlideImage()
+        }
+    }
+
+    private fun setTemplateItemAnimationsRunning(itemView: View, running: Boolean) {
+        LayoutItemTagTemplateBinding.bind(itemView).run {
+            ivCover.setGlideAnimationRunning(running)
+            ivSampleSingle.setGlideAnimationRunning(running)
+            ivSampleLeft.setGlideAnimationRunning(running)
+            ivSampleRight.setGlideAnimationRunning(running)
         }
     }
 

@@ -10,7 +10,7 @@ import android.text.style.ClickableSpan
 import android.view.View
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.ext.loadImage
+import com.flower.flow.app.core.ext.loadGlideImage
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.data.model.CacheConfig
 import com.flower.flow.data.model.StringResId
@@ -20,7 +20,6 @@ import com.flower.flow.domain.startup.StartUserGate
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
 import me.hgj.jetpackmvvm.ext.util.doDebouncedClick
-import me.hgj.jetpackmvvm.ext.util.finishActivityByClass
 import me.hgj.jetpackmvvm.ext.util.finishAllActivity
 import me.hgj.jetpackmvvm.ext.util.getColorExt
 import me.hgj.jetpackmvvm.ext.util.intent.openActivity
@@ -74,7 +73,7 @@ class PrivacyActivity : BaseActivity<PrivacyViewModel, ActivityPrivacyBinding>()
         mViewModel.getBackgroundVideo().obs(this) {
             onSuccess {
                 if (it.cuspcrow.isNotEmpty()) {
-                    mBind.bgVideo.loadImage(it.cuspcrow, placeholderRes = R.mipmap.pic_privacy)
+                    mBind.bgVideo.loadGlideImage(it.cuspcrow, placeholderRes = R.mipmap.pic_privacy)
                     mBind.ivBg.visibility = View.INVISIBLE
                 }
             }

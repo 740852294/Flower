@@ -1,7 +1,5 @@
 package com.flower.flow.ui.fragment.me
 
-import android.view.View
-import androidx.recyclerview.widget.RecyclerView
 import androidx.core.view.isVisible
 import com.drake.brv.BindingAdapter
 import com.drake.brv.annotaion.DividerOrientation
@@ -40,8 +38,21 @@ class MeWorkListBinder(
     fun setupRecyclerView() {
         val adapter = object : BindingAdapter() {
             override fun onViewRecycled(holder: BindingViewHolder) {
-                WorkItemViewDelegate.recycleItem(holder.itemView)
                 super.onViewRecycled(holder)
+                WorkItemViewDelegate.recycleItem(holder.itemView)
+            }
+
+            override fun onViewAttachedToWindow(holder: BindingViewHolder) {
+                super.onViewAttachedToWindow(holder)
+                WorkItemViewDelegate.setItemAnimationsRunning(
+                    holder.itemView,
+                    callbacks.isFragmentVisible() && holder.itemView.isVisibleOnScreen(),
+                )
+            }
+
+            override fun onViewDetachedFromWindow(holder: BindingViewHolder) {
+                super.onViewDetachedFromWindow(holder)
+                WorkItemViewDelegate.setItemAnimationsRunning(holder.itemView, false)
             }
         }
 
@@ -105,21 +116,6 @@ class MeWorkListBinder(
             }
         }
         binding.rvList.adapter = adapter
-
-        binding.rvList.addOnChildAttachStateChangeListener(
-            object : RecyclerView.OnChildAttachStateChangeListener {
-                override fun onChildViewAttachedToWindow(view: View) {
-                    WorkItemViewDelegate.setItemAnimationsRunning(
-                        view,
-                        callbacks.isFragmentVisible() && view.isVisibleOnScreen(),
-                    )
-                }
-
-                override fun onChildViewDetachedFromWindow(view: View) {
-                    WorkItemViewDelegate.setItemAnimationsRunning(view, false)
-                }
-            },
-        )
     }
 
     fun bindWorkList(

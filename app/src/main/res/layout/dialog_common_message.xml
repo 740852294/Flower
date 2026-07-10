@@ -82,7 +82,7 @@
 
             <Space
                 android:id="@+id/buttonSpace"
-                android:layout_width="26dp"
+                android:layout_width="20dp"
                 android:layout_height="match_parent" />
 
             <com.hjq.shape.view.ShapeButton

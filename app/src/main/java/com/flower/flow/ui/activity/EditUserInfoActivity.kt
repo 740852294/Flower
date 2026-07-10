@@ -7,12 +7,11 @@ import android.provider.OpenableColumns
 import android.view.Gravity
 import android.view.MenuItem
 import android.widget.FrameLayout
-import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doAfterTextChanged
 import androidx.lifecycle.lifecycleScope
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.ext.loadAvatarFile
+import com.flower.flow.app.core.ext.loadGlideAvatar
 import com.flower.flow.app.core.util.AesTextCodec
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.PhotoCompressUtil
@@ -101,7 +100,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
         UserManager.user?.apply {
             val avatar = this.excludephone
             if (avatar.isNotEmpty()) {
-                mBind.ivAvatar.loadAvatarFile(avatar)
+                mBind.ivAvatar.loadGlideAvatar(avatar)
             }
 
             val name = this.dazzledeacon
@@ -174,8 +173,7 @@ class EditUserInfoActivity : BaseActivity<EditUserInfoViewModel, ActivityEditUse
                 AppStrings.get(StringResId.PHOTO_UPLOAD_FAIL).toast()
                 return@launch
             }
-
-            mBind.ivAvatar.loadAvatarFile(compressedFile)
+            mBind.ivAvatar.loadGlideAvatar(compressedFile.absolutePath)
             mViewModel.setPendingAvatarPath(compressedFile.absolutePath)
             updateSaveButtonState()
         }

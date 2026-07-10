@@ -85,17 +85,21 @@
 #实体类
 -keep class com.flower.flow.data.model.entity.**{ *; }
 
-# Fresco 3.7 通过反射创建 GIF/WebP 动图解码器，必须保留完整类和构造方法。
--keep class com.facebook.animated.webp.WebPImageDecoder { *; }
--keep class com.facebook.animated.gif.GifImageDecoder { *; }
--keepclassmembers class com.facebook.fresco.animation.drawable.AnimatedDrawable2 {
-    private boolean _isRunning;
-    private long startTimeMs;
-    private long expectedRenderTimeMs;
-    private long lastFrameAnimationTimeMs;
-    private int lastDrawnFrameNumber;
-    private long pausedStartTimeMsDifference;
-    private long pausedLastFrameAnimationTimeMsDifference;
-    private int pausedLastDrawnFrameNumber;
-    private java.lang.Runnable invalidateRunnable;
-}
+# Glide 4.16 自带 consumer rules 会保留 AppGlideModule / ImageHeaderParser 等基础规则。
+# 这里额外保留 KSP 生成入口，以及当前生成模块实际注册的 LibraryGlideModule。
+-keep class com.bumptech.glide.GeneratedAppGlideModuleImpl { *; }
+-keep class com.flower.flow.MyGlideModule { *; }
+-keep class com.bumptech.glide.GeneratedRequestManagerFactory { *; }
+-keep class com.bumptech.glide.integration.okhttp3.OkHttpLibraryGlideModule { *; }
+-keep class com.github.penfeizhou.animation.glide.GlideAnimationModule { *; }
+
+# penfeizhou glide-plugin 会传递引入 awebp/apng/gif/avif；其中只有 gif AAR 自带部分规则。
+-keep class com.github.penfeizhou.animation.io.Reader { *; }
+-keep class com.github.penfeizhou.animation.gif.io.GifReader { *; }
+-keep class com.github.penfeizhou.animation.gif.decode.GifFrame { *; }
+-keep class com.github.penfeizhou.animation.webp.io.WebPReader { *; }
+-keep class com.github.penfeizhou.animation.webp.decode.AnimationFrame { *; }
+-keep class com.github.penfeizhou.animation.apng.io.APNGReader { *; }
+-keep class com.github.penfeizhou.animation.apng.decode.APNGFrame { *; }
+-keep class com.github.penfeizhou.animation.avif.io.AVIFReader { *; }
+-keep class com.github.penfeizhou.animation.avif.decode.AVIFFrame { *; }

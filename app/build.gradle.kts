@@ -144,19 +144,6 @@ kotlin {
 dependencies {
     implementation(project(":mvvm"))
 
-    implementation(libs.fresco)
-    implementation(libs.fresco.gif)
-    implementation(libs.fresco.vito)
-    implementation(libs.fresco.vito.core)
-    implementation(libs.fresco.vito.view)
-    implementation(libs.fresco.vito.options)
-    implementation(libs.fresco.vito.source)
-    // 动图 webp
-    implementation(libs.fresco.animated.webp)
-    // 动图基础支持
-    implementation(libs.fresco.animated.base)
-    implementation(libs.fresco.webpsupport)
-
     implementation(libs.facebook.core)
     implementation(libs.install.referrer)
     implementation(libs.play.services.ads.identifier)
@@ -183,4 +170,11 @@ dependencies {
     ksp(libs.rxhttp.compiler)
 
     testImplementation(libs.junit)
+
+    implementation(libs.glide)
+    ksp(libs.glide.ksp)
+    implementation(libs.glide.integration)
+    implementation(libs.glide.plugin)
+    implementation(libs.glide.awebp)
+    implementation(libs.glide.gif)
 }

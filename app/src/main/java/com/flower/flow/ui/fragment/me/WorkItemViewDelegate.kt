@@ -4,9 +4,9 @@ import android.view.View
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.flower.flow.R
-import com.flower.flow.app.core.ext.clearImage
-import com.flower.flow.app.core.ext.loadImage
-import com.flower.flow.app.core.ext.setImageAnimationRunning
+import com.flower.flow.app.core.ext.clearGlideImage
+import com.flower.flow.app.core.ext.loadGlideImage
+import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.data.model.entity.WorkItem
 import com.flower.flow.databinding.LayoutItemWorkBinding
@@ -59,7 +59,7 @@ object WorkItemViewDelegate {
     ) {
         val isVip = UserManager.user?.shareengage ?: false
         bindSelectionState(binding, model, selection)
-        binding.ivCover.setImageAnimationRunning(false)
+        binding.ivCover.setGlideAnimationRunning(false)
 
         binding.btnStatus.isVisible = !model.increaserace.isNullOrBlank()
         binding.btnStatus.text = model.increaserace ?: ""
@@ -96,14 +96,12 @@ object WorkItemViewDelegate {
         binding.llTime.visibility = View.INVISIBLE
         binding.llProgress.visibility = View.GONE
         binding.ivDownload.visibility = View.INVISIBLE
-        binding.ivCover.loadImage(
+        binding.ivCover.loadGlideImage(
             url = model.clogcadre,
-            isAutoPlay = false,
-            resizeToViewport = true,
-            onFinalImageSet = onAnimationSync,
+            onResourceReady = onAnimationSync,
         )
         binding.ivCover.applyBlurEffect(true)
-        bindSampleImages(binding, model.aperitifaccost)
+        bindSampleImages(binding, model.aperitifaccost, onAnimationSync)
         binding.llStatus.visibility = View.VISIBLE
         binding.ivStatus.visibility = View.VISIBLE
         binding.ivStatus.setImageResource(R.mipmap.ic_work_lock)
@@ -125,16 +123,19 @@ object WorkItemViewDelegate {
         binding.ivDownload.visibility = View.INVISIBLE
         val url = model.aperitifaccost?.firstOrNull() ?: ""
         if (url.isNotBlank()) {
-            binding.ivCover.loadImage(
+            binding.ivCover.loadGlideImage(
                 url = url,
-                isAutoPlay = false,
-                resizeToViewport = true,
-                onFinalImageSet = onAnimationSync,
+                onResourceReady = onAnimationSync,
             )
+        } else {
+            binding.ivCover.clearGlideImage()
         }
         binding.ivCover.applyBlurEffect(true)
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
+        binding.ivSampleSingle.clearGlideImage()
+        binding.ivSampleLeft.clearGlideImage()
+        binding.ivSampleRight.clearGlideImage()
         binding.llStatus.visibility = View.VISIBLE
         binding.ivStatus.visibility = View.GONE
         binding.tvStatus1.visibility =
@@ -159,16 +160,19 @@ object WorkItemViewDelegate {
         binding.ivDownload.visibility = View.VISIBLE
         val url = model.aperitifaccost?.firstOrNull() ?: model.clogcadre ?: ""
         if (url.isNotBlank()) {
-            binding.ivCover.loadImage(
+            binding.ivCover.loadGlideImage(
                 url = url,
-                isAutoPlay = false,
-                resizeToViewport = true,
-                onFinalImageSet = onAnimationSync,
+                onResourceReady = onAnimationSync,
             )
+        } else {
+            binding.ivCover.clearGlideImage()
         }
         binding.ivCover.applyBlurEffect(false)
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
+        binding.ivSampleSingle.clearGlideImage()
+        binding.ivSampleLeft.clearGlideImage()
+        binding.ivSampleRight.clearGlideImage()
         binding.llStatus.visibility = View.GONE
     }
 
@@ -183,16 +187,19 @@ object WorkItemViewDelegate {
         binding.ivDownload.visibility = View.INVISIBLE
         val url = model.aperitifaccost?.firstOrNull() ?: ""
         if (url.isNotBlank()) {
-            binding.ivCover.loadImage(
+            binding.ivCover.loadGlideImage(
                 url = url,
-                isAutoPlay = false,
-                resizeToViewport = true,
-                onFinalImageSet = onAnimationSync,
+                onResourceReady = onAnimationSync,
             )
+        } else {
+            binding.ivCover.clearGlideImage()
         }
         binding.ivCover.applyBlurEffect(true)
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
+        binding.ivSampleSingle.clearGlideImage()
+        binding.ivSampleLeft.clearGlideImage()
+        binding.ivSampleRight.clearGlideImage()
         binding.llStatus.visibility = View.VISIBLE
         binding.ivStatus.visibility = View.VISIBLE
         binding.ivStatus.setImageResource(R.mipmap.ic_work_failed)
@@ -205,31 +212,37 @@ object WorkItemViewDelegate {
     fun bindSampleImages(
         binding: LayoutItemWorkBinding,
         samples: List<String>?,
+        onAnimationSync: (ImageView) -> Unit,
     ) {
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
         when {
-            samples.isNullOrEmpty() -> return
+            samples.isNullOrEmpty() -> {
+                binding.ivSampleSingle.clearGlideImage()
+                binding.ivSampleLeft.clearGlideImage()
+                binding.ivSampleRight.clearGlideImage()
+                return
+            }
             samples.size == 1 -> {
                 binding.ivSampleSingle.isVisible = true
-                binding.ivSampleSingle.loadImage(
+                binding.ivSampleSingle.loadGlideImage(
                     url = samples.first(),
-                    isAutoPlay = false,
-                    resizeToViewport = true,
+                    onResourceReady = onAnimationSync,
                 )
+                binding.ivSampleLeft.clearGlideImage()
+                binding.ivSampleRight.clearGlideImage()
             }
 
             else -> {
                 binding.llSampleBottom.isVisible = true
-                binding.ivSampleLeft.loadImage(
+                binding.ivSampleSingle.clearGlideImage()
+                binding.ivSampleLeft.loadGlideImage(
                     url = samples[0],
-                    isAutoPlay = false,
-                    resizeToViewport = true,
+                    onResourceReady = onAnimationSync,
                 )
-                binding.ivSampleRight.loadImage(
+                binding.ivSampleRight.loadGlideImage(
                     url = samples.getOrNull(1),
-                    isAutoPlay = false,
-                    resizeToViewport = true,
+                    onResourceReady = onAnimationSync,
                 )
             }
         }
@@ -237,21 +250,20 @@ object WorkItemViewDelegate {
 
     fun setItemAnimationsRunning(itemView: View, running: Boolean) {
         LayoutItemWorkBinding.bind(itemView).run {
-            ivCover.setImageAnimationRunning(running)
-            ivSampleSingle.setImageAnimationRunning(false)
-            ivSampleLeft.setImageAnimationRunning(false)
-            ivSampleRight.setImageAnimationRunning(false)
+            ivCover.setGlideAnimationRunning(running)
+            ivSampleSingle.setGlideAnimationRunning(running)
+            ivSampleLeft.setGlideAnimationRunning(running)
+            ivSampleRight.setGlideAnimationRunning(running)
         }
     }
 
     fun recycleItem(itemView: View) {
         LayoutItemWorkBinding.bind(itemView).run {
-            ivCover.setImageAnimationRunning(false)
             ivCover.applyBlurEffect(false)
-            ivCover.clearImage()
-            ivSampleSingle.clearImage()
-            ivSampleLeft.clearImage()
-            ivSampleRight.clearImage()
+            ivCover.clearGlideImage()
+            ivSampleSingle.clearGlideImage()
+            ivSampleLeft.clearGlideImage()
+            ivSampleRight.clearGlideImage()
         }
     }
 }

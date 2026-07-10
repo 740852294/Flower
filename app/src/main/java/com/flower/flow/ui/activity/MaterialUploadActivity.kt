@@ -8,19 +8,13 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.widget.ImageView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
-import com.facebook.drawee.backends.pipeline.Fresco
-import com.facebook.drawee.controller.BaseControllerListener
-import com.facebook.imagepipeline.image.ImageInfo
-import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
-import com.flower.flow.app.core.ext.clearImage
+import com.flower.flow.app.core.ext.clearGlideImage
 import com.flower.flow.app.core.ext.initClose
-import com.flower.flow.app.core.ext.loadImage
-import com.flower.flow.app.core.ext.loadImageFile
-import com.flower.flow.app.core.ext.setImageAnimationRunning
+import com.flower.flow.app.core.ext.loadGlideImage
+import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.GenerateSubmitCache
 import com.flower.flow.app.core.util.MainNavigator
@@ -34,6 +28,8 @@ import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.dialog.GeneratePreCheckPresenter
 import com.flower.flow.ui.dialog.GenerateResultDialog
 import com.flower.flow.ui.upload.ImagePickDelegate
+import com.github.penfeizhou.animation.gif.GifDrawable
+import com.github.penfeizhou.animation.loader.AssetStreamLoader
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -50,6 +46,7 @@ import java.io.File
 import kotlin.random.Random
 import kotlin.time.Duration.Companion.milliseconds
 
+
 class MaterialUploadActivity :
     BaseActivity<MaterialUploadViewModel, ActivityMaterialUploadBinding>() {
 
@@ -64,6 +61,10 @@ class MaterialUploadActivity :
     private var isCoverCleared = false
     private var pendingGenerateReveal: (() -> Unit)? = null
     private lateinit var imagePickDelegate: ImagePickDelegate
+    private val gifDrawable by lazy {
+        val assetLoader = AssetStreamLoader(this, "generate.gif")
+        GifDrawable(assetLoader)
+    }
 
     private val generateBackPressedCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() = Unit
@@ -97,10 +98,9 @@ class MaterialUploadActivity :
 
         templateItem?.apply {
             mBind.toolbar.title = dazzledeacon
-            mBind.ivCover.loadImage(
+            mBind.ivCover.loadGlideImage(
                 url = bullmind,
-                isAutoPlay = false,
-                onFinalImageSet = ::syncCoverAnimationPlayback,
+                onResourceReady = ::syncCoverAnimationPlayback,
             )
             bindPhotoUpload(this)
             bindLockBadge(this)
@@ -142,6 +142,29 @@ class MaterialUploadActivity :
                 submitPageInfo = info
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isCoverCleared) {
+            mBind.ivCover.setGlideAnimationRunning(true)
+        }
+        if (mBind.flGenerate.isVisible) {
+            startGenerateAnimation()
+        }
+    }
+
+    override fun onPause() {
+        mBind.ivCover.setGlideAnimationRunning(false)
+        gifDrawable.stop()
+        super.onPause()
+    }
+
+    override fun onDestroy() {
+        generateSimulationJob?.cancel()
+        gifDrawable.stop()
+        mBind.gifView.setImageDrawable(null)
+        super.onDestroy()
     }
 
     private fun handleSelectedImageUri(uri: Uri?) {
@@ -236,50 +259,38 @@ class MaterialUploadActivity :
 
     private fun syncCoverAnimationPlayback(imageView: ImageView) {
         if (isCoverCleared) return
-        imageView.setImageAnimationRunning(true)
+        imageView.setGlideAnimationRunning(true)
     }
 
     private fun clearCoverImage() {
         if (isCoverCleared) return
         isCoverCleared = true
-        mBind.ivCover.setImageAnimationRunning(false)
-        mBind.ivCover.clearImage()
+        mBind.ivCover.setGlideAnimationRunning(false)
+        mBind.ivCover.clearGlideImage()
         mBind.ivCover.isVisible = false
     }
 
     private fun preloadGenerateAnimation() {
         isGenerateAnimationReady = false
-        val uri = "res://${packageName}/${R.drawable.generate}".toUri()
-        val controller = Fresco.newDraweeControllerBuilder()
-            .setUri(uri)
-            .setAutoPlayAnimations(false)
-            .setOldController(mBind.gifView.controller)
-            .setControllerListener(object : BaseControllerListener<ImageInfo>() {
-                override fun onFinalImageSet(
-                    id: String?,
-                    imageInfo: ImageInfo?,
-                    animatable: android.graphics.drawable.Animatable?,
-                ) {
-                    animatable?.stop()
-                    isGenerateAnimationReady = true
-                    mBind.root.post {
-                        if (mBind.flGenerate.isVisible) {
-                            startGenerateAnimation()
-                        }
-                        pendingGenerateReveal?.invoke()
-                        pendingGenerateReveal = null
-                    }
-                }
-            })
-            .build()
-
-        mBind.gifView.controller = controller
+        gifDrawable.setAutoPlay(false)
+        gifDrawable.stop()
+        mBind.gifView.setImageDrawable(gifDrawable)
+        mBind.root.post {
+            isGenerateAnimationReady = true
+            if (mBind.flGenerate.isVisible) {
+                startGenerateAnimation()
+            }
+            pendingGenerateReveal?.invoke()
+            pendingGenerateReveal = null
+        }
     }
 
     private fun startGenerateAnimation() {
-        val animatable = mBind.gifView.controller?.animatable ?: return
-        if (!animatable.isRunning) {
-            animatable.start()
+        if (mBind.gifView.drawable !== gifDrawable) {
+            mBind.gifView.setImageDrawable(gifDrawable)
+        }
+        if (!gifDrawable.isRunning) {
+            gifDrawable.start()
         }
     }
 
@@ -400,21 +411,30 @@ class MaterialUploadActivity :
         when (slot) {
             UploadSlot.SINGLE -> {
                 mViewModel.singleUploadPath = file.absolutePath
-                mBind.ivUploadPreview.loadImageFile(file)
+                mBind.ivUploadPreview.loadGlideImage(
+                    url = Uri.fromFile(file).toString(),
+                    scaleType = ImageView.ScaleType.FIT_CENTER,
+                )
                 mBind.ivUploadPreview.isVisible = true
                 mBind.llSingleUploadPlaceholder.isVisible = false
             }
 
             UploadSlot.LEFT -> {
                 mViewModel.leftUploadPath = file.absolutePath
-                mBind.ivUploadPreviewLeft.loadImageFile(file)
+                mBind.ivUploadPreviewLeft.loadGlideImage(
+                    url = Uri.fromFile(file).toString(),
+                    scaleType = ImageView.ScaleType.FIT_CENTER,
+                )
                 mBind.ivUploadPreviewLeft.isVisible = true
                 mBind.llUploadPlaceholderLeft.isVisible = false
             }
 
             UploadSlot.RIGHT -> {
                 mViewModel.rightUploadPath = file.absolutePath
-                mBind.ivUploadPreviewRight.loadImageFile(file)
+                mBind.ivUploadPreviewRight.loadGlideImage(
+                    url = Uri.fromFile(file).toString(),
+                    scaleType = ImageView.ScaleType.FIT_CENTER,
+                )
                 mBind.ivUploadPreviewRight.isVisible = true
                 mBind.llUploadPlaceholderRight.isVisible = false
             }

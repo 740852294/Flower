@@ -12,7 +12,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.applyCornerRadius
-import com.flower.flow.app.core.ext.loadImageFitWidth
+import com.flower.flow.app.core.ext.loadGlideImageFitWidth
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.LegacyStoragePermission
 import com.flower.flow.app.core.util.StoragePermissionUi
@@ -85,7 +85,7 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         mBind.btnDownload.clickNoRepeat {
             CommonMessageDialog.Builder(this)
                 .setContent(workItem.demand.orEmpty())
-                .setConfirmButton(AppStrings.get(StringResId.DOWNLOAD_ACTION)) {
+                .setConfirmButton(AppStrings.get(StringResId.CONFIRM_ACTION)) {
                     requestWorkDownload()
                 }
                 .setCancelButton(AppStrings.get(StringResId.CANCEL_ACTION)) {}
@@ -123,7 +123,7 @@ class WorkPreviewActivity : BaseActivity<BaseViewModel, ActivityWorkPreviewBindi
         mBind.previewVideo.isVisible = false
         mBind.videoLoading.isVisible = false
 
-        mBind.previewImage.loadImageFitWidth(
+        mBind.previewImage.loadGlideImageFitWidth(
             url = url,
             onAspectRatio = ::updatePreviewAspectRatio,
         )

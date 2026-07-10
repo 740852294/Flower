@@ -15,8 +15,8 @@ import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseFragment
 import com.flower.flow.app.core.ext.isVisibleOnScreen
-import com.flower.flow.app.core.ext.loadAvatarFile
-import com.flower.flow.app.core.ext.setImageAnimationRunning
+import com.flower.flow.app.core.ext.loadGlideAvatar
+import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.core.widget.CenterImageSpan
@@ -117,7 +117,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         override fun syncAnimationPlayback(imageView: ImageView) {
             imageView.post {
-                imageView.setImageAnimationRunning(
+                imageView.setGlideAnimationRunning(
                     canPlayWorkAnimations() &&
                         imageView.isVisibleOnScreen(),
                 )
@@ -301,14 +301,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.clVip.isVisible = (!isVip) && ((App.globalConfig?.exaltabrade ?: 0) == 1)
         mBind.ivVipLabel.isVisible = isVip
 
-        val avatar = user.excludephone
-        if (avatar.isNotEmpty()) {
-            mBind.ivAvatar.loadAvatarFile(
-                source = avatar,
-                isAutoPlay = true,
-                onFinalImageSet = workListCallbacks::syncAnimationPlayback,
-            )
-        }
+        mBind.ivAvatar.loadGlideAvatar(
+            source = user.excludephone,
+            onResourceReady = workListCallbacks::syncAnimationPlayback,
+        )
 
         mBind.tvName.text = user.dazzledeacon
         mBind.tvMoney.text = user.beastamalgam.toString()
@@ -400,7 +396,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     private fun setVisibleAnimationsRunning(running: Boolean) {
-        mBind.ivAvatar.setImageAnimationRunning(running && mBind.ivAvatar.isVisibleOnScreen())
+        mBind.ivAvatar.setGlideAnimationRunning(running && mBind.ivAvatar.isVisibleOnScreen())
         mBind.rvList.children.forEach { itemView ->
             com.flower.flow.ui.fragment.me.WorkItemViewDelegate.setItemAnimationsRunning(
                 itemView,

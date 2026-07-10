@@ -9,9 +9,11 @@ import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.core.view.updateLayoutParams
+import com.flower.flow.R
 import com.flower.flow.app.App
-import com.flower.flow.app.core.ext.loadImage
-import com.flower.flow.app.core.ext.setImageAnimationRunning
+import com.flower.flow.app.core.ext.clearGlideImage
+import com.flower.flow.app.core.ext.loadGlideImage
+import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.data.model.entity.TemplateItem
 import com.flower.flow.data.model.entity.TopicItem
 import com.flower.flow.databinding.LayoutItemTopicLeftBinding
@@ -74,16 +76,14 @@ internal fun LayoutItemTopicRightBinding.asTopicItemViewRefs() = TopicItemViewRe
 
 internal fun LayoutItemTopicLeftBinding.bindTopicItem(
     model: TopicItem,
-    onFinalImageSet: (ImageView) -> Unit,
 ) {
-    bindTopicItem(asTopicItemViewRefs(), model, onFinalImageSet)
+    bindTopicItem(asTopicItemViewRefs(), model)
 }
 
 internal fun LayoutItemTopicRightBinding.bindTopicItem(
     model: TopicItem,
-    onFinalImageSet: (ImageView) -> Unit,
 ) {
-    bindTopicItem(asTopicItemViewRefs(), model, onFinalImageSet)
+    bindTopicItem(asTopicItemViewRefs(), model)
 
     fun Int.dpToPx(): Int = TypedValue.applyDimension(
         TypedValue.COMPLEX_UNIT_DIP,
@@ -103,18 +103,9 @@ internal fun LayoutItemTopicRightBinding.bindTopicItem(
     }
 }
 
-internal fun LayoutItemTopicLeftBinding.setTopicItemAnimationsRunning(running: Boolean) {
-    asTopicItemViewRefs().setAnimationsRunning(running)
-}
-
-internal fun LayoutItemTopicRightBinding.setTopicItemAnimationsRunning(running: Boolean) {
-    asTopicItemViewRefs().setAnimationsRunning(running)
-}
-
 internal fun bindTopicItem(
     refs: TopicItemViewRefs,
     model: TopicItem,
-    onFinalImageSet: (ImageView) -> Unit,
 ) {
     refs.tvName.text = model.dazzledeacon
     refs.tvDesc.text = model.bequeathconclave
@@ -123,109 +114,111 @@ internal fun bindTopicItem(
     val model1 = modelList?.getOrNull(0)
     if (model1 != null) {
         refs.clTemple1.isVisible = true
-        refs.ivCover1.loadImage(
-            url = model1.bullmind,
-            isAutoPlay = false,
-            onFinalImageSet = onFinalImageSet,
-        )
+        refs.ivCover1.loadGlideImage(model1.bullmind)
         val showCost = model1.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(1, 3)
         refs.llLockBadge.isVisible = showCost && showConfig
         refs.tvLockIntegral.text = model1.peacearrow.toString()
-        bindSampleImages(refs, model1.neverchapter, onFinalImageSet)
+        bindSampleImages(refs, model1.neverchapter)
     } else {
         refs.clTemple1.isVisible = false
+        refs.ivCover1.clearGlideImage()
     }
 
     bindOptionalCover(
         refs.ivCover2,
         modelList?.getOrNull(1),
-        onFinalImageSet = onFinalImageSet,
     )
     bindOptionalCover(
         refs.ivCover3,
         modelList?.getOrNull(2),
-        onFinalImageSet = onFinalImageSet,
     )
     bindOptionalCover(
         refs.ivCover4,
         modelList?.getOrNull(3),
-        isAutoPlay = false,
+        autoPlay = false,
     )
     bindOptionalCover(
         refs.ivCover5,
         modelList?.getOrNull(4),
-        isAutoPlay = false,
+        autoPlay = false,
     )
     bindOptionalCover(
         refs.ivCover6,
         modelList?.getOrNull(5),
-        isAutoPlay = false,
+        autoPlay = false,
     )
 }
 
 private fun bindOptionalCover(
     imageView: ImageView,
     template: TemplateItem?,
-    onFinalImageSet: ((ImageView) -> Unit)? = null,
-    isAutoPlay: Boolean = false,
+    autoPlay: Boolean = true,
 ) {
     if (template != null) {
         imageView.isVisible = true
-        imageView.loadImage(
-            url = template.bullmind,
-            isAutoPlay = isAutoPlay,
-            onFinalImageSet = onFinalImageSet,
-        )
+        imageView.loadGlideImage(template.bullmind, autoPlay = autoPlay)
     } else {
         imageView.isVisible = false
+        imageView.clearGlideImage()
     }
 }
 
 private fun bindSampleImages(
     refs: TopicItemViewRefs,
     samples: List<String>?,
-    onFinalImageSet: (ImageView) -> Unit,
 ) {
     refs.ivSampleSingle.isVisible = false
     refs.llSampleBottom.isVisible = false
     when {
-        samples.isNullOrEmpty() -> return
+        samples.isNullOrEmpty() -> {
+            refs.ivSampleSingle.clearGlideImage()
+            refs.ivSampleLeft.clearGlideImage()
+            refs.ivSampleRight.clearGlideImage()
+            return
+        }
         samples.size == 1 -> {
             refs.ivSampleSingle.isVisible = true
-            refs.ivSampleSingle.loadImage(
-                url = samples.first(),
-                isAutoPlay = false,
-                onFinalImageSet = onFinalImageSet,
-            )
+            refs.ivSampleSingle.loadGlideImage(samples.first())
+            refs.ivSampleLeft.clearGlideImage()
+            refs.ivSampleRight.clearGlideImage()
         }
 
         else -> {
             refs.llSampleBottom.isVisible = true
-            refs.ivSampleLeft.loadImage(
-                url = samples[0],
-                isAutoPlay = false,
-                onFinalImageSet = onFinalImageSet,
-            )
-            refs.ivSampleRight.loadImage(
-                url = samples.getOrNull(1),
-                isAutoPlay = false,
-                onFinalImageSet = onFinalImageSet,
-            )
+            refs.ivSampleSingle.clearGlideImage()
+            refs.ivSampleLeft.loadGlideImage(samples[0])
+            refs.ivSampleRight.loadGlideImage(samples.getOrNull(1))
         }
     }
 }
 
-private fun TopicItemViewRefs.setAnimationsRunning(running: Boolean) {
-    ivCover1.setImageAnimationRunning(running)
-    ivCover2.setImageAnimationRunning(running)
-    ivCover3.setImageAnimationRunning(running)
-    if (!running) {
-        ivCover4.setImageAnimationRunning(false)
-        ivCover5.setImageAnimationRunning(false)
-        ivCover6.setImageAnimationRunning(false)
-        ivSampleSingle.setImageAnimationRunning(false)
-        ivSampleLeft.setImageAnimationRunning(false)
-        ivSampleRight.setImageAnimationRunning(false)
+internal fun View.clearTopicItemImages() {
+    forEachTopicImageView { imageView ->
+        imageView.clearGlideImage()
     }
 }
+
+internal fun View.setTopicItemAnimationsRunning(running: Boolean) {
+    forEachTopicImageView { imageView ->
+        imageView.setGlideAnimationRunning(running)
+    }
+}
+
+private fun View.forEachTopicImageView(action: (ImageView) -> Unit) {
+    TOPIC_IMAGE_VIEW_IDS.forEach { id ->
+        findViewById<ImageView>(id)?.let(action)
+    }
+}
+
+private val TOPIC_IMAGE_VIEW_IDS = intArrayOf(
+    R.id.ivCover1,
+    R.id.ivCover2,
+    R.id.ivCover3,
+    R.id.ivCover4,
+    R.id.ivCover5,
+    R.id.ivCover6,
+    R.id.ivSampleSingle,
+    R.id.ivSampleLeft,
+    R.id.ivSampleRight,
+)

@@ -23,10 +23,11 @@ import com.drake.brv.utils.models
 import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
+import com.flower.flow.app.core.ext.clearGlideImage
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.isVisibleOnScreen
-import com.flower.flow.app.core.ext.loadImage
-import com.flower.flow.app.core.ext.setImageAnimationRunning
+import com.flower.flow.app.core.ext.loadGlideImage
+import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.app.core.widget.CoverFlowScrollListener
@@ -248,8 +249,22 @@ class TopicUseTemplateActivity :
 
         val adapter = object : BindingAdapter() {
             override fun onViewRecycled(holder: BindingViewHolder) {
-                recycleTemplateItem(holder.itemView)
                 super.onViewRecycled(holder)
+                recycleTemplateItem(holder.itemView)
+            }
+
+            override fun onViewAttachedToWindow(holder: BindingViewHolder) {
+                super.onViewAttachedToWindow(holder)
+                val position = rv.getChildAdapterPosition(holder.itemView)
+                val shouldRun = isResumed &&
+                    rv.scrollState == RecyclerView.SCROLL_STATE_IDLE &&
+                    position == previewPosition
+                setItemAnimationRunning(holder.itemView, shouldRun)
+            }
+
+            override fun onViewDetachedFromWindow(holder: BindingViewHolder) {
+                super.onViewDetachedFromWindow(holder)
+                setItemAnimationRunning(holder.itemView, false)
             }
         }
         adapter.apply {
@@ -269,22 +284,6 @@ class TopicUseTemplateActivity :
             }
         }
         rv.adapter = adapter
-
-        rv.addOnChildAttachStateChangeListener(
-            object : RecyclerView.OnChildAttachStateChangeListener {
-                override fun onChildViewAttachedToWindow(view: View) {
-                    val position = rv.getChildAdapterPosition(view)
-                    val shouldRun = isResumed &&
-                        rv.scrollState == RecyclerView.SCROLL_STATE_IDLE &&
-                        position == previewPosition
-                    setItemAnimationRunning(view, shouldRun)
-                }
-
-                override fun onChildViewDetachedFromWindow(view: View) {
-                    setItemAnimationRunning(view, false)
-                }
-            },
-        )
 
         mBind.llRv.post {
             val containerHeight = mBind.llRv.height
@@ -381,10 +380,9 @@ class TopicUseTemplateActivity :
     }
 
     private fun bindTemplateUseItem(itemView: View, model: TemplateItem) {
-        itemView.findViewById<ImageView>(R.id.ivCover).loadImage(
+        itemView.findViewById<ImageView>(R.id.ivCover).loadGlideImage(
             url = model.bullmind,
-            isAutoPlay = false,
-            onFinalImageSet = { imageView ->
+            onResourceReady = { imageView ->
                 syncAnimationPlayback(imageView, itemView)
             },
         )
@@ -401,28 +399,44 @@ class TopicUseTemplateActivity :
 
     private fun bindSampleImages(itemView: View, samples: List<String>?) {
         val ivSampleSingle = itemView.findViewById<ImageView>(R.id.ivSampleSingle)
+        val ivSampleLeft = itemView.findViewById<ImageView>(R.id.ivSampleLeft)
+        val ivSampleRight = itemView.findViewById<ImageView>(R.id.ivSampleRight)
         val llSampleBottom = itemView.findViewById<View>(R.id.llSampleBottom)
         ivSampleSingle.isVisible = false
         llSampleBottom.isVisible = false
         when {
-            samples.isNullOrEmpty() -> return
+            samples.isNullOrEmpty() -> {
+                ivSampleSingle.clearGlideImage()
+                ivSampleLeft.clearGlideImage()
+                ivSampleRight.clearGlideImage()
+                return
+            }
             samples.size == 1 -> {
                 ivSampleSingle.isVisible = true
-                ivSampleSingle.loadImage(
+                ivSampleSingle.loadGlideImage(
                     url = samples.first(),
-                    isAutoPlay = false,
+                    onResourceReady = { imageView ->
+                        syncAnimationPlayback(imageView, itemView)
+                    },
                 )
+                ivSampleLeft.clearGlideImage()
+                ivSampleRight.clearGlideImage()
             }
 
             else -> {
                 llSampleBottom.isVisible = true
-                itemView.findViewById<ImageView>(R.id.ivSampleLeft).loadImage(
+                ivSampleSingle.clearGlideImage()
+                ivSampleLeft.loadGlideImage(
                     url = samples[0],
-                    isAutoPlay = false,
+                    onResourceReady = { imageView ->
+                        syncAnimationPlayback(imageView, itemView)
+                    },
                 )
-                itemView.findViewById<ImageView>(R.id.ivSampleRight).loadImage(
+                ivSampleRight.loadGlideImage(
                     url = samples.getOrNull(1),
-                    isAutoPlay = false,
+                    onResourceReady = { imageView ->
+                        syncAnimationPlayback(imageView, itemView)
+                    },
                 )
             }
         }
@@ -431,7 +445,7 @@ class TopicUseTemplateActivity :
     private fun syncAnimationPlayback(imageView: ImageView, itemView: View) {
         val rv = mBind.rvTemplate
         val position = rv.getChildAdapterPosition(itemView)
-        imageView.setImageAnimationRunning(
+        imageView.setGlideAnimationRunning(
             isResumed &&
                 rv.scrollState == RecyclerView.SCROLL_STATE_IDLE &&
                 position == previewPosition &&
@@ -461,11 +475,17 @@ class TopicUseTemplateActivity :
     }
 
     private fun setItemAnimationRunning(itemView: View, running: Boolean) {
-        itemView.findViewById<ImageView>(R.id.ivCover).setImageAnimationRunning(running)
+        itemView.findViewById<ImageView>(R.id.ivCover).setGlideAnimationRunning(running)
+        itemView.findViewById<ImageView>(R.id.ivSampleSingle).setGlideAnimationRunning(running)
+        itemView.findViewById<ImageView>(R.id.ivSampleLeft).setGlideAnimationRunning(running)
+        itemView.findViewById<ImageView>(R.id.ivSampleRight).setGlideAnimationRunning(running)
     }
 
     private fun recycleTemplateItem(itemView: View) {
-        itemView.findViewById<ImageView>(R.id.ivCover).setImageAnimationRunning(false)
+        itemView.findViewById<ImageView>(R.id.ivCover).clearGlideImage()
+        itemView.findViewById<ImageView>(R.id.ivSampleSingle).clearGlideImage()
+        itemView.findViewById<ImageView>(R.id.ivSampleLeft).clearGlideImage()
+        itemView.findViewById<ImageView>(R.id.ivSampleRight).clearGlideImage()
     }
 
     override fun onBindViewClick() {

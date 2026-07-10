@@ -8,10 +8,11 @@ import android.widget.ImageView
 import androidx.core.view.isVisible
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
+import com.flower.flow.app.core.ext.clearGlideImage
 import com.flower.flow.app.core.ext.initClose
 import com.flower.flow.app.core.ext.isVisibleOnScreen
-import com.flower.flow.app.core.ext.loadImage
-import com.flower.flow.app.core.ext.setImageAnimationRunning
+import com.flower.flow.app.core.ext.loadGlideImage
+import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.data.model.StringResId
@@ -51,10 +52,9 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
         templateItem?.apply {
             mBind.tvName.text = this.dazzledeacon
 
-            mBind.ivCover.loadImage(
+            mBind.ivCover.loadGlideImage(
                 url = this.bullmind,
-                isAutoPlay = false,
-                onFinalImageSet = ::syncAnimationPlayback,
+                onResourceReady = ::syncAnimationPlayback,
             )
 
             bindLockBadge(mBind, this)
@@ -80,12 +80,12 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
     override fun onResume() {
         super.onResume()
         isResumed = true
-        mBind.ivCover.setImageAnimationRunning(mBind.ivCover.isVisibleOnScreen())
+        setTemplateImagesAnimationRunning(true)
     }
 
     override fun onPause() {
         isResumed = false
-        mBind.ivCover.setImageAnimationRunning(false)
+        setTemplateImagesAnimationRunning(false)
         super.onPause()
     }
 
@@ -142,32 +142,52 @@ class TagUseTemplateActivity : BaseActivity<BaseViewModel, ActivityTagUseTemplat
         binding.ivSampleSingle.isVisible = false
         binding.llSampleBottom.isVisible = false
         when {
-            samples.isNullOrEmpty() -> return
+            samples.isNullOrEmpty() -> {
+                binding.ivSampleSingle.clearGlideImage()
+                binding.ivSampleLeft.clearGlideImage()
+                binding.ivSampleRight.clearGlideImage()
+                return
+            }
             samples.size == 1 -> {
                 binding.ivSampleSingle.isVisible = true
-                binding.ivSampleSingle.loadImage(
+                binding.ivSampleSingle.loadGlideImage(
                     url = samples.first(),
-                    isAutoPlay = false,
+                    onResourceReady = ::syncAnimationPlayback,
                 )
+                binding.ivSampleLeft.clearGlideImage()
+                binding.ivSampleRight.clearGlideImage()
             }
 
             else -> {
                 binding.llSampleBottom.isVisible = true
-                binding.ivSampleLeft.loadImage(
+                binding.ivSampleSingle.clearGlideImage()
+                binding.ivSampleLeft.loadGlideImage(
                     url = samples[0],
-                    isAutoPlay = false,
+                    onResourceReady = ::syncAnimationPlayback,
                 )
-                binding.ivSampleRight.loadImage(
+                binding.ivSampleRight.loadGlideImage(
                     url = samples.getOrNull(1),
-                    isAutoPlay = false,
+                    onResourceReady = ::syncAnimationPlayback,
                 )
             }
         }
     }
 
     private fun syncAnimationPlayback(imageView: ImageView) {
-        imageView.setImageAnimationRunning(
+        imageView.setGlideAnimationRunning(
             isResumed && imageView.isVisibleOnScreen(),
         )
+    }
+
+    private fun setTemplateImagesAnimationRunning(running: Boolean) {
+        val imageViews = arrayOf(
+            mBind.ivCover,
+            mBind.ivSampleSingle,
+            mBind.ivSampleLeft,
+            mBind.ivSampleRight,
+        )
+        imageViews.forEach { imageView ->
+            imageView.setGlideAnimationRunning(running && imageView.isVisibleOnScreen())
+        }
     }
 }
