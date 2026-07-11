@@ -40,8 +40,8 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/settingBtn"
-                        android:layout_width="34dp"
-                        android:layout_height="32dp"
+                        android:layout_width="33dp"
+                        android:layout_height="31dp"
                         android:contentDescription="@null"
                         android:src="@mipmap/ic_me_setting"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -75,8 +75,8 @@
                         tools:visibility="visible">
 
                         <androidx.appcompat.widget.AppCompatImageView
-                            android:layout_width="17dp"
-                            android:layout_height="17dp"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
                             android:contentDescription="@null"
                             android:src="@mipmap/ic_me_money" />
 
@@ -85,10 +85,10 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:minWidth="34dp"
+                            android:minWidth="32dp"
                             android:text="0"
                             android:textColor="@color/white"
-                            android:textSize="14sp" />
+                            android:textSize="13sp" />
 
                     </com.hjq.shape.layout.ShapeLinearLayout>
 
@@ -120,7 +120,7 @@
                         android:includeFontPadding="false"
                         android:maxLines="1"
                         android:textColor="@color/white"
-                        android:textSize="24sp"
+                        android:textSize="23sp"
                         app:layout_constrainedWidth="true"
                         app:layout_constraintBottom_toBottomOf="@id/ivAvatar"
                         app:layout_constraintEnd_toStartOf="@id/ivEdit"
@@ -157,37 +157,24 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
+                <FrameLayout
                     android:id="@+id/clVip"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="11dp"
-                    android:paddingHorizontal="16dp"
+                    android:paddingHorizontal="14dp"
                     android:visibility="gone"
                     tools:visibility="visible">
 
-                    <androidx.appcompat.widget.AppCompatImageView
-                        android:id="@+id/ivVipBg"
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_marginTop="25dp"
-                        android:adjustViewBounds="true"
-                        android:contentDescription="@null"
-                        android:scaleType="fitXY"
-                        android:src="@mipmap/ic_me_vip_bg"
-                        app:layout_constraintDimensionRatio="344:80"
-                        app:layout_constraintTop_toTopOf="parent" />
-
                     <LinearLayout
-                        android:layout_width="0px"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="18dp"
-                        android:layout_marginEnd="5dp"
+                        android:layout_marginTop="25dp"
+                        android:background="@mipmap/ic_me_vip_bg"
                         android:orientation="vertical"
-                        app:layout_constraintBottom_toBottomOf="@id/ivVipBg"
-                        app:layout_constraintEnd_toStartOf="@+id/ivVipStar"
-                        app:layout_constraintStart_toStartOf="@id/ivVipBg"
-                        app:layout_constraintTop_toTopOf="@id/ivVipBg">
+                        android:paddingVertical="15dp"
+                        android:paddingStart="18dp"
+                        android:paddingEnd="142dp">
 
                         <TextView
                             android:id="@+id/vipTitleText"
@@ -195,7 +182,7 @@
                             android:layout_height="wrap_content"
                             android:includeFontPadding="false"
                             android:textColor="@color/white"
-                            android:textSize="20sp"
+                            android:textSize="19sp"
                             android:textStyle="bold"
                             tools:text="AI Video PRO" />
 
@@ -212,9 +199,10 @@
 
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/ivVipStar"
-                        android:layout_width="115dp"
-                        android:layout_height="93dp"
-                        android:layout_marginEnd="29dp"
+                        android:layout_width="109dp"
+                        android:layout_height="85dp"
+                        android:layout_gravity="end"
+                        android:layout_marginEnd="28dp"
                         android:contentDescription="@null"
                         android:src="@mipmap/ic_me_vip_star"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -224,13 +212,12 @@
                         android:id="@+id/btnVip"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="end|bottom"
                         android:includeFontPadding="false"
                         android:paddingHorizontal="8dp"
                         android:paddingVertical="4dp"
                         android:textColor="#333333"
                         android:textSize="12sp"
-                        app:layout_constraintBottom_toBottomOf="@id/ivVipBg"
-                        app:layout_constraintEnd_toEndOf="@id/ivVipBg"
                         app:shape_radiusInBottomEnd="10dp"
                         app:shape_radiusInBottomStart="5dp"
                         app:shape_radiusInTopStart="10dp"
@@ -239,7 +226,7 @@
                         app:shape_solidGradientStartColor="#FFFFE9CF"
                         tools:text="upgrade" />
 
-                </androidx.constraintlayout.widget.ConstraintLayout>
+                </FrameLayout>
 
                 <com.hjq.shape.layout.ShapeFrameLayout
                     android:id="@+id/fl_works"
@@ -276,7 +263,7 @@
                                 android:layout_weight="1"
                                 android:includeFontPadding="false"
                                 android:textColor="@color/white"
-                                android:textSize="20sp"
+                                android:textSize="19sp"
                                 android:textStyle="bold"
                                 tools:text="My Creations" />
 
@@ -305,7 +292,7 @@
                             android:includeFontPadding="false"
                             android:lineSpacingExtra="4dp"
                             android:textColor="@color/white"
-                            android:textSize="14sp"
+                            android:textSize="13sp"
                             android:visibility="gone"
                             tools:text="The number of your works has exceeded 10. The excess will be automatically deleted after 3 days. "
                             tools:visibility="visible" />

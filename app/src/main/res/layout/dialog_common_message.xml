@@ -33,7 +33,7 @@
             android:gravity="center"
             android:includeFontPadding="false"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="23sp"
             tools:text="Reminder" />
 
         <TextView
@@ -46,7 +46,7 @@
             android:includeFontPadding="false"
             android:lineSpacingExtra="5dp"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="15sp"
             tools:text="Using this template will deduct 150 points" />
 
         <Space
@@ -71,7 +71,7 @@
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:paddingHorizontal="12dp"
+                android:paddingHorizontal="6dp"
                 android:textAllCaps="false"
                 android:textColor="#FFC1BFBF"
                 android:textSize="18sp"
@@ -93,7 +93,7 @@
                 android:gravity="center"
                 android:includeFontPadding="false"
                 android:maxLines="1"
-                android:paddingHorizontal="12dp"
+                android:paddingHorizontal="6dp"
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="18sp"

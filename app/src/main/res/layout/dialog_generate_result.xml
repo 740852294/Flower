@@ -53,7 +53,7 @@
             android:gravity="center"
             android:includeFontPadding="false"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="15sp"
             tools:text="Estimated time：" />
 
         <TextView
@@ -63,7 +63,7 @@
             android:gravity="center"
             android:includeFontPadding="false"
             android:textColor="#FFF77417"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:visibility="gone"
             tools:text="10 minutes"
             tools:visibility="visible" />
@@ -80,7 +80,7 @@
         android:includeFontPadding="false"
         android:lineSpacingExtra="5dp"
         android:textColor="@color/white"
-        android:textSize="14sp"
+        android:textSize="13sp"
         tools:text="It will be available in your works once it's done!" />
 
     <com.hjq.shape.view.ShapeButton

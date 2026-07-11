@@ -8,6 +8,7 @@ import com.drake.brv.utils.setup
 import com.flower.flow.R
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.AppStrings
+import com.flower.flow.app.core.util.enableKeyboardAvoidance
 import com.flower.flow.app.core.util.enableNestedVerticalScrolling
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.data.model.StringResId
@@ -30,6 +31,11 @@ class ReportActivity : BaseActivity<ReportViewModel, ActivityReportBinding>() {
     override fun initView(savedInstanceState: Bundle?) {
         setText()
         setupCharCount()
+        enableKeyboardAvoidance(
+            root = mBind.root,
+            scrollView = mBind.scrollContent,
+            mBind.etReportContent,
+        )
         mBind.etReportContent.enableNestedVerticalScrolling()
 
         mBind.rvReportType.vertical()

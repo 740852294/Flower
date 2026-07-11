@@ -12,7 +12,6 @@ import android.view.ViewConfiguration
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.children
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -25,9 +24,7 @@ import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.ext.clearGlideImage
 import com.flower.flow.app.core.ext.initClose
-import com.flower.flow.app.core.ext.isVisibleOnScreen
 import com.flower.flow.app.core.ext.loadGlideImage
-import com.flower.flow.app.core.ext.setGlideAnimationRunning
 import com.flower.flow.app.core.util.AppStrings
 import com.flower.flow.app.core.widget.ActionButton
 import com.flower.flow.app.core.widget.CoverFlowScrollListener
@@ -75,7 +72,6 @@ class TopicUseTemplateActivity :
     private var carouselDownY = 0f
     private var isCarouselAxisLocked = false
     private var isCarouselVerticalGesture = false
-    private var isResumed = false
     private val carouselTouchSlop by lazy {
         ViewConfiguration.get(this).scaledTouchSlop
     }
@@ -89,7 +85,7 @@ class TopicUseTemplateActivity :
         ): IntArray {
             val childCenter = targetView.left + targetView.width / 2
             val containerCenter = (layoutManager.paddingLeft +
-                layoutManager.width - layoutManager.paddingRight) / 2
+                    layoutManager.width - layoutManager.paddingRight) / 2
             return intArrayOf(childCenter - containerCenter, 0)
         }
 
@@ -97,7 +93,7 @@ class TopicUseTemplateActivity :
             if (layoutManager.childCount == 0) return null
 
             val containerCenter = (layoutManager.paddingLeft +
-                layoutManager.width - layoutManager.paddingRight) / 2
+                    layoutManager.width - layoutManager.paddingRight) / 2
             var closestView: View? = null
             var closestDistance = Int.MAX_VALUE
             for (index in 0 until layoutManager.childCount) {
@@ -133,33 +129,27 @@ class TopicUseTemplateActivity :
     private val scrollListener = object : RecyclerView.OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
             updatePreviewPosition(recyclerView)
-            if (dx != 0) {
-                syncVisibleAnimations()
-            }
         }
 
         override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
             when (newState) {
                 RecyclerView.SCROLL_STATE_DRAGGING -> {
                     carouselLayoutManager.beginSinglePageScroll()
-                    syncVisibleAnimations()
                 }
 
                 RecyclerView.SCROLL_STATE_IDLE -> {
                     carouselLayoutManager.endSinglePageScroll()
                     updateSelectedPosition(recyclerView)
-                    resumeVisibleAnimations()
-                }
-
-                RecyclerView.SCROLL_STATE_SETTLING -> {
-                    syncVisibleAnimations()
                 }
             }
         }
     }
 
     private val carouselTouchListener = object : RecyclerView.SimpleOnItemTouchListener() {
-        override fun onInterceptTouchEvent(recyclerView: RecyclerView, event: MotionEvent): Boolean {
+        override fun onInterceptTouchEvent(
+            recyclerView: RecyclerView,
+            event: MotionEvent
+        ): Boolean {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     carouselDownX = event.x
@@ -168,7 +158,7 @@ class TopicUseTemplateActivity :
                     isCarouselVerticalGesture = false
                     isCarouselGestureBlocked =
                         recyclerView.scrollState != RecyclerView.SCROLL_STATE_IDLE ||
-                            SystemClock.elapsedRealtime() < nextCarouselGestureTime
+                                SystemClock.elapsedRealtime() < nextCarouselGestureTime
                 }
 
                 MotionEvent.ACTION_MOVE -> {
@@ -248,20 +238,6 @@ class TopicUseTemplateActivity :
         rv.addOnItemTouchListener(carouselTouchListener)
 
         val adapter = object : BindingAdapter() {
-            override fun onViewRecycled(holder: BindingViewHolder) {
-                super.onViewRecycled(holder)
-                recycleTemplateItem(holder.itemView)
-            }
-
-            override fun onViewAttachedToWindow(holder: BindingViewHolder) {
-                super.onViewAttachedToWindow(holder)
-                setItemAnimationRunning(holder.itemView, shouldPlayItemAnimation(holder.itemView))
-            }
-
-            override fun onViewDetachedFromWindow(holder: BindingViewHolder) {
-                super.onViewDetachedFromWindow(holder)
-                setItemAnimationRunning(holder.itemView, false)
-            }
         }
         adapter.apply {
             addType<TemplateItem>(R.layout.layout_item_topic_template_use)
@@ -301,7 +277,6 @@ class TopicUseTemplateActivity :
                 ?.scrollToPositionWithOffset(selectedPosition, 0)
             coverFlowListener.applyTransform(rv)
             loadMoreIfNeeded(selectedPosition)
-            resumeVisibleAnimations()
         }
     }
 
@@ -378,9 +353,6 @@ class TopicUseTemplateActivity :
     private fun bindTemplateUseItem(itemView: View, model: TemplateItem) {
         itemView.findViewById<ImageView>(R.id.ivCover).loadGlideImage(
             url = model.bullmind,
-            onResourceReady = { imageView ->
-                syncAnimationPlayback(imageView, itemView)
-            },
         )
         val showCost = model.peacearrow > 0
         val showConfig = (App.globalConfig?.disposenovel ?: 0) in arrayOf(2, 3)
@@ -407,13 +379,11 @@ class TopicUseTemplateActivity :
                 ivSampleRight.clearGlideImage()
                 return
             }
+
             samples.size == 1 -> {
                 ivSampleSingle.isVisible = true
                 ivSampleSingle.loadGlideImage(
                     url = samples.first(),
-                    onResourceReady = { imageView ->
-                        syncAnimationPlayback(imageView, itemView)
-                    },
                 )
                 ivSampleLeft.clearGlideImage()
                 ivSampleRight.clearGlideImage()
@@ -424,75 +394,12 @@ class TopicUseTemplateActivity :
                 ivSampleSingle.clearGlideImage()
                 ivSampleLeft.loadGlideImage(
                     url = samples[0],
-                    onResourceReady = { imageView ->
-                        syncAnimationPlayback(imageView, itemView)
-                    },
                 )
                 ivSampleRight.loadGlideImage(
                     url = samples.getOrNull(1),
-                    onResourceReady = { imageView ->
-                        syncAnimationPlayback(imageView, itemView)
-                    },
                 )
             }
         }
-    }
-
-    private fun syncAnimationPlayback(imageView: ImageView, itemView: View) {
-        val rv = mBind.rvTemplate
-        val position = rv.getChildAdapterPosition(itemView)
-        imageView.setGlideAnimationRunning(
-            shouldPlayItemAnimation(itemView, position) &&
-                imageView.isVisibleOnScreen(),
-        )
-    }
-
-    private fun resumeVisibleAnimations() {
-        mBind.rvTemplate.post {
-            if (!isResumed) return@post
-            setAllItemAnimationsRunning(false)
-            val rv = mBind.rvTemplate
-            rv.children.forEach { itemView ->
-                setItemAnimationRunning(itemView, shouldPlayItemAnimation(itemView))
-            }
-        }
-    }
-
-    private fun syncVisibleAnimations() {
-        if (!isResumed) return
-        mBind.rvTemplate.children.forEach { itemView ->
-            setItemAnimationRunning(itemView, shouldPlayItemAnimation(itemView))
-        }
-    }
-
-    private fun setAllItemAnimationsRunning(running: Boolean) {
-        mBind.rvTemplate.children.forEach { itemView ->
-            setItemAnimationRunning(itemView, running)
-        }
-    }
-
-    private fun setItemAnimationRunning(itemView: View, running: Boolean) {
-        itemView.findViewById<ImageView>(R.id.ivCover).setGlideAnimationRunning(running)
-        itemView.findViewById<ImageView>(R.id.ivSampleSingle).setGlideAnimationRunning(running)
-        itemView.findViewById<ImageView>(R.id.ivSampleLeft).setGlideAnimationRunning(running)
-        itemView.findViewById<ImageView>(R.id.ivSampleRight).setGlideAnimationRunning(running)
-    }
-
-    private fun shouldPlayItemAnimation(
-        itemView: View,
-        position: Int = mBind.rvTemplate.getChildAdapterPosition(itemView),
-    ): Boolean {
-        return isResumed &&
-            position != RecyclerView.NO_POSITION &&
-            abs(position - previewPosition) <= 1 &&
-            itemView.isVisibleOnScreen()
-    }
-
-    private fun recycleTemplateItem(itemView: View) {
-        itemView.findViewById<ImageView>(R.id.ivCover).clearGlideImage()
-        itemView.findViewById<ImageView>(R.id.ivSampleSingle).clearGlideImage()
-        itemView.findViewById<ImageView>(R.id.ivSampleLeft).clearGlideImage()
-        itemView.findViewById<ImageView>(R.id.ivSampleRight).clearGlideImage()
     }
 
     override fun onBindViewClick() {
@@ -508,18 +415,6 @@ class TopicUseTemplateActivity :
 
     override fun createObserver() {
 
-    }
-
-    override fun onResume() {
-        super.onResume()
-        isResumed = true
-        resumeVisibleAnimations()
-    }
-
-    override fun onPause() {
-        isResumed = false
-        setAllItemAnimationsRunning(false)
-        super.onPause()
     }
 
     override fun onDestroy() {

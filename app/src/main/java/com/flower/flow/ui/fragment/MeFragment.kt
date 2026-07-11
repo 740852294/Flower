@@ -95,9 +95,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
 
         mBind.refreshLayout.refresh {
             exitSelectionMode()
+            setDeleteButtonInteractionEnabled(false)
             loadData(isLoading = false)
         }
         mBind.refreshLayout.loadMore {
+            setDeleteButtonInteractionEnabled(false)
             refreshWorkList(refresh = false, isLoading = false)
         }
 
@@ -172,6 +174,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.settingBtn.clickNoRepeat { openActivity<SettingActivity>() }
 
         mBind.btnDelete.clickNoRepeat {
+            if (!mBind.btnDelete.isEnabled) return@clickNoRepeat
             when {
                 !selectionController.isSelectionMode -> enterSelectionMode()
                 !selectionController.hasSelection() -> exitSelectionMode()
@@ -242,9 +245,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     onExitSelection = { exitSelectionMode(notifyItems = false) },
                 )
                 resumeVisibleAnimations()
+                setDeleteButtonInteractionEnabled(true)
             }
             onError { status ->
                 loadListError(status, mBind.refreshLayout)
+                setDeleteButtonInteractionEnabled(true)
             }
         }
     }
@@ -259,10 +264,12 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     onExitSelection = { exitSelectionMode(notifyItems = false) },
                 )
                 resumeVisibleAnimations()
+                setDeleteButtonInteractionEnabled(true)
             }
             onError { status ->
                 loadListError(status, mBind.refreshLayout)
                 status.msg.toast()
+                setDeleteButtonInteractionEnabled(true)
             }
         }
     }
@@ -320,6 +327,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                 syncVisibleAnimations()
             }
         }
+    }
+
+    private fun setDeleteButtonInteractionEnabled(enabled: Boolean) {
+        mBind.btnDelete.isEnabled = enabled
     }
 
     private fun enterSelectionMode() {

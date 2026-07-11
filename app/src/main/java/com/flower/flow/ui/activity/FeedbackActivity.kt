@@ -11,6 +11,7 @@ import com.flower.flow.R
 import com.flower.flow.app.App
 import com.flower.flow.app.core.base.BaseActivity
 import com.flower.flow.app.core.util.AppStrings
+import com.flower.flow.app.core.util.enableKeyboardAvoidance
 import com.flower.flow.app.core.util.enableNestedVerticalScrolling
 import com.flower.flow.app.core.util.UserManager
 import com.flower.flow.app.core.widget.ActionButton
@@ -37,6 +38,12 @@ class FeedbackActivity : BaseActivity<FeedbackViewModel, ActivityFeedbackBinding
             addReportBtn()
         }
         setText()
+        enableKeyboardAvoidance(
+            root = mBind.root,
+            scrollView = mBind.scrollContent,
+            mBind.etFeedbackContent,
+            mBind.etEmail,
+        )
         mBind.etFeedbackContent.enableNestedVerticalScrolling()
 
         mBind.rvFeedbackType.vertical()

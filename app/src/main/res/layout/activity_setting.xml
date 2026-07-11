@@ -40,7 +40,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="Share with friends" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -70,7 +70,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="Feedback" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -100,7 +100,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="System Notification" />
 
                     <com.hjq.shape.view.ShapeView
@@ -147,7 +147,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="Privacy Policy" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -177,7 +177,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="Terms of Use" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -207,7 +207,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="Multilingual" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -237,7 +237,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="Version number" />
 
                     <TextView
@@ -246,7 +246,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:textColor="#C1BFBF"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="V1.0.0" />
 
                 </LinearLayout>
@@ -277,7 +277,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="Account：" />
 
                     <TextView
@@ -287,7 +287,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="552132544" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -317,7 +317,7 @@
                         android:layout_height="wrap_content"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="Password：" />
 
                     <TextView
@@ -327,7 +327,7 @@
                         android:layout_weight="1"
                         android:includeFontPadding="false"
                         android:textColor="@color/white"
-                        android:textSize="16sp"
+                        android:textSize="15sp"
                         tools:text="********" />
 
                     <androidx.appcompat.widget.AppCompatImageView
@@ -345,11 +345,11 @@
     <com.hjq.shape.view.ShapeButton
         android:id="@+id/btnChange"
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="50dp"
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:textColor="@color/white"
-        android:textSize="19sp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@id/btnDisagree"
         app:shape_radius="30dp"
         app:shape_solidGradientEndColor="#FFFD662E"

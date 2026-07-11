@@ -20,8 +20,8 @@
 
     <com.flower.flow.app.core.widget.RoundCornerImageView
         android:id="@+id/ivSampleSingle"
-        android:layout_width="32dp"
-        android:layout_height="42dp"
+        android:layout_width="31dp"
+        android:layout_height="40dp"
         android:layout_marginStart="9dp"
         android:layout_marginTop="9dp"
         android:scaleType="centerCrop"
@@ -46,16 +46,16 @@
 
         <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivSampleLeft"
-            android:layout_width="32dp"
-            android:layout_height="44dp"
+            android:layout_width="30dp"
+            android:layout_height="42dp"
             android:scaleType="centerCrop"
             app:rciv_cornerBottomLeftRadius="10dp"
             app:rciv_cornerTopLeftRadius="10dp" />
 
         <com.flower.flow.app.core.widget.RoundCornerImageView
             android:id="@+id/ivSampleRight"
-            android:layout_width="32dp"
-            android:layout_height="44dp"
+            android:layout_width="30dp"
+            android:layout_height="42dp"
             android:scaleType="centerCrop"
             app:rciv_cornerBottomRightRadius="10dp"
             app:rciv_cornerTopRightRadius="10dp" />
@@ -190,9 +190,9 @@
             android:layout_height="match_parent"
             android:layout_marginTop="7dp"
             android:gravity="center"
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="10dp"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:visibility="gone"
             tools:text="Generation failed"
             tools:visibility="visible" />
@@ -203,7 +203,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="7dp"
             android:gravity="center"
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="15dp"
             android:textColor="@color/white"
             android:textSize="12sp"
             android:visibility="gone"
@@ -216,7 +216,7 @@
             android:layout_height="match_parent"
             android:layout_marginTop="16dp"
             android:gravity="center"
-            android:paddingHorizontal="20dp"
+            android:paddingHorizontal="15dp"
             android:textColor="#FFD9D9D9"
             android:textSize="12sp"
             android:visibility="gone"
@@ -231,7 +231,7 @@
             android:layout_marginTop="14dp"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:visibility="gone"
             app:shape_radius="25dp"
             app:shape_solidGradientEndColor="#FFFD662E"
