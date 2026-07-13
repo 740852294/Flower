@@ -37,7 +37,9 @@ import com.flower.flow.ui.activity.WorkPreviewActivity
 import com.flower.flow.ui.adapter.MainAdapter
 import com.flower.flow.ui.fragment.me.MeRegenerateCoordinator
 import com.flower.flow.ui.fragment.me.MeWorkListBinder
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import me.hgj.jetpackmvvm.core.data.obs
 import me.hgj.jetpackmvvm.ext.util.clickNoRepeat
@@ -45,6 +47,7 @@ import me.hgj.jetpackmvvm.ext.util.intent.openActivity
 import me.hgj.jetpackmvvm.ext.util.intent.openActivityForResult
 import me.hgj.jetpackmvvm.ext.util.loadListError
 import me.hgj.jetpackmvvm.ext.util.loadMore
+import me.hgj.jetpackmvvm.ext.util.logD
 import me.hgj.jetpackmvvm.ext.util.refresh
 import me.hgj.jetpackmvvm.ext.util.statusPadding
 import me.hgj.jetpackmvvm.ext.util.toast
@@ -56,9 +59,10 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     private lateinit var downloadManager: WorkDownloadJobManager
     private lateinit var workListBinder: MeWorkListBinder
     private lateinit var regenerateCoordinator: MeRegenerateCoordinator
-    private var workListPollingStarted = false
+    private var workListPollingJob: Job? = null
 
     companion object {
+        private const val TAG = "MeFragment"
         const val SPAN_COUNT = 2
         internal const val PAYLOAD_SELECTION = "payload_selection"
         internal const val PAYLOAD_DOWNLOAD = "payload_download"
@@ -87,7 +91,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         regenerateCoordinator = MeRegenerateCoordinator(
             fragment = this,
             viewModel = mViewModel,
-            onReload = ::refreshData,
+            onReload = ::initData,
         )
 
         setText()
@@ -96,7 +100,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.refreshLayout.refresh {
             exitSelectionMode()
             setDeleteButtonInteractionEnabled(false)
-            refreshData(isLoading = false)
+            initData(isLoading = false)
         }
         mBind.refreshLayout.loadMore {
             setDeleteButtonInteractionEnabled(false)
@@ -183,7 +187,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     taskIds = selectionController.selectedIds(),
                     onDeleted = {
                         exitSelectionMode()
-                        refreshData(isLoading = true)
+                        initData(isLoading = true)
                     },
                 )
             }
@@ -201,9 +205,11 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     override fun onResume() {
         super.onResume()
         resumeVisibleAnimations()
+        startWorkListPolling()
     }
 
     override fun onPause() {
+        stopWorkListPolling("onPause")
         setVisibleAnimationsRunning(false)
         exitSelectionMode()
         super.onPause()
@@ -212,27 +218,54 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     override fun onHiddenChanged(hidden: Boolean) {
         super.onHiddenChanged(hidden)
         if (hidden) {
+            stopWorkListPolling("onHiddenChanged hidden=true")
             setVisibleAnimationsRunning(false)
             exitSelectionMode()
         } else {
             resumeVisibleAnimations()
+            startWorkListPolling()
         }
     }
 
     override fun lazyLoadData() {
-        refreshData(true)
+        initData(true)
         startWorkListPolling()
     }
 
     private fun startWorkListPolling() {
-        if (workListPollingStarted) return
-        workListPollingStarted = true
-        viewLifecycleOwner.lifecycleScope.launch {
-            while (true) {
-                delay(WORK_LIST_POLL_INTERVAL.milliseconds)
-                refreshData(isLoading = false)
+        if (!canPollWorkList()) {
+            "work list polling skip start, visible=false".logD(TAG)
+            return
+        }
+        if (workListPollingJob?.isActive == true) {
+            "work list polling already started".logD(TAG)
+            return
+        }
+        "work list polling start".logD(TAG)
+        workListPollingJob = viewLifecycleOwner.lifecycleScope.launch {
+            try {
+                while (isActive) {
+                    delay(WORK_LIST_POLL_INTERVAL.milliseconds)
+                    if (!isActive) break
+                    "work list polling tick, refresh me silently".logD(TAG)
+                    initData(isLoading = false, isSilently = false)
+                }
+            } finally {
+                "work list polling coroutine stopped".logD(TAG)
             }
         }
+    }
+
+    private fun stopWorkListPolling(reason: String) {
+        val job = workListPollingJob
+        if (job?.isActive != true) {
+           "work list polling already stopped, reason=$reason".logD(TAG)
+            workListPollingJob = null
+            return
+        }
+        "work list polling stop, reason=$reason".logD(TAG)
+        job.cancel()
+        workListPollingJob = null
     }
 
     fun refreshWorkList(refresh: Boolean, isLoading: Boolean) {
@@ -254,28 +287,12 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
     }
 
-    fun initData(isLoading: Boolean) {
-        mViewModel.initData(isLoading).obs(viewLifecycleOwner) {
-            onSuccess { page ->
-                workListBinder.bindWorkList(
-                    page,
-                    mBind.rvList.bindingAdapter,
-                    isRefresh = true,
-                    onExitSelection = { exitSelectionMode(notifyItems = false) },
-                )
-                resumeVisibleAnimations()
-                setDeleteButtonInteractionEnabled(true)
-            }
-            onError { status ->
-                loadListError(status, mBind.refreshLayout)
-                status.msg.toast()
-                setDeleteButtonInteractionEnabled(true)
-            }
-        }
+    fun refreshMeSilently(isLoading: Boolean, isSilently: Boolean) {
+        initData(isLoading, isSilently)
     }
 
-    fun refreshData(isLoading: Boolean) {
-        mViewModel.refreshData(isLoading).obs(viewLifecycleOwner) {
+    private fun initData(isLoading: Boolean, isSilently: Boolean = false) {
+        mViewModel.initData(isLoading, isSilently).obs(viewLifecycleOwner) {
             onSuccess { page ->
                 workListBinder.bindWorkList(
                     page,
@@ -303,7 +320,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
             user?.apply { setUserInfo(user) }
         }
 
-        EventViewModel.languageEvent.observe(this) {
+        EventViewModel.languageEvent.observe(viewLifecycleOwner) {
             setText()
         }
 
@@ -419,6 +436,8 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         return isResumed && !isHidden
     }
 
+    private fun canPollWorkList(): Boolean = canPlayWorkAnimations()
+
     private fun setVisibleAnimationsRunning(running: Boolean) {
         mBind.ivAvatar.setGlideAnimationRunning(running && mBind.ivAvatar.isVisibleOnScreen())
         mBind.rvList.children.forEach { itemView ->
@@ -430,6 +449,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun onDestroyView() {
+        stopWorkListPolling("onDestroyView")
         super.onDestroyView()
     }
 }

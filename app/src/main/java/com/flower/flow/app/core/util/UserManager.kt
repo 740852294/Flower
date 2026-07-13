@@ -31,10 +31,12 @@ object UserManager {
             userLiveData.postValue = value
         }
 
-    fun saveUser(userInfo: UserInfo) {
+    fun saveUser(userInfo: UserInfo, isChange: Boolean = true) {
         user = userInfo
-        EventViewModel.msgRedDotEvent.postValue = userInfo.valleytoward
-        EventViewModel.workRedDotEvent.postValue = userInfo.exposedaub
+        if (isChange) {
+            EventViewModel.msgRedDotEvent.postValue = userInfo.valleytoward
+            EventViewModel.workRedDotEvent.postValue = userInfo.exposedaub
+        }
     }
 
     fun saveUserMsgDot(dot: Boolean) {

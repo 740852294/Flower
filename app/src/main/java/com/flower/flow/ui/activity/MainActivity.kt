@@ -171,7 +171,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         selectTab(index)
     }
 
-    fun refreshTopicList(showPageLoading: Boolean){
+    fun refreshTopicList(showPageLoading: Boolean) {
         if (!::tabs.isInitialized) return
         val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
             ?.getFragment(MainAdapter.PAGE_TOPIC) as? TopicFragment
@@ -185,11 +185,11 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         fragment?.refreshHomeTopicList()
     }
 
-    fun refreshMeSilently(isLoading: Boolean) {
+    fun refreshMeSilently(isLoading: Boolean, isSilently: Boolean) {
         if (!::tabs.isInitialized) return
         val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
             ?.getFragment(MainAdapter.PAGE_USER) as? MeFragment
-        fragment?.refreshData(isLoading)
+        fragment?.refreshMeSilently(isLoading, isSilently)
     }
 
     private fun selectTab(index: Int) {
@@ -199,7 +199,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
                 getUserInfo(isLoading = false)
             }
             if (index == MainAdapter.PAGE_USER && previousTab != -1) {
-                refreshMeSilently(true)
+                refreshMeSilently(isLoading = true, isSilently = false)
             }
             currentTabIndex = index
         }

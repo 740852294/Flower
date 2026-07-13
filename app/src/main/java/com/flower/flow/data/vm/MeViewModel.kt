@@ -13,22 +13,17 @@ class MeViewModel : BaseViewModel() {
 
     private var workListPage = 1
 
-    fun initData(isLoading: Boolean) = request {
+    fun initData(isLoading: Boolean, isSilently: Boolean) = request {
         onRequest {
             val info = UserRepository.getUserInfoLivedata().await()
-            UserManager.saveUser(info)
-            workListPage = 1
-            AiArtRepository.getWorkTaskList(workListPage).await()
-        }
-        loadingType = if (isLoading) LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL
-    }
-
-    fun refreshData(isLoading: Boolean) = request {
-        onRequest {
             workListPage = 1
             val list = AiArtRepository.getWorkTaskList(workListPage).await()
-            val info = UserRepository.getUserInfoLivedata().await()
-            UserManager.saveUser(info)
+            if (!isSilently && info.exposedaub) {
+                val info2 = UserRepository.getUserInfoLivedata().await()
+                UserManager.saveUser(info2)
+            } else {
+                UserManager.saveUser(info, isChange = !isSilently)
+            }
             list
         }
         loadingType = if (isLoading) LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL

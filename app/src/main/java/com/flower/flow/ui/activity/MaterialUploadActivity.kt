@@ -212,7 +212,10 @@ class MaterialUploadActivity :
         clearCoverImage()
 
         findActivity<MainActivity>()?.refreshTopicListSilently()
-        findActivity<MainActivity>()?.refreshMeSilently(false)
+        findActivity<MainActivity>()?.refreshMeSilently(
+            isLoading = false,
+            isSilently = true
+        )
 
         mBind.tvGeneratePercent.text = "0%"
         updateGenerateTip(result.concedearbiter)
