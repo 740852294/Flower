@@ -87,7 +87,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         regenerateCoordinator = MeRegenerateCoordinator(
             fragment = this,
             viewModel = mViewModel,
-            onReload = ::loadData,
+            onReload = ::refreshData,
         )
 
         setText()
@@ -96,7 +96,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         mBind.refreshLayout.refresh {
             exitSelectionMode()
             setDeleteButtonInteractionEnabled(false)
-            loadData(isLoading = false)
+            refreshData(isLoading = false)
         }
         mBind.refreshLayout.loadMore {
             setDeleteButtonInteractionEnabled(false)
@@ -183,7 +183,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
                     taskIds = selectionController.selectedIds(),
                     onDeleted = {
                         exitSelectionMode()
-                        loadData(isLoading = true)
+                        refreshData(isLoading = true)
                     },
                 )
             }
@@ -220,7 +220,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
     }
 
     override fun lazyLoadData() {
-        loadData(true)
+        refreshData(true)
         startWorkListPolling()
     }
 
@@ -230,7 +230,7 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         viewLifecycleOwner.lifecycleScope.launch {
             while (true) {
                 delay(WORK_LIST_POLL_INTERVAL.milliseconds)
-                loadData(isLoading = false)
+                refreshData(isLoading = false)
             }
         }
     }
@@ -254,8 +254,28 @@ class MeFragment : BaseFragment<MeViewModel, FragmentMeBinding>() {
         }
     }
 
-    fun loadData(isLoading: Boolean) {
+    fun initData(isLoading: Boolean) {
         mViewModel.initData(isLoading).obs(viewLifecycleOwner) {
+            onSuccess { page ->
+                workListBinder.bindWorkList(
+                    page,
+                    mBind.rvList.bindingAdapter,
+                    isRefresh = true,
+                    onExitSelection = { exitSelectionMode(notifyItems = false) },
+                )
+                resumeVisibleAnimations()
+                setDeleteButtonInteractionEnabled(true)
+            }
+            onError { status ->
+                loadListError(status, mBind.refreshLayout)
+                status.msg.toast()
+                setDeleteButtonInteractionEnabled(true)
+            }
+        }
+    }
+
+    fun refreshData(isLoading: Boolean) {
+        mViewModel.refreshData(isLoading).obs(viewLifecycleOwner) {
             onSuccess { page ->
                 workListBinder.bindWorkList(
                     page,

@@ -23,6 +23,17 @@ class MeViewModel : BaseViewModel() {
         loadingType = if (isLoading) LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL
     }
 
+    fun refreshData(isLoading: Boolean) = request {
+        onRequest {
+            workListPage = 1
+            val list = AiArtRepository.getWorkTaskList(workListPage).await()
+            val info = UserRepository.getUserInfoLivedata().await()
+            UserManager.saveUser(info)
+            list
+        }
+        loadingType = if (isLoading) LoadingType.LOADING_DIALOG else LoadingType.LOADING_NULL
+    }
+
     fun loadWorkList(refresh: Boolean, isLoading: Boolean) = request {
         onRequest {
             if (refresh) {

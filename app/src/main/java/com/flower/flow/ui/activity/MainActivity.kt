@@ -189,7 +189,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>() {
         if (!::tabs.isInitialized) return
         val fragment = (mBind.mainViewPager.adapter as? MainAdapter)
             ?.getFragment(MainAdapter.PAGE_USER) as? MeFragment
-        fragment?.loadData(isLoading)
+        fragment?.refreshData(isLoading)
     }
 
     private fun selectTab(index: Int) {
