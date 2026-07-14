@@ -91,13 +91,12 @@ class MaterialUploadActivity :
         onBackPressedDispatcher.addCallback(this, generateBackPressedCallback)
         imagePickDelegate = ImagePickDelegate(this, photoPickerLauncher, legacyPickerLauncher)
         mBind.llContent.statusPadding()
-        mBind.toolbar.initClose(templateItem?.dazzledeacon ?: "") {
+        mBind.toolbar.initClose(AppStrings.get(StringResId.PHOTO_UPLOAD_ACTION)) {
             finish()
         }
         setText()
 
         templateItem?.apply {
-            mBind.toolbar.title = dazzledeacon
             mBind.ivCover.loadGlideImage(
                 url = bullmind,
             )
