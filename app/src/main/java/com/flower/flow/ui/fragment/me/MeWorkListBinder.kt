@@ -106,21 +106,15 @@ class MeWorkListBinder(
                         selectionController.toggleSelection(model.baptismdictate)
                         notifyItemChanged(modelPosition, MeFragment.PAYLOAD_SELECTION)
                         callbacks.onSelectionChanged()
-                    } else if (
-                        model.afflict == WorkStatusCodes.COMPLETE &&
-                        !downloadManager.isActive(model.baptismdictate) &&
-                        downloadManager.stateOf(model.baptismdictate) == null
-                    ) {
-                        callbacks.onOpenWorkPreview(model)
+                        return@doDebouncedClick
                     }
-                }
-            }
-
-            onClick(R.id.btnStatus) {
-                doDebouncedClick {
-                    val model = currentWorkItem() ?: return@doDebouncedClick
-                    if (!selectionController.isSelectionMode) {
-                        callbacks.onRequestAgainGenerate(model)
+                    val downloading = downloadManager.isActive(model.baptismdictate) ||
+                        downloadManager.stateOf(model.baptismdictate) != null
+                    if (downloading) return@doDebouncedClick
+                    when (model.afflict) {
+                        WorkStatusCodes.COMPLETE -> callbacks.onOpenWorkPreview(model)
+                        WorkStatusCodes.NONE, WorkStatusCodes.FAIL ->
+                            callbacks.onRequestAgainGenerate(model)
                     }
                 }
             }

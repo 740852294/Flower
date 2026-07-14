@@ -60,8 +60,7 @@ object WorkItemViewDelegate {
         val isVip = UserManager.user?.shareengage ?: false
         bindSelectionState(binding, model, selection)
 
-        binding.btnStatus.isVisible = !model.increaserace.isNullOrBlank()
-        binding.btnStatus.text = model.increaserace ?: ""
+        bindStatusButton(binding, model)
 
         when (model.afflict) {
             WorkStatusCodes.NONE -> bindLockedUi(binding, model, isVip, selection)
@@ -83,8 +82,7 @@ object WorkItemViewDelegate {
         bindSelectionState(binding, model, selection)
         binding.ivCover.setGlideAnimationRunning(false)
 
-        binding.btnStatus.isVisible = !model.increaserace.isNullOrBlank()
-        binding.btnStatus.text = model.increaserace ?: ""
+        bindStatusButton(binding, model)
 
         when (model.afflict) {
             WorkStatusCodes.NONE -> bindLockedState(
@@ -105,6 +103,14 @@ object WorkItemViewDelegate {
                 bindFailedState(binding, model, onAnimationSync)
         }
         bindDownloadState(binding, model, downloadState)
+    }
+
+    private fun bindStatusButton(binding: LayoutItemWorkBinding, model: WorkItem) {
+        binding.btnStatus.isVisible = !model.increaserace.isNullOrBlank()
+        binding.btnStatus.text = model.increaserace ?: ""
+        // 由 rootItem 统一处理点击，避免按钮拦截触摸
+        binding.btnStatus.isClickable = false
+        binding.btnStatus.isFocusable = false
     }
 
     private fun bindLockedState(
