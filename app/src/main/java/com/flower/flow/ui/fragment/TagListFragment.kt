@@ -25,7 +25,7 @@ import me.hgj.jetpackmvvm.ext.util.loadListSuccess
 import me.hgj.jetpackmvvm.ext.util.loadMore
 import me.hgj.jetpackmvvm.ext.util.refresh
 import me.hgj.jetpackmvvm.ext.util.toast
-import me.hgj.jetpackmvvm.ext.view.grid
+import com.drake.brv.utils.staggered
 
 class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>() {
 
@@ -62,7 +62,7 @@ class TagListFragment : BaseFragment<TagListViewModel, FragmentTagListBinding>()
             }
         }
 
-        mBind.rvList.grid(SPAN_COUNT)
+        mBind.rvList.staggered(SPAN_COUNT)
         adapter.apply {
             addType<TemplateItem>(R.layout.layout_item_tag_template)
 
